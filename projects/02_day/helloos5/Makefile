@@ -1,39 +1,27 @@
+# é»˜è®¤ç›®æ ‡
+all: helloos.img
 
-# ƒfƒtƒHƒ‹ƒg“®ì
+# ç¼–è¯‘ ipl.bin
 
-default :
-	../z_tools/make.exe img
+ipl.bin: ipl.nas
+	nasm -f bin -o ipl.bin ipl.nas
 
-# ƒtƒ@ƒCƒ‹¶¬‹K‘¥
+# ç”Ÿæˆ helloos.img
 
-ipl.bin : ipl.nas Makefile
-	../z_tools/nask.exe ipl.nas ipl.bin ipl.lst
+helloos.img: ipl.bin
+	dd if=ipl.bin of=helloos.img bs=512 count=1 conv=notrunc
 
-helloos.img : ipl.bin Makefile
-	../z_tools/edimg.exe   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl.bin len:512 from:0 to:0   imgout:helloos.img
+# è¿è¡Œ QEMU
 
-# ƒRƒ}ƒ“ƒh
+run: helloos.img
+	qemu-system-x86_64 -drive file=helloos.img,format=raw
 
-asm :
-	../z_tools/make.exe -r ipl.bin
+# æ¸…ç†ç”Ÿæˆæ–‡ä»¶
 
-img :
-	../z_tools/make.exe -r helloos.img
+clean:
+	-rm -f ipl.bin
 
-run :
-	../z_tools/make.exe img
-	copy helloos.img ..\z_tools\qemu\fdimage0.bin
-	../z_tools/make.exe -C ../z_tools/qemu
+# æ¸…ç†æºä»£ç ä»¥å¤–çš„æ–‡ä»¶
 
-install :
-	../z_tools/make.exe img
-	../z_tools/imgtol.com w a: helloos.img
-
-clean :
-	-del ipl.bin
-	-del ipl.lst
-
-src_only :
-	../z_tools/make.exe clean
-	-del helloos.img
+src_only: clean
+	-rm -f helloos.img
