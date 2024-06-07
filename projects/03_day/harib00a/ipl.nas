@@ -1,78 +1,81 @@
 ; haribote-ipl
 ; TAB=4
 
-		ORG		0x7c00			; このプログラムがどこに読み込まれるのか
+        ORG     0x7c00          ; This program loads at memory address 0x7c00
 
-; 以下は標準的なFAT12フォーマットフロッピーディスクのための記述
+; Standard FAT12 boot sector setup
 
-		JMP		entry
-		DB		0x90
-		DB		"HARIBOTE"		; ブートセクタの名前を自由に書いてよい（8バイト）
-		DW		512				; 1セクタの大きさ（512にしなければいけない）
-		DB		1				; クラスタの大きさ（1セクタにしなければいけない）
-		DW		1				; FATがどこから始まるか（普通は1セクタ目からにする）
-		DB		2				; FATの個数（2にしなければいけない）
-		DW		224				; ルートディレクトリ領域の大きさ（普通は224エントリにする）
-		DW		2880			; このドライブの大きさ（2880セクタにしなければいけない）
-		DB		0xf0			; メディアのタイプ（0xf0にしなければいけない）
-		DW		9				; FAT領域の長さ（9セクタにしなければいけない）
-		DW		18				; 1トラックにいくつのセクタがあるか（18にしなければいけない）
-		DW		2				; ヘッドの数（2にしなければいけない）
-		DD		0				; パーティションを使ってないのでここは必ず0
-		DD		2880			; このドライブ大きさをもう一度書く
-		DB		0,0,0x29		; よくわからないけどこの値にしておくといいらしい
-		DD		0xffffffff		; たぶんボリュームシリアル番号
-		DB		"HARIBOTEOS "	; ディスクの名前（11バイト）
-		DB		"FAT12   "		; フォーマットの名前（8バイト）
-		RESB	18				; とりあえず18バイトあけておく
+        JMP     entry
+        DB      0x90
+        DB      "HARIBOTE"      ; Boot sector name (8 bytes)
+        DW      512             ; Sector size (512 bytes)
+        DB      1               ; Cluster size (1 sector)
+        DW      1               ; FAT start sector (usually sector 1)
+        DB      2               ; Number of FATs (2)
+        DW      224             ; Root directory entries (usually 224)
+        DW      2880            ; Total sectors on the disk (2880 for 1.44MB floppy)
+        DB      0xf0            ; Media descriptor (0xf0 for removable media)
+        DW      9               ; Sectors per FAT (9 sectors)
+        DW      18              ; Sectors per track (18)
+        DW      2               ; Number of heads (2)
+        DD      0               ; Hidden sectors (0)
+        DD      2880            ; Total sectors (again)
+        DB      0,0,0x29        ; Physical drive number, reserved, extended boot signature
+        DD      0xffffffff      ; Volume serial number
+        DB      "HARIBOTEOS "   ; Volume label (11 bytes)
+        DB      "FAT12   "      ; File system type (8 bytes)
+        RESB    18              ; Reserved bytes
 
-; プログラム本体
+; Program entry point
 
 entry:
-		MOV		AX,0			; レジスタ初期化
-		MOV		SS,AX
-		MOV		SP,0x7c00
-		MOV		DS,AX
+        MOV     AX,0            ; Initialize registers
+        MOV     SS,AX
+        MOV     SP,0x7c00
+        MOV     DS,AX
 
-; ディスクを読む
+; Disk read setup
 
-		MOV		AX,0x0820
-		MOV		ES,AX
-		MOV		CH,0			; シリンダ0
-		MOV		DH,0			; ヘッド0
-		MOV		CL,2			; セクタ2
+        MOV     AX,0x0820
+        MOV     ES,AX
+        MOV     CH,0            ; Cylinder 0
+        MOV     DH,0            ; Head 0
+        MOV     CL,2            ; Sector 2
 
-		MOV		AH,0x02			; AH=0x02 : ディスク読み込み
-		MOV		AL,1			; 1セクタ
-		MOV		BX,0
-		MOV		DL,0x00			; Aドライブ
-		INT		0x13			; ディスクBIOS呼び出し
-		JC		error
+        MOV     AH,0x02         ; BIOS read sector function
+        MOV     AL,1            ; Number of sectors to read
+        MOV     BX,0            ; Buffer offset
+        MOV     DL,0x00         ; Drive number (0x00 for floppy A)
+        INT     0x13            ; Call BIOS
+        JC      error           ; Jump to error if carry flag is set
 
-; 読み終わったけどとりあえずやることないので寝る
+; Halt the CPU if read is successful
 
 fin:
-		HLT						; 何かあるまでCPUを停止させる
-		JMP		fin				; 無限ループ
+        HLT                     ; Halt the CPU
+        JMP     fin             ; Infinite loop
+
+; Error handler
 
 error:
-		MOV		SI,msg
+        MOV     SI,msg
 putloop:
-		MOV		AL,[SI]
-		ADD		SI,1			; SIに1を足す
-		CMP		AL,0
-		JE		fin
-		MOV		AH,0x0e			; 一文字表示ファンクション
-		MOV		BX,15			; カラーコード
-		INT		0x10			; ビデオBIOS呼び出し
-		JMP		putloop
+        MOV     AL,[SI]
+        ADD     SI,1            ; Increment SI
+        CMP     AL,0
+        JE      fin             ; Jump to fin if AL is 0 (end of message)
+        MOV     AH,0x0e         ; BIOS teletype function
+        MOV     BX,15           ; Color code
+        INT     0x10            ; Call BIOS
+        JMP     putloop
+
 msg:
-		DB		0x0a, 0x0a		; 改行を2つ
-		DB		"load error"
-		DB		0x0a			; 改行
-		DB		0
+        DB      0x0a, 0x0a      ; Two newlines
+        DB      "load error"
+        DB      0x0a            ; Newline
+        DB      0
 
-		; RESB	0x7dfe-$
-		RESB 0x7dfe-0x7c00-($-$$)
+        ; Fill remaining bytes to 0x7dfe
+        RESB    0x7dfe-0x7c00-($-$$)
 
-		DB		0x55, 0xaa
+        DB      0x55, 0xaa      ; Boot sector signature
