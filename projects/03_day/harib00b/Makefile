@@ -1,46 +1,27 @@
-TOOLPATH = ../z_tools/
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+DEL      = rm -f
 
-# デフォルト動作
+# Default action
+all: haribote.img
 
-default :
-	$(MAKE) img
+# Build boot sector binary
+ipl.bin: ipl.nas
+	nasm -f bin -o ipl.bin ipl.nas
 
-# ファイル生成規則
+# Create disk image and write the boot sector
+haribote.img: ipl.bin
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=haribote.img bs=512 count=2880
+	# Write the boot sector
+	dd if=ipl.bin of=haribote.img bs=512 count=1 conv=notrunc
 
-ipl.bin : ipl.nas Makefile
-	$(NASK) ipl.nas ipl.bin ipl.lst
+# Run the image with QEMU
+run: haribote.img
+	qemu-system-x86_64 -drive file=haribote.img,format=raw,if=floppy
 
-haribote.img : ipl.bin Makefile
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl.bin len:512 from:0 to:0   imgout:haribote.img
-
-# コマンド
-
-asm :
-	$(MAKE) ipl.bin
-
-img :
-	$(MAKE) haribote.img
-
-run :
-	$(MAKE) img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
-
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: haribote.img
-
-clean :
+# Clean build artifacts
+clean:
 	-$(DEL) ipl.bin
-	-$(DEL) ipl.lst
 
-src_only :
-	$(MAKE) clean
+# Clean disk image
+src_only: clean
 	-$(DEL) haribote.img
