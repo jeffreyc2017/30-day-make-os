@@ -1,50 +1,43 @@
-TOOLPATH = ../z_tools/
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+DEL      = rm -f
 
-# デフォルト動作
+# Default action
+all: haribote.img
 
-default :
-	$(MAKE) img
+# Build boot sector binary
+ipl10.bin: ipl10.nas
+	nasm -f bin -o ipl10.bin ipl10.nas
 
-# ファイル生成規則
 
-ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin ipl10.lst
+haribote.sys : haribote.nas
+	nasm -f bin -o haribote.sys haribote.nas
 
-haribote.sys : haribote.nas Makefile
-	$(NASK) haribote.nas haribote.sys haribote.lst
 
-haribote.img : ipl10.bin haribote.sys Makefile
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl10.bin len:512 from:0 to:0 \
-		copy from:haribote.sys to:@: \
-		imgout:haribote.img
+# Create disk image and write the boot sector
+haribote.img: ipl10.bin haribote.sys
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=haribote.img bs=512 count=2880
 
-# コマンド
+	# Format the image as FAT12
+	mkfs.fat -F 12 haribote.img
 
-img :
-	$(MAKE) haribote.img
+	# Write the boot sector
+	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
 
-run :
-	$(MAKE) img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+	mkdir -p ./floppy
+	sudo mount -o loop haribote.img ./floppy
+	sudo cp haribote.sys ./floppy
+	sudo umount ./floppy
+	-$(DEL) -r ./floppy
 
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: haribote.img
+# Run the image with QEMU
+run: haribote.img
+	qemu-system-x86_64 -drive file=haribote.img,format=raw,if=floppy
 
+# Clean build artifacts
 clean :
 	-$(DEL) ipl10.bin
-	-$(DEL) ipl10.lst
 	-$(DEL) haribote.sys
-	-$(DEL) haribote.lst
 
-src_only :
-	$(MAKE) clean
+# Clean disk image
+src_only: clean
 	-$(DEL) haribote.img
