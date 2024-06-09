@@ -1,4 +1,4 @@
-[INSTRSET "i486p"]
+; [INSTRSET "i486p"]
 [BITS 32]
 		CLI
 fin:

@@ -1,4 +1,4 @@
-[INSTRSET "i486p"]
+; [INSTRSET "i486p"]
 [BITS 32]
 		MOV		EAX,1*8			; OS用のセグメント番号
 		MOV		DS,AX			; これをDSにいれちゃう

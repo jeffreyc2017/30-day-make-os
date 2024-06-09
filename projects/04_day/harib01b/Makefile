@@ -1,85 +1,62 @@
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+# Compiler and linker options
+CC = aarch64-linux-gnu-gcc
+AS = aarch64-linux-gnu-as
+LD = aarch64-linux-gnu-ld
+CFLAGS = -ffreestanding -nostdlib -nostartfiles
+LDFLAGS = -Ttext 0x1000
+DEL      = rm -f
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = $(TOOLPATH)haribote/haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
-
-# デフォルト動作
-
-default :
-	$(MAKE) img
+# Default action
+all: haribote.img
 
 # ファイル生成規則
 
-ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin ipl10.lst
+ipl10.bin : ipl10.nas
+	nasm -f bin -o ipl10.bin ipl10.nas
 
-asmhead.bin : asmhead.nas Makefile
-	$(NASK) asmhead.nas asmhead.bin asmhead.lst
+asmhead.bin : asmhead.nas
+	nasm -f bin -o asmhead.bin asmhead.nas
 
-bootpack.gas : bootpack.c Makefile
-	$(CC1) -o bootpack.gas bootpack.c
+bootpack.bin : bootpack.c
+	# $(CC) $(CFLAGS) -c $< -o bootpack.o
+	# $(AS) start.s -o start.o
+	# $(LD) $(LDFLAGS) start.o bootpack.o -o $@
 
-bootpack.nas : bootpack.gas Makefile
-	$(GAS2NASK) bootpack.gas bootpack.nas
+	$(CC) $(CFLAGS) -c $< -o bootpack.bin
 
-bootpack.obj : bootpack.nas Makefile
-	$(NASK) bootpack.nas bootpack.obj bootpack.lst
+naskfunc.obj : naskfunc.nas
+	nasm -f bin -o naskfunc.obj naskfunc.nas
 
-naskfunc.obj : naskfunc.nas Makefile
-	$(NASK) naskfunc.nas naskfunc.obj naskfunc.lst
+haribote.sys : asmhead.bin bootpack.bin naskfunc.obj
+	cat $^ > $@
 
-bootpack.bim : bootpack.obj naskfunc.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
-		bootpack.obj naskfunc.obj
-# 3MB+64KB=3136KB
+haribote.img : ipl10.bin haribote.sys
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=haribote.img bs=512 count=2880
 
-bootpack.hrb : bootpack.bim Makefile
-	$(BIM2HRB) bootpack.bim bootpack.hrb 0
+	# Format the image as FAT12
+	mkfs.fat -F 12 haribote.img
 
-haribote.sys : asmhead.bin bootpack.hrb Makefile
-	copy /B asmhead.bin+bootpack.hrb haribote.sys
+	# Write the boot sector
+	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
 
-haribote.img : ipl10.bin haribote.sys Makefile
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl10.bin len:512 from:0 to:0 \
-		copy from:haribote.sys to:@: \
-		imgout:haribote.img
+	dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
 
-# コマンド
+	mkdir -p ./floppy
+	sudo mount -o loop haribote.img ./floppy
+	sudo cp haribote.sys ./floppy
+	sudo umount ./floppy
+	-$(DEL) -r ./floppy
 
-img :
-	$(MAKE) haribote.img
-
-run :
-	$(MAKE) img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
-
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: haribote.img
+run :haribote.img
+	qemu-system-x86_64 -drive file=haribote.img,format=raw,if=floppy
 
 clean :
 	-$(DEL) *.bin
-	-$(DEL) *.lst
-	-$(DEL) *.gas
+	-$(DEL) *.elf
+	-$(DEL) *.o
 	-$(DEL) *.obj
-	-$(DEL) bootpack.nas
-	-$(DEL) bootpack.map
-	-$(DEL) bootpack.bim
-	-$(DEL) bootpack.hrb
 	-$(DEL) haribote.sys
 
-src_only :
-	$(MAKE) clean
+src_only : clean
 	-$(DEL) haribote.img

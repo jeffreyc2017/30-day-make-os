@@ -1,4 +1,4 @@
-[INSTRSET "i486p"]
+; [INSTRSET "i486p"]
 [BITS 32]
 		MOV		ECX,msg
 putloop:

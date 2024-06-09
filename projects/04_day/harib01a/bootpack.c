@@ -1,7 +1,8 @@
 void io_hlt(void);
 void write_mem8(int addr, int data);
 
-void HariMain(void)
+// void HariMain(void)
+int main(void)
 {
 	int i; /* 変数宣言。iという変数は、32ビットの整数型 */
 

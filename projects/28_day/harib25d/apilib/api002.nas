@@ -1,5 +1,5 @@
-[FORMAT "WCOFF"]
-[INSTRSET "i486p"]
+; [FORMAT "WCOFF"]
+; [INSTRSET "i486p"]
 [BITS 32]
 [FILE "api002.nas"]
 

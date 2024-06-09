@@ -38,7 +38,7 @@ haribote.img : ipl10.bin haribote.sys
 	# Write the boot sector
 	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
 
-	dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
+	# dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
 
 	mkdir -p ./floppy
 	sudo mount -o loop haribote.img ./floppy
