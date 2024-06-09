@@ -18,10 +18,15 @@ asmhead.bin : asmhead.nas
 	nasm -f bin -o asmhead.bin asmhead.nas
 
 bootpack.bin : bootpack.c
-	$(CC) $(CFLAGS) -c $< -o bootpack.o
-	# $(AS) start.s -o start.o
-	# $(LD) $(LDFLAGS) start.o bootpack.o -o $@
-	$(LD) $(LDFLAGS) bootpack.o -o $@
+	$(CC) -S $< -o bootpack.s
+	$(AS) bootpack.s -o bootpack.o
+	$(LD) bootpack.o -o bootpack.bin
+	# objcopy -O binary bootpack.o bootpack.bin
+
+	# $(CC) $(CFLAGS) -c $< -o bootpack.o
+	# # $(AS) start.s -o start.o
+	# # $(LD) $(LDFLAGS) start.o bootpack.o -o $@
+	# $(LD) $(LDFLAGS) bootpack.o -o $@
 
 # 3MB+64KB=3136KB
 
@@ -53,6 +58,7 @@ clean :
 	-$(DEL) *.bin
 	-$(DEL) *.elf
 	-$(DEL) *.o
+	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 
 src_only : clean

@@ -1,5 +1,6 @@
-// void HariMain(void)
-int main(void)
+void HariMain(void)
+// int main(void)
+// void _start(void)
 {
 
 fin:
