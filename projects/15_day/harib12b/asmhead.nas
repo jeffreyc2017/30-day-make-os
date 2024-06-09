@@ -23,7 +23,7 @@ SCRNX	EQU		0x0ff4			; 解像度のX
 SCRNY	EQU		0x0ff6			; 解像度のY
 VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 
-		ORG		0xc200			; このプログラムがどこに読み込まれるのか
+		ORG		0xc400			; このプログラムがどこに読み込まれるのか
 
 ; VBE存在確認
 

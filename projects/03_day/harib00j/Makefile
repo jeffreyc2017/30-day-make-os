@@ -40,7 +40,10 @@ haribote.img : ipl10.bin haribote.sys
 	# Write the boot sector
 	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
 
-	dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
+	# This command ensure the haribote.sys is written to the address
+	# of 0x4200 to keep align with the original code. But this is not
+	# the correct way to copy the file.
+	# dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
 
 	mkdir -p ./floppy
 	sudo mount -o loop haribote.img ./floppy
