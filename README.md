@@ -163,3 +163,8 @@ In some cases, writing directly to the image may suffice, especially if the file
 | AMD Ryzen         | 64 位         |
 | VIA C3            | 32 位         |
 | VIA Nano          | 64 位         |
+
+## References
+
+- https://github.com/ghosind/HariboteOS
+

@@ -110,10 +110,12 @@ pipelineflush:
 		MOV		ESI,[EBX+20]	; Source
 		ADD		ESI,EBX
 		MOV		EDI,[EBX+12]	; Destination
-		CALL	memcpy
+;		CALL	memcpy
 skip:
-		MOV		ESP,[EBX+12]	; Initial value of stack
-		JMP		DWORD 2*8:0x0000001b
+;		MOV		ESP,[EBX+12]	; Initial value of stack
+;		JMP		DWORD 2*8:0x0000001b
+		MOV   ESP, 0xffff
+		JMP   DWORD 2*8:0x00000000
 
 waitkbdout:
 		IN		 AL,0x64
