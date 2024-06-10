@@ -180,3 +180,24 @@ fls haribote.img
 icat haribote.img 4
 istat haribote.img 4
 ```
+
+Replaced all
+ORG 0xc200 -> ORG 0xc400
+JMP 0xc200 -> JMP 0xc400
+
+## Assembler
+
+`as` and `nasm` are both assemblers, but they are associated with different instruction set architectures and syntaxes:
+
+1. **as (GNU Assembler):**
+
+   - `as` is the GNU Assembler, which is part of the GNU Binutils suite.
+   - It primarily targets the GNU/Linux operating system and supports various architectures, including x86, ARM, MIPS, and others.
+   - It uses the AT&T assembly syntax by default, which is characterized by the use of `%` for registers and the order of operands in instructions.
+   - `as` is often used in conjunction with the GCC compiler toolchain for compiling programs on Linux systems.
+
+2. **nasm (Netwide Assembler):**
+   - `nasm` is an independent, portable assembler that supports a wide range of architectures, including x86 and x86-64 (AMD64).
+   - It uses its own syntax, which is often referred to as NASM syntax. This syntax is similar to Intel assembly syntax and is characterized by the use of square brackets for memory operands and a more intuitive instruction format.
+   - `nasm` is popular among developers who prefer a more expressive and readable assembly language syntax, especially for writing low-level system software or operating systems.
+   - Unlike `as`, `nasm` is not tied to any specific compiler toolchain and can be used independently for assembling assembly language source files into object files or executables.

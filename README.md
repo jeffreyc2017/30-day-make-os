@@ -1,5 +1,10 @@
 此项目在 RaspberryPi 5 上运行。
 
+1. 尽量保持原代码文件不做变更，仅做必要的修改以使编译通过；
+2. 主要的修改在于Makefile；
+3. 原代码的目标机器是32位x86 CPU;
+4. 原代码使用NASM(Netwide Assembler) syntax;
+
 ```sh
 $ uname -a
 Linux raspberrypi 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64 GNU/Linux
@@ -109,3 +114,52 @@ These resources should provide you with detailed information and explanations of
 A 1.44 MB floppy disk typically uses the FAT12 file system. FAT12 is specifically designed for smaller storage media, such as floppy disks, and can handle the limited number of sectors and small file sizes associated with them.
 
 In some cases, writing directly to the image may suffice, especially if the filesystem structure is simple and does not require additional metadata or directory structures.
+
+## Cross-compiler
+
+[nasm](https://nasm.us)
+[MinGW-w64](https://www.mingw-w64.org/)
+
+## 04_day
+
+存器在 C 语言编译后生成的机器语言中，用于记忆非常重要的值。因此这次我们只用 EAX 和 BCX。
+这次还给 naskfunc.nas 增加了一行，那就是 INSTRSET 指令。它是用来告诉 nask“这个程序是给 486 用的哦”，nask 见了这一行之后就知道“哦，那见了 EAX 这个词，就解释成寄存器名”。如果什么都不指定，它就会认为那是为 8086 这种非常古老的、而且只有 16 位寄存器的 CPU 而写的程序，见了 EAX 这个词，会误解成标签（Label），或是常数。8086 那时候写的程序中，曾偶尔使用 EAX 来做标签，当时也没想到这个单词后来会成为寄存器名而不能再随便使用。
+上面虽然写着 486 用，但并不是说会出现仅能在 486 中执行的机器语言，这只是单纯的词语解释的问题。所以 486 用的模式下，如果只使用 16 位寄存器，也能成为在 8086 中亦可执行的机器语言。
+“纸娃娃操作系统”也支持 386，所以虽然这里指定的是 486，但并不是 386 中就不能用。可能会有人同，这里的 386，486 都是什么意思啊？我们来简单介绍一下电脑的 CPU（英特尔系列）家谱。
+8086-+80186 286-386-486->Pentium→PentiumProPentiumlI→PentiumIII-Pentium4-\*...
+从上面的家谱来看，386 已经是非常古老的 CPU 了。到 286 为止 CPU 是 16 位，而 386 以后 CPU 是 32 位。
+现在，汇编这部分已经准备好了，下面来修改 C 语言吧。这次我们导人了变量。
+
+> [!IMPORTANT]
+> 此书面向 32 位 CPU
+> The Raspberry Pi 5 uses a 64-bit 2.4 GHz quad-core ARM Cortex-A76 processor.
+
+| 处理器型号        | 位数          |
+| ----------------- | ------------- |
+| Intel 8086        | 16 位         |
+| Intel 8088        | 16 位         |
+| Intel 80186       | 16 位         |
+| Intel 80286       | 16 位         |
+| Intel 80386       | 32 位         |
+| Intel 80486       | 32 位         |
+| Intel Pentium     | 32 位         |
+| Intel Pentium Pro | 32 位         |
+| Intel Pentium II  | 32 位         |
+| Intel Pentium III | 32 位         |
+| Intel Pentium 4   | 32 位或 64 位 |
+| Intel Atom        | 32 位         |
+| Intel Core 2 系列 | 64 位         |
+| Intel Core i 系列 | 64 位         |
+| Intel Xeon        | 32 位或 64 位 |
+| AMD K5            | 32 位         |
+| AMD K6            | 32 位         |
+| AMD Athlon XP     | 32 位         |
+| AMD Athlon        | 32 位或 64 位 |
+| AMD Duron         | 32 位         |
+| AMD Sempron       | 32 位         |
+| AMD Opteron       | 64 位         |
+| AMD Phenom        | 64 位         |
+| AMD FX            | 64 位         |
+| AMD Ryzen         | 64 位         |
+| VIA C3            | 32 位         |
+| VIA Nano          | 64 位         |

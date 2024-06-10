@@ -1,49 +1,49 @@
 ; haribote-os boot asm
 ; TAB=4
 
-BOTPAK	EQU		0x00280000		; bootpackのロード先
-DSKCAC	EQU		0x00100000		; ディスクキャッシュの場所
-DSKCAC0	EQU		0x00008000		; ディスクキャッシュの場所（リアルモード）
+BOTPAK	EQU		0x00280000		; Destination for bootpack loading
+DSKCAC	EQU		0x00100000		; Location of disk cache
+DSKCAC0	EQU		0x00008000		; Location of disk cache (real mode)
 
-; BOOT_INFO関係
-CYLS	EQU		0x0ff0			; ブートセクタが設定する
+; BOOT_INFO related
+CYLS	EQU		0x0ff0			; Set by the boot sector
 LEDS	EQU		0x0ff1
-VMODE	EQU		0x0ff2			; 色数に関する情報。何ビットカラーか？
-SCRNX	EQU		0x0ff4			; 解像度のX
-SCRNY	EQU		0x0ff6			; 解像度のY
-VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
+VMODE	EQU		0x0ff2			; Information about color depth
+SCRNX	EQU		0x0ff4			; X resolution
+SCRNY	EQU		0x0ff6			; Y resolution
+VRAM	EQU		0x0ff8			; Start address of graphic buffer
 
-;		ORG		0xc400			; このプログラムがどこに読み込まれるのか
+		ORG		0xc400			; Where this program is loaded
 
-; 画面モードを設定
+; Set the screen mode
 
-		MOV		AL,0x13			; VGAグラフィックス、320x200x8bitカラー
+		MOV		AL,0x13			; VGA graphics, 320x200x8-bit color
 		MOV		AH,0x00
 		INT		0x10
-		MOV		BYTE [VMODE],8	; 画面モードをメモする（C言語が参照する）
+		MOV		BYTE [VMODE],8	; Save screen mode for C language
 		MOV		WORD [SCRNX],320
 		MOV		WORD [SCRNY],200
 		MOV		DWORD [VRAM],0x000a0000
 
-; キーボードのLED状態をBIOSに教えてもらう
+; Get keyboard LED status from BIOS
 
 		MOV		AH,0x02
 		INT		0x16 			; keyboard BIOS
 		MOV		[LEDS],AL
 
-; PICが一切の割り込みを受け付けないようにする
-;	AT互換機の仕様では、PICの初期化をするなら、
-;	こいつをCLI前にやっておかないと、たまにハングアップする
-;	PICの初期化はあとでやる
+; Disable all interrupts accepted by PIC
+; For initialization of PIC in AT-compatible machines,
+; you need to do this before CLI to avoid hang-ups sometimes
+; PIC initialization is done later
 
 		MOV		AL,0xff
 		OUT		0x21,AL
-		NOP						; OUT命令を連続させるとうまくいかない機種があるらしいので
+		NOP						; Some models might fail if OUT instructions are continuous
 		OUT		0xa1,AL
 
-		CLI						; さらにCPUレベルでも割り込み禁止
+		CLI						; Disable interrupts at CPU level
 
-; CPUから1MB以上のメモリにアクセスできるように、A20GATEを設定
+; Enable access to memory above 1MB by setting A20GATE
 
 		CALL	waitkbdout
 		MOV		AL,0xd1
@@ -53,72 +53,72 @@ VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 		OUT		0x60,AL
 		CALL	waitkbdout
 
-; プロテクトモード移行
+; Switch to protected mode
 
-; [INSTRSET "i486p"]				; 486の命令まで使いたいという記述
+; [INSTRSET "i486p"]				; Specify using instructions up to 486
 
-		LGDT	[GDTR0]			; 暫定GDTを設定
+		LGDT	[GDTR0]			; Set provisional GDT
 		MOV		EAX,CR0
-		AND		EAX,0x7fffffff	; bit31を0にする（ページング禁止のため）
-		OR		EAX,0x00000001	; bit0を1にする（プロテクトモード移行のため）
+		AND		EAX,0x7fffffff	; Set bit31 to 0 (disable paging)
+		OR		EAX,0x00000001	; Set bit0 to 1 (switch to protected mode)
 		MOV		CR0,EAX
 		JMP		pipelineflush
 pipelineflush:
-		MOV		AX,1*8			;  読み書き可能セグメント32bit
+		MOV		AX,1*8			;  Read-write segment, 32-bit
 		MOV		DS,AX
 		MOV		ES,AX
 		MOV		FS,AX
 		MOV		GS,AX
 		MOV		SS,AX
 
-; bootpackの転送
+; Transfer bootpack
 
-		MOV		ESI,bootpack	; 転送元
-		MOV		EDI,BOTPAK		; 転送先
+		MOV		ESI,bootpack	; Source
+		MOV		EDI,BOTPAK		; Destination
 		MOV		ECX,512*1024/4
 		CALL	memcpy
 
-; ついでにディスクデータも本来の位置へ転送
+; Transfer disk data to the original position
 
-; まずはブートセクタから
+; First, from the boot sector
 
-		MOV		ESI,0x7c00		; 転送元
-		MOV		EDI,DSKCAC		; 転送先
+		MOV		ESI,0x7c00		; Source
+		MOV		EDI,DSKCAC		; Destination
 		MOV		ECX,512/4
 		CALL	memcpy
 
-; 残り全部
+; Transfer the remaining data
 
-		MOV		ESI,DSKCAC0+512	; 転送元
-		MOV		EDI,DSKCAC+512	; 転送先
+		MOV		ESI,DSKCAC0+512	; Source
+		MOV		EDI,DSKCAC+512	; Destination
 		MOV		ECX,0
 		MOV		CL,BYTE [CYLS]
-		IMUL	ECX,512*18*2/4	; シリンダ数からバイト数/4に変換
-		SUB		ECX,512/4		; IPLの分だけ差し引く
+		IMUL	ECX,512*18*2/4	; Convert cylinder count to byte count/4
+		SUB		ECX,512/4		; Subtract IPL
 		CALL	memcpy
 
-; asmheadでしなければいけないことは全部し終わったので、
-;	あとはbootpackに任せる
+; Everything to be done in asmhead is finished,
+; Now leave it to bootpack
 
-; bootpackの起動
+; Boot bootpack
 
 		MOV		EBX,BOTPAK
 		MOV		ECX,[EBX+16]
 		ADD		ECX,3			; ECX += 3;
 		SHR		ECX,2			; ECX /= 4;
-		JZ		skip			; 転送するべきものがない
-		MOV		ESI,[EBX+20]	; 転送元
+		JZ		skip			; Nothing to transfer
+		MOV		ESI,[EBX+20]	; Source
 		ADD		ESI,EBX
-		MOV		EDI,[EBX+12]	; 転送先
+		MOV		EDI,[EBX+12]	; Destination
 		CALL	memcpy
 skip:
-		MOV		ESP,[EBX+12]	; スタック初期値
+		MOV		ESP,[EBX+12]	; Initial value of stack
 		JMP		DWORD 2*8:0x0000001b
 
 waitkbdout:
 		IN		 AL,0x64
 		AND		 AL,0x02
-		JNZ		waitkbdout		; ANDの結果が0でなければwaitkbdoutへ
+		JNZ		waitkbdout		; Jump to waitkbdout if the result of AND is not 0
 		RET
 
 memcpy:
@@ -127,15 +127,15 @@ memcpy:
 		MOV		[EDI],EAX
 		ADD		EDI,4
 		SUB		ECX,1
-		JNZ		memcpy			; 引き算した結果が0でなければmemcpyへ
+		JNZ		memcpy			; Jump to memcpy if the result of subtraction is not 0
 		RET
-; memcpyはアドレスサイズプリフィクスを入れ忘れなければ、ストリング命令でも書ける
+; memcpy can also be written using string instructions as long as you don't forget the address size prefix
 
 		ALIGNB	16
 GDT0:
-		RESB	8				; ヌルセレクタ
-		DW		0xffff,0x0000,0x9200,0x00cf	; 読み書き可能セグメント32bit
-		DW		0xffff,0x0000,0x9a28,0x0047	; 実行可能セグメント32bit（bootpack用）
+		RESB	8				; Null selector
+		DW		0xffff,0x0000,0x9200,0x00cf	; Read-write segment 32-bit
+		DW		0xffff,0x0000,0x9a28,0x0047	; Execute segment 32-bit (for bootpack)
 
 		DW		0
 GDTR0:
