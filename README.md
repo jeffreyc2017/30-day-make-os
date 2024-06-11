@@ -1,9 +1,9 @@
 此项目在 RaspberryPi 5 上运行。
 
 1. 尽量保持原代码文件不做变更，仅做必要的修改以使编译通过；
-2. 主要的修改在于Makefile；
-3. 原代码的目标机器是32位x86 CPU;
-4. 原代码使用NASM(Netwide Assembler) syntax;
+2. 主要的修改在于 Makefile；
+3. 原代码的目标机器是 32 位 x86 CPU;
+4. 原代码使用 NASM(Netwide Assembler) syntax;
 
 ```sh
 $ uname -a
@@ -168,3 +168,4 @@ In some cases, writing directly to the image may suffice, especially if the file
 
 - https://github.com/ghosind/HariboteOS
 
+- [Intel 386 and AMD x86-64 Options](https://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/i386-and-x86_002d64-Options.html)

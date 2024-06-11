@@ -1,8 +1,8 @@
-void io_hlt(void);
-void io_cli(void);
-void io_out8(int port, int data);
-int io_load_eflags(void);
-void io_store_eflags(int eflags);
+void _io_hlt(void);
+void _io_cli(void);
+void _io_out8(int port, int data);
+int _io_load_eflags(void);
+void _io_store_eflags(int eflags);
 
 /* 実は同じソースファイルに書いてあっても、定義する前に使うのなら、
 	やっぱり宣言しておかないといけない。 */
@@ -24,7 +24,7 @@ void HariMain(void)
 	}
 
 	for (;;) {
-		io_hlt();
+		_io_hlt();
 	}
 }
 
@@ -57,15 +57,15 @@ void init_palette(void)
 void set_palette(int start, int end, unsigned char *rgb)
 {
 	int i, eflags;
-	eflags = io_load_eflags();	/* 割り込み許可フラグの値を記録する */
-	io_cli(); 					/* 許可フラグを0にして割り込み禁止にする */
-	io_out8(0x03c8, start);
+	eflags = _io_load_eflags();	/* 割り込み許可フラグの値を記録する */
+	_io_cli(); 					/* 許可フラグを0にして割り込み禁止にする */
+	_io_out8(0x03c8, start);
 	for (i = start; i <= end; i++) {
-		io_out8(0x03c9, rgb[0] / 4);
-		io_out8(0x03c9, rgb[1] / 4);
-		io_out8(0x03c9, rgb[2] / 4);
+		_io_out8(0x03c9, rgb[0] / 4);
+		_io_out8(0x03c9, rgb[1] / 4);
+		_io_out8(0x03c9, rgb[2] / 4);
 		rgb += 3;
 	}
-	io_store_eflags(eflags);	/* 割り込み許可フラグを元に戻す */
+	_io_store_eflags(eflags);	/* 割り込み許可フラグを元に戻す */
 	return;
 }
