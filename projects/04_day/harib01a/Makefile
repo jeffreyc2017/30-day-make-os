@@ -2,6 +2,7 @@
 ifndef GCCPREFIX
 GCCPREFIX := x86_64-linux-gnu-
 endif
+
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
 NASM = nasm
