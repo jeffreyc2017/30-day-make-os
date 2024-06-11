@@ -1,4 +1,4 @@
-void io_hlt(void);
+void _io_hlt(void);
 
 void HariMain(void)
 {
@@ -12,6 +12,6 @@ void HariMain(void)
 	}
 
 	for (;;) {
-		io_hlt();
+		_io_hlt();
 	}
 }
