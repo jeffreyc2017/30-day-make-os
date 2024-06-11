@@ -1,9 +1,25 @@
+# 30dayMakeOS on Raspberry Pi
+
+## conditions
+
 此项目在 RaspberryPi 5 上运行。
 
 1. 尽量保持原代码文件不做变更，仅做必要的修改以使编译通过；
 2. 主要的修改在于 Makefile；
 3. 原代码的目标机器是 32 位 x86 CPU;
 4. 原代码使用 NASM(Netwide Assembler) syntax;
+
+## -fleading-underscore
+
+旧版本的 GCC（GNU Compiler Collection）在编译时，为了兼容某些老库，会在符号名前自动添加一个下划线。然而，新版本的 GCC 已经不再默认添加这个下划线。但是，如果需要，可以通过编译选项重新开启这个功能。
+
+要在新版本的 GCC 中启用这个功能，可以使用`-fleading-underscore`编译选项。例如：
+
+```bash
+gcc -fleading-underscore -o outputfile sourcefile.c
+```
+
+这样，在编译过程中，GCC 会自动在符号名前添加下划线，从而实现与旧库的兼容。
 
 ```sh
 $ uname -a
@@ -165,6 +181,8 @@ In some cases, writing directly to the image may suffice, especially if the file
 | VIA Nano          | 64 位         |
 
 ## References
+
+- [Original book website](http://hrb.osask.jp)
 
 - https://github.com/ghosind/HariboteOS
 

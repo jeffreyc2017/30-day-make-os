@@ -76,6 +76,7 @@ is not strictly necessary for all systems but is included as a precaution to ens
 ### Purpose of the NOP Instruction
 
 1. **I/O Timing Considerations**:
+
    - The `OUT` instructions are writing to the PIC (Programmable Interrupt Controller) registers, which control hardware interrupts. Some older or slower hardware might require a brief delay between consecutive `OUT` instructions to ensure the first command is fully processed before the next one is issued. The `NOP` instruction provides a small, predictable delay.
 
 2. **Hardware Compatibility**:
@@ -253,18 +254,21 @@ The GDT is a data structure used by Intel x86-family processors to define the ch
 ```assembly
 ALIGNB  16
 ```
+
 - **Purpose**: Align the following data on a 16-byte boundary.
 - **Explanation**: This ensures that the GDT starts at a memory address that is a multiple of 16. This alignment can improve performance and is required by some processors for certain data structures.
 
 ```assembly
 GDT0:
 ```
+
 - **Purpose**: Label marking the start of the GDT.
 - **Explanation**: `GDT0` is the label used to reference the start of the GDT.
 
 ```assembly
 RESB    8               ; Null selector
 ```
+
 - **Purpose**: Reserve 8 bytes for the null descriptor.
 - **Explanation**: The first entry in the GDT must be a null descriptor. This entry is not used for segment translation and is required by the x86 architecture to always be present.
 
@@ -337,24 +341,28 @@ The GDTR is a special register that holds the base address and limit of the GDT.
 ```assembly
 DW      0
 ```
+
 - **Purpose**: Reserve 2 bytes.
 - **Explanation**: Placeholder to align subsequent data structures.
 
 ```assembly
 GDTR0:
 ```
+
 - **Purpose**: Label marking the start of the GDTR.
 - **Explanation**: `GDTR0` is the label used to reference the start of the GDTR.
 
 ```assembly
 DW      8*3-1
 ```
+
 - **Purpose**: Set the size (limit) of the GDT.
 - **Explanation**: The limit of the GDT is set to the size of three descriptors (null descriptor, data segment, and code segment). Since each descriptor is 8 bytes, the limit is `8*3-1 = 23` bytes.
 
 ```assembly
 DD      GDT0
 ```
+
 - **Purpose**: Set the base address of the GDT.
 - **Explanation**: The base address of the GDT is set to the address labeled `GDT0`.
 
@@ -375,3 +383,12 @@ bootpack:
 This marks the beginning of the bootpack data, which is the main OS kernel.
 
 In summary, this code initializes the system, sets up protected mode, and loads the main OS kernel, preparing the system to run the operating system.
+
+```sh
+AH=0x00
+AL=模式
+0x03:80*25的16色模式
+0x12:640*480*4
+0x13:320*200*8
+0x6a:800*600*4
+```

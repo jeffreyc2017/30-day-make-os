@@ -9,8 +9,9 @@ AS = $(GCCPREFIX)as
 NASM = nasm
 LD = $(GCCPREFIX)ld
 OBJCOPY = $(GCCPREFIX)objcopy
-CFLAGS = -ffreestanding -nostdlib -nostartfiles -Wall -fno-pie -m32 -mtune=i486 -march=i486
-LDFLAGS = -m elf_i386 -Ttext 0x1000 -z noexecstack
+CFLAGS = -fleading-underscore -ffreestanding -nostdlib -nostartfiles -Wall -fno-pie -m32 -mtune=i486 -march=i486
+# LDFLAGS = -m elf_i386 -Ttext 0x1000 -z noexecstack
+LDFLAGS = -m elf_i386
 DEL = rm -f
 
 # Default action
@@ -28,7 +29,16 @@ naskfunc.obj: naskfunc.nas
 	$(NASM) -f elf32 -o naskfunc.obj naskfunc.nas -l naskfunc.lst
 
 bootpack.elf: bootpack.c naskfunc.obj
-	$(CC) $(CFLAGS) -c bootpack.c -o bootpack.o
+	# # Compile bootpack.c to object file with Intel assembly syntax
+	# $(CC) $(CFLAGS) -c -masm=intel bootpack.c -o bootpack.o
+
+	# Compile bootpack.c to assembly with Intel syntax
+	$(CC) $(CFLAGS) -S -masm=intel bootpack.c -o bootpack.s
+
+	# Compile the assembly code to an object file
+	$(CC) $(CFLAGS) -c bootpack.s -o bootpack.o
+
+	# Link the object files to create the final executable
 	$(LD) $(LDFLAGS) -o bootpack.elf bootpack.o naskfunc.obj
 
 bootpack.bin: bootpack.elf
@@ -54,7 +64,7 @@ haribote.img: ipl10.bin haribote.sys
 	-$(DEL) -r ./floppy
 
 run: haribote.img
-	qemu-system-i386 -drive file=haribote.img,format=raw,if=floppy
+	qemu-system-i386 -m 32 -vga std -drive file=haribote.img,format=raw,if=floppy
 
 clean:
 	-$(DEL) *.bin
