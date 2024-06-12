@@ -9,7 +9,17 @@ AS = $(GCCPREFIX)as
 NASM = nasm
 LD = $(GCCPREFIX)ld
 OBJCOPY = $(GCCPREFIX)objcopy
-CFLAGS = -fleading-underscore -ffreestanding -nostdlib -nostartfiles -Wall -fno-pie -m32 -mtune=i486 -march=i486
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+         -ffreestanding \
+         -nostdlib \
+         -nostartfiles \
+         -Wall \
+         -fno-pie \
+         -m32 \
+         -mtune=i486 -march=i486 \
+		 -masm=intel
+# CFLAGS += -g
 # LDFLAGS = -m elf_i386 -Ttext 0x1000 -z noexecstack
 LDFLAGS = -m elf_i386
 DEL = rm -f
@@ -30,16 +40,21 @@ naskfunc.obj: naskfunc.nas
 
 bootpack.elf: bootpack.c naskfunc.obj
 	# # Compile bootpack.c to object file with Intel assembly syntax
-	# $(CC) $(CFLAGS) -c -masm=intel bootpack.c -o bootpack.o
+	# $(CC) $(CFLAGS) -c bootpack.c -o bootpack.o
 
 	# Compile bootpack.c to assembly with Intel syntax
-	$(CC) $(CFLAGS) -S -masm=intel bootpack.c -o bootpack.s
+	$(CC) $(CFLAGS) -S bootpack.c -o bootpack.s
 
 	# Compile the assembly code to an object file
 	$(CC) $(CFLAGS) -c bootpack.s -o bootpack.o
 
 	# Link the object files to create the final executable
 	$(LD) $(LDFLAGS) -o bootpack.elf bootpack.o naskfunc.obj
+
+check: bootpack.o bootpack.elf
+	$(OBJDUMP) -x bootpack.o | grep table_rgb
+	$(OBJDUMP) -x bootpack.elf | grep table_rgb
+	$(OBJDUMP) -s -j .data bootpack.elf
 
 bootpack.bin: bootpack.elf
 	$(OBJCOPY) -O binary bootpack.elf bootpack.bin
