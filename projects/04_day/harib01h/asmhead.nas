@@ -13,8 +13,11 @@ SCRNX	EQU		0x0ff4			; 解像度のX
 SCRNY	EQU		0x0ff6			; 解像度のY
 VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 
-		ORG		0xc400			; このプログラムがどこに読み込まれるのか
+;		ORG		0xc400			; このプログラムがどこに読み込まれるのか
 
+[SECTION .text]
+[BITS 16]
+entry:
 ; 画面モードを設定
 
 		MOV		AL,0x13			; VGAグラフィックス、320x200x8bitカラー
