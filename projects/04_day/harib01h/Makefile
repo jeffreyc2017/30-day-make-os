@@ -1,12 +1,9 @@
-# Compiler and linker options for x86 32-bit CPU
-ifndef GCCPREFIX
-# GCCPREFIX := x86_64-linux-gnu-
-
-# On Raspberry Pi:
-# GCCPREFIX := i686-linux-gnu-
-
-# On x86 PC:
+# Default GCCPREFIX for x86 PC
 GCCPREFIX :=
+
+# Define GCCPREFIX for Raspberry Pi
+ifeq ($(filter RPI,$(MAKECMDGOALS)),RPI)
+	GCCPREFIX := i686-linux-gnu-
 endif
 
 NASM = nasm
@@ -16,15 +13,15 @@ LD = $(GCCPREFIX)ld
 OBJCOPY = $(GCCPREFIX)objcopy
 OBJDUMP = $(GCCPREFIX)objdump
 CFLAGS = -fleading-underscore \
-         -ffreestanding \
+		 -ffreestanding \
 		 -fno-stack-protector \
-         -nostdlib \
+		 -nostdlib \
 		 -nostdinc \
-         -nostartfiles \
-         -Wall \
-         -fno-pie \
-         -m32 \
-         -mtune=i486 -march=i486 \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
 		 -masm=intel
 
 QEMU_FLAGS :=
@@ -91,4 +88,4 @@ clean:
 src_only: clean
 	-$(DEL) $(IMG)
 
-.phony: all run clean src_only
+.PHONY: all run clean src_only RPI
