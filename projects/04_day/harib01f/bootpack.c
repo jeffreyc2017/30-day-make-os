@@ -10,7 +10,8 @@ void io_store_eflags(int eflags);
 void init_palette(void);
 void set_palette(int start, int end, unsigned char *rgb);
 
-void HariMain(void)
+int main(void)
+// void HariMain(void)
 {
 	int i; /* 変数宣言。iという変数は、32ビットの整数型 */
 	char *p; /* pという変数は、BYTE [...]用の番地 */
@@ -48,7 +49,7 @@ void init_palette(void)
 		0x00, 0x84, 0x84,	/* 14:暗い水色 */
 		0x84, 0x84, 0x84	/* 15:暗い灰色 */
 	};
-	set_palette(0, 12, table_rgb);
+	set_palette(0, 15, table_rgb);
 	return;
 
 	/* static char 命令は、データにしか使えないけどDB命令相当 */
