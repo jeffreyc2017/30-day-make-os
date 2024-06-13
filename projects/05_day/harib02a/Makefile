@@ -1,60 +1,80 @@
-# Compiler and linker options for x86 32-bit CPU
-ifndef GCCPREFIX
-# GCCPREFIX := x86_64-linux-gnu-
-GCCPREFIX := i686-linux-gnu-
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
+
+# Define GCCPREFIX for Raspberry Pi
+ifeq ($(filter RPI,$(MAKECMDGOALS)),RPI)
+	GCCPREFIX := i686-linux-gnu-
 endif
 
+NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
-NASM = nasm
 LD = $(GCCPREFIX)ld
 OBJCOPY = $(GCCPREFIX)objcopy
-CFLAGS = -ffreestanding -nostdlib -nostartfiles -Wall -fno-pie -m32 -mtune=i486 -march=i486
-LDFLAGS = -m elf_i386 -Ttext 0x1000 -z noexecstack
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
+
+QEMU_FLAGS :=
+
+ifdef DEBUG
+QEMU_FLAGS += -gdb tcp::1234 -S
+CFLAGS += -g
+endif
+
+LDFLAGS = -m elf_i386
 DEL = rm -f
 
-# Default action
-all: haribote.img
+IMG = haribote.img
 
-# File generation rules
+all: $(IMG)
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o ipl10.bin ipl10.nas -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l ipl10.lst
 
-asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o asmhead.bin asmhead.nas -l asmhead.lst
+naskfunc.elf: naskfunc.nas
+	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
 
-naskfunc.obj: naskfunc.nas
-	$(NASM) -f elf32 -o naskfunc.obj naskfunc.nas -l naskfunc.lst
+bootpack.o: bootpack.c
+	# Compile bootpack.c to assembly with Intel syntax
+	$(CC) $(CFLAGS) -S $< -o bootpack.s
 
-bootpack.elf: bootpack.c naskfunc.obj
-	$(CC) $(CFLAGS) -c bootpack.c -o bootpack.o
-	$(LD) $(LDFLAGS) -o bootpack.elf bootpack.o naskfunc.obj
+	# Compile the assembly code to an object file
+	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
-bootpack.bin: bootpack.elf
-	$(OBJCOPY) -O binary bootpack.elf bootpack.bin
+asmhead.elf: asmhead.nas
+	$(NASM) -f elf32 -o $@ $< -l asmhead.lst
 
-haribote.sys: asmhead.bin bootpack.bin
-	cat $^ > $@
+haribote.sys: asmhead.elf bootpack.o naskfunc.elf
+	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
 
-haribote.img: ipl10.bin haribote.sys
+$(IMG): ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=haribote.img bs=512 count=2880
+	dd if=/dev/zero of=$(IMG) bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 haribote.img
+	mkfs.fat -F 12 $(IMG)
 
 	# Write the boot sector
-	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
 
 	mkdir -p ./floppy
-	sudo mount -o loop haribote.img ./floppy
+	sudo mount -o loop $(IMG) ./floppy -o fat=12
 	sudo cp haribote.sys ./floppy
 	sudo umount ./floppy
 	-$(DEL) -r ./floppy
 
-run: haribote.img
-	qemu-system-i386 -drive file=haribote.img,format=raw,if=floppy
+run: src_only $(IMG)
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
 clean:
 	-$(DEL) *.bin
@@ -66,4 +86,6 @@ clean:
 	-$(DEL) haribote.sys
 
 src_only: clean
-	-$(DEL) haribote.img
+	-$(DEL) $(IMG)
+
+.PHONY: all run clean src_only RPI
