@@ -15,8 +15,8 @@ VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 
 ;		ORG		0xc400			; このプログラムがどこに読み込まれるのか
 
-  [SECTION .text]
-  [BITS 16]
+[SECTION .text]
+[BITS 16]
 entry:
 ; 画面モードを設定
 

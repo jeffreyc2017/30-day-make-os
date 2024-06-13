@@ -10,8 +10,7 @@ void io_store_eflags(int eflags);
 void init_palette(void);
 void set_palette(int start, int end, unsigned char *rgb);
 
-int main(void)
-// void HariMain(void)
+void HariMain(void)
 {
 	int i; /* 変数宣言。iという変数は、32ビットの整数型 */
 	char *p; /* pという変数は、BYTE [...]用の番地 */
