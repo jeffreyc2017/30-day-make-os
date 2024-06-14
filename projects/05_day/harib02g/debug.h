@@ -1,0 +1,1 @@
+extern void sprintf(char *str,char *format ,...);
