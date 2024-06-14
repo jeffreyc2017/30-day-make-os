@@ -1,8 +1,20 @@
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
+ENV_RASPBERRY_PI := $(if $(RPI),1,0)
+
+ifdef RASPBERRY_PI
+	IS_RASPBERRY_PI := 1
+else ifdef ENV_RASPBERRY_PI
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
+
 # Default GCCPREFIX for x86 PC
 GCCPREFIX :=
 
-# Define GCCPREFIX for Raspberry Pi
-ifeq ($(filter RPI,$(MAKECMDGOALS)),RPI)
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
 	GCCPREFIX := i686-linux-gnu-
 endif
 
@@ -39,7 +51,11 @@ IMG = haribote.img
 UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
 
-all: $(IMG)
+all: target-os $(IMG)
+
+target-os:
+	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
+	@echo "GCCPREFIX: $(GCCPREFIX)"
 
 ipl10.bin: ipl10.nas
 	$(NASM) -f bin -o $@ $< -l ipl10.lst
@@ -48,7 +64,8 @@ naskfunc.elf: naskfunc.nas
 	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
 
 hankaku.asm: hankaku.txt
-	$(CC) -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	# Use the native gcc to build the tool on local machine.
+	gcc -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
