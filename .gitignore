@@ -6,3 +6,6 @@
 *.o
 *.obj
 *.s
+
+makefont
+hankaku.asm
