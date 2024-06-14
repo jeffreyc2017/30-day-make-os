@@ -36,6 +36,9 @@ DEL = rm -f
 
 IMG = haribote.img
 
+UTILS_FOLDER := ../../../utils
+MAKEFONT := $(UTILS_FOLDER)/makefont
+
 all: $(IMG)
 
 ipl10.bin: ipl10.nas
@@ -45,8 +48,8 @@ naskfunc.elf: naskfunc.nas
 	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
 
 hankaku.asm: hankaku.txt
-	$(CC) -o ../../../utils/makefont ../../../utils/makefont.c
-	../../../utils/makefont -i $< -o $@ -f 1
+	$(CC) -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
 	$(NASM) -f elf32 -o $@ $< -l hankaku.lst
