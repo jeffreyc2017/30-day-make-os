@@ -201,3 +201,337 @@ JMP 0xc200 -> JMP 0xc400
    - It uses its own syntax, which is often referred to as NASM syntax. This syntax is similar to Intel assembly syntax and is characterized by the use of square brackets for memory operands and a more intuitive instruction format.
    - `nasm` is popular among developers who prefer a more expressive and readable assembly language syntax, especially for writing low-level system software or operating systems.
    - Unlike `as`, `nasm` is not tied to any specific compiler toolchain and can be used independently for assembling assembly language source files into object files or executables.
+
+## debug
+
+在使用 QEMU 运行代码时，有几种工具和方法可以用来查看和调试内存分布。以下是一些常用的工具和方法：
+
+### 1. QEMU Monitor
+
+QEMU 提供了一个内置的监控工具，称为 QEMU Monitor。它允许你在运行时查看和修改虚拟机的状态，包括内存内容。
+
+#### 启动 QEMU Monitor
+
+启动 QEMU 时，可以使用 `-monitor` 选项来启用 QEMU Monitor。例如：
+
+```sh
+qemu-system-x86_64 -drive file=your_image.img,format=raw -monitor stdio
+```
+
+这会将监控控制台绑定到标准输入/输出，使你可以直接在终端中输入监控命令。
+
+#### 常用命令
+
+- `info mem`: 显示内存信息。
+- `xp /fmt addr`: 以特定格式查看内存，例如 `xp /10x 0x00028000` 查看从地址 `0x00028000` 开始的 10 个字的数据。
+- `x /fmt addr`: 与 `xp` 类似，但更常用于直接内存访问。
+
+### 2. GDB (GNU Debugger)
+
+GDB 是一个强大的调试工具，可以与 QEMU 一起使用，提供对虚拟机的详细调试功能。
+
+#### 启动 QEMU 并启用 GDB Server
+
+启动 QEMU 并启用 GDB Server：
+
+```sh
+qemu-system-x86_64 -drive file=your_image.img,format=raw -s -S
+```
+
+- `-s`：在 TCP 端口 1234 上启动 GDB Server。
+- `-S`：启动后暂停虚拟机，等待 GDB 连接。
+
+#### 启动 GDB 并连接到 QEMU
+
+在另一个终端中启动 GDB 并连接到 QEMU：
+
+```sh
+gdb your_program.elf
+(gdb) target remote localhost:1234
+```
+
+在 GDB 中，你可以使用多种命令查看内存和寄存器的状态：
+
+- `info registers`：查看寄存器状态。
+- `x /fmt addr`：查看内存内容，例如 `x /10x 0x00028000`。
+
+### 3. QEMU GUI 前端工具
+
+有一些 GUI 前端工具可以与 QEMU 一起使用，以提供更友好的用户界面进行调试。例如：
+
+- **QEMU GUI**: 提供了基本的虚拟机管理和监控功能。
+- **Virt-Manager**: 一个常用的虚拟机管理工具，可以管理 QEMU/KVM 虚拟机，并提供图形化界面。
+
+### 4. 内存查看工具
+
+在内存中查找和查看特定内容可以使用一些特定的工具或脚本。例如：
+
+- **hexedit**：一个简单的终端十六进制编辑器。
+- **xxd**：一个将文件或标准输入进行十六进制转储的工具。
+
+### 示例：使用 QEMU Monitor 查看内存
+
+启动 QEMU 并启用 QEMU Monitor：
+
+```sh
+qemu-system-x86_64 -drive file=your_image.img,format=raw -monitor stdio
+```
+
+在 QEMU Monitor 中查看内存内容：
+
+```sh
+(qemu) xp /10x 0x00028000
+```
+
+这会显示从地址 `0x00028000` 开始的 10 个字的数据。
+
+### 示例：使用 GDB 调试
+
+启动 QEMU 并启用 GDB Server：
+
+```sh
+qemu-system-x86_64 -drive file=your_image.img,format=raw -s -S
+```
+
+在另一个终端中启动 GDB 并连接到 QEMU：
+
+```sh
+gdb your_program.elf
+(gdb) target remote localhost:1234
+(gdb) x /10x 0x00028000
+```
+
+这会显示从地址 `0x00028000` 开始的 10 个字的数据。
+
+### 总结
+
+使用 QEMU Monitor 和 GDB 是查看和调试 QEMU 中运行的代码和内存分布的最常用和有效的方法。结合这些工具，你可以深入了解虚拟机内存的布局和内容，以调试和优化你的程序。
+
+To include debug symbols in an ELF file compiled with NASM, you need to use the appropriate NASM options and directives to generate the necessary debugging information. Here's a step-by-step guide to achieve this:
+
+### Step 1: Write Your Assembly Code
+
+Ensure your assembly code includes debugging information using the `dbg` section if necessary. For example:
+
+```asm
+section .data
+    msg db 'Hello, World!', 0
+
+section .bss
+
+section .text
+    global _start
+
+_start:
+    ; Write your code here
+    mov eax, 4          ; sys_write
+    mov ebx, 1          ; file descriptor 1 is stdout
+    mov ecx, msg        ; pointer to message
+    mov edx, 13         ; message length
+    int 0x80            ; call kernel
+
+    ; Exit
+    mov eax, 1          ; sys_exit
+    xor ebx, ebx        ; exit code 0
+    int 0x80            ; call kernel
+```
+
+### Step 2: Assemble with NASM
+
+Use the `-F` option to specify the debugging format and the `-g` option to include debugging information. NASM supports various debugging formats, but for ELF files, `dwarf` is a common choice.
+
+```sh
+nasm -f elf32 -F dwarf -g -o program.o program.asm
+```
+
+### Step 3: Link with LD
+
+Link the object file to produce an executable. Ensure you use the appropriate flags to include debugging information:
+
+```sh
+ld -m elf_i386 -o program program.o
+```
+
+### Step 4: Verify Debug Symbols
+
+You can use tools like `readelf` and `objdump` to verify that the debug symbols are included in your ELF file.
+
+#### Using `readelf`:
+
+```sh
+readelf -S program
+```
+
+Look for sections like `.debug_info`, `.debug_abbrev`, `.debug_line`, etc., which indicate the presence of debugging information.
+
+#### Using `objdump`:
+
+```sh
+objdump -h program
+```
+
+This will list all sections in the ELF file, including debug sections.
+
+### Step 5: Debugging with GDB
+
+You can now use GDB to debug your program:
+
+```sh
+gdb program
+```
+
+Within GDB, you can set breakpoints, step through the code, and inspect variables as usual:
+
+```sh
+(gdb) break _start
+(gdb) run
+(gdb) step
+(gdb) info registers
+(gdb) x/s msg
+```
+
+### Example Script
+
+Here is a complete example script to automate the steps:
+
+```sh
+#!/bin/bash
+
+# Assemble the program
+nasm -f elf32 -F dwarf -g -o program.o program.asm
+
+# Link the program
+ld -m elf_i386 -o program program.o
+
+# Verify the debug symbols
+readelf -S program | grep debug
+objdump -h program | grep debug
+
+# Run GDB
+gdb program
+```
+
+### Summary
+
+- **NASM Compilation**: Use `-F dwarf -g` to include DWARF debug information.
+- **Linking**: Use `ld` to link the object file, ensuring debug information is preserved.
+- **Verification**: Use `readelf` and `objdump` to verify the presence of debug sections.
+- **Debugging**: Use GDB to debug the ELF file with debug symbols.
+
+This method will ensure that your ELF file generated with NASM includes the necessary debug symbols for effective debugging.
+
+Yes, you can debug an x86 application running on a QEMU x86 virtual machine from an ARM host using GDB, but you need to use a cross-debugging setup. This involves using a cross-gdb (a version of GDB that can debug a different architecture than the one it is running on) that understands the x86 architecture.
+
+Here's how you can set it up:
+
+### Step 1: Install Cross-GDB for x86 on ARM Host
+
+You need to install a GDB that can debug x86 applications. On many Linux distributions, this can be done using the package manager. For example, on Ubuntu or Debian:
+
+```sh
+sudo apt-get install gdb-multiarch
+```
+
+This `gdb-multiarch` version supports multiple architectures, including x86.
+
+### Step 2: Start QEMU with GDB Server Enabled
+
+Run your x86 application in QEMU with GDB server enabled:
+
+```sh
+qemu-system-i386 -drive file=your_image.img,format=raw -s -S
+```
+
+- `-s` starts the GDB server on port 1234.
+- `-S` makes QEMU start in a paused state, waiting for GDB to connect.
+
+### Step 3: Connect Cross-GDB to QEMU
+
+Start `gdb-multiarch` and connect to the QEMU GDB server:
+
+```sh
+gdb-multiarch your_program.elf
+```
+
+In GDB, connect to the QEMU GDB server:
+
+```sh
+(gdb) target remote localhost:1234
+```
+
+### Step 4: Debug Your Application
+
+Now you can use GDB commands to debug your application:
+
+```sh
+(gdb) break _start
+(gdb) continue
+(gdb) step
+(gdb) info registers
+(gdb) x/s msg
+```
+
+### Complete Example
+
+Let's put it all together with a complete script and example:
+
+1. **Assembly Code** (program.asm):
+
+   ```asm
+   section .data
+       msg db 'Hello, World!', 0
+
+   section .bss
+
+   section .text
+       global _start
+
+   _start:
+       ; Write your code here
+       mov eax, 4          ; sys_write
+       mov ebx, 1          ; file descriptor 1 is stdout
+       mov ecx, msg        ; pointer to message
+       mov edx, 13         ; message length
+       int 0x80            ; call kernel
+
+       ; Exit
+       mov eax, 1          ; sys_exit
+       xor ebx, ebx        ; exit code 0
+       int 0x80            ; call kernel
+   ```
+
+2. **Assembly and Link Script**:
+
+   ```sh
+   #!/bin/bash
+
+   # Assemble the program
+   nasm -f elf32 -F dwarf -g -o program.o program.asm
+
+   # Link the program
+   ld -m elf_i386 -o program program.o
+
+   # Run QEMU with GDB server
+   qemu-system-i386 -drive file=your_image.img,format=raw -s -S &
+   ```
+
+3. **GDB Connection Script**:
+
+   ```sh
+   #!/bin/bash
+
+   # Start cross-gdb and connect to QEMU GDB server
+   gdb-multiarch program <<EOF
+   target remote localhost:1234
+   break _start
+   continue
+   EOF
+   ```
+
+### Notes
+
+- Ensure your QEMU image and assembly code are correctly set up and compiled.
+- `gdb-multiarch` is used to handle multiple architectures, including x86 on ARM.
+- The scripts automate the process of starting QEMU and connecting GDB for debugging.
+
+With this setup, you can effectively debug an x86 application running on a QEMU x86 virtual machine from an ARM host.

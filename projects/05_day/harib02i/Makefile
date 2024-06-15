@@ -37,10 +37,13 @@ CFLAGS = -fleading-underscore \
 		 -masm=intel
 
 QEMU_FLAGS :=
+NASM_FLAGS :=
 
 ifdef DEBUG
-QEMU_FLAGS += -gdb tcp::1234 -S
+QEMU_FLAGS += -s -S
+QEMU_FLAGS += -monitor stdio
 CFLAGS += -g
+NASM_FLAGS += -F dwarf -g
 endif
 
 LDFLAGS = -m elf_i386
@@ -61,7 +64,7 @@ ipl10.bin: ipl10.nas
 	$(NASM) -f bin -o $@ $< -l ipl10.lst
 
 naskfunc.elf: naskfunc.nas
-	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l naskfunc.lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -69,7 +72,7 @@ hankaku.asm: hankaku.txt
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
-	$(NASM) -f elf32 -o $@ $< -l hankaku.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
 bootpack.o: bootpack.c
 	# Compile bootpack.c to assembly with Intel syntax
@@ -81,7 +84,7 @@ bootpack.o: bootpack.c
 	$(CC) $(CFLAGS) -c debug.c -o debug.o
 
 asmhead.elf: asmhead.nas
-	$(NASM) -f elf32 -o $@ $< -l asmhead.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l asmhead.lst
 
 haribote.sys: asmhead.elf bootpack.o naskfunc.elf hankaku.elf debug.o
 	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
@@ -103,7 +106,8 @@ $(IMG): ipl10.bin haribote.sys
 	-$(DEL) -r ./floppy
 
 run: src_only $(IMG)
-	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive file=$(IMG),format=raw,if=floppy,index=0,media=disk
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
 clean:
 	-$(DEL) *.bin

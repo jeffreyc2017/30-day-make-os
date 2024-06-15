@@ -117,7 +117,7 @@ pipelineflush:
 skip:
 ;		MOV		ESP,[EBX+12]	; スタック初期値
 ;		JMP		DWORD 2*8:0x0000001b
-		MOV   ESP, 0xffff
+;		MOV   ESP, 0xffff
 		JMP   DWORD 2*8:0x00000000
 
 waitkbdout:
