@@ -1,6 +1,6 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.encoding": "utf8",
-  "files.autoGuessEncoding": true,
-  "editor.fontFamily": "'Noto Sans JP', 'IPA P Gothic', 'MS Gothic', 'Yu Gothic', 'Meiryo', 'MS Mincho', monospace"
+  "files.autoGuessEncoding": true
+  // "editor.fontFamily": "'Noto Sans JP', 'IPA P Gothic', 'MS Gothic', 'Yu Gothic', 'Meiryo', 'MS Mincho', monospace"
 }
