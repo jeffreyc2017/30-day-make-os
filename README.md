@@ -271,7 +271,7 @@ skip:
 |        | 9\*      |               | GDT 与 IDT                                                  |
 | 06 day | harib03a | 分割源文件    | 不用重点看。遗留问题：bootpack.obj 必须放在第二个链接位置\* |
 |        | harib03b | 整理 Makefile | 不用重点看                                                  |
-|        | harib03c |               |                                                             |
+|        | harib03c | 整理头文件    |                                                             |
 |        | harib03d |               |                                                             |
 |        | harib03e |               |                                                             |
 | 07 day | harib04a |               |                                                             |
