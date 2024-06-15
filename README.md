@@ -254,18 +254,76 @@ skip:
 
 ## 各章简要
 
-| day    | section | description                                                |
-| ------ | ------- | ---------------------------------------------------------- |
-| 01 day | 1       |                                                            |
-| 02 day | 1       |                                                            |
-| 03 day | 1       |                                                            |
-| 04 day | 1       |                                                            |
-| 05 day | 1       | 保存内存中的启动信息，不用看                               |
-|        | 2       | 增加结构体定义，有 C 语言基础可以不用看                    |
-|        | 3       | 改为指针访问，有 C 语言基础可以不用看                      |
-|        | 4       | 显示字符，本质上是写 VRAM                                  |
-|        | 5       | 增加 ASCII 字符集，在 UTILS 下编写了一个 makefont 工具     |
-|        | 6       | 显示字符串，5 基础上的扩展                                 |
-|        | 7       | sprintf，增加 C 语言实现。暂未能像书中使用标准头文件和库\* |
-|        | 8       | 显示鼠标箭头，本质是写 VRAM                                |
-|        | 9\*     | GDT 与 IDT                                                 |
+| day    | section  | description                                                             |
+| ------ | -------- | ----------------------------------------------------------------------- |
+| 01 day | 1        |                                                                         |
+| 02 day | 1        |                                                                         |
+| 03 day | 1        |                                                                         |
+| 04 day | 1        |                                                                         |
+| 05 day | 1        | 保存内存中的启动信息，不用看                                            |
+|        | 2        | 增加结构体定义，有 C 语言基础可以不用看                                 |
+|        | 3        | 改为指针访问，有 C 语言基础可以不用看                                   |
+|        | 4        | 显示字符，本质上是写 VRAM                                               |
+|        | 5        | 增加 ASCII 字符集，在 UTILS 下编写了一个 makefont 工具                  |
+|        | 6        | 显示字符串，5 基础上的扩展                                              |
+|        | 7        | sprintf，增加 C 语言实现。暂未能像书中使用标准头文件和库\*              |
+|        | 8        | 显示鼠标箭头，本质是写 VRAM                                             |
+|        | 9\*      | GDT 与 IDT                                                              |
+| 06 day | harib03a | 分割源文件。不用重点看。遗留问题：bootpack.obj 必须放在第二个链接位置\* |
+|        | harib03b |                                                                         |
+|        | harib03c |                                                                         |
+|        | harib03d |                                                                         |
+|        | harib03e |                                                                         |
+| 07 day | harib04a |                                                                         |
+|        | harib04b |                                                                         |
+|        | harib04c |                                                                         |
+|        | harib04d |                                                                         |
+|        | harib04e |                                                                         |
+|        | harib04f |                                                                         |
+|        | harib04g |                                                                         |
+| 08 day | harib05  |                                                                         |
+|        | harib05  |                                                                         |
+| 09 day | harib06  |                                                                         |
+|        | harib06  |                                                                         |
+| 10 day | harib07  |                                                                         |
+|        | harib07  |                                                                         |
+| 11 day | harib08  |                                                                         |
+|        | harib08  |                                                                         |
+| 12 day | harib09  |                                                                         |
+|        | harib09  |                                                                         |
+| 13 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 14 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 15 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 16 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 17 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 18 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 19 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 20 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 21 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 22 day | harib1   |                                                                         |
+|        | harib1   |                                                                         |
+| 23 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 24 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 25 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 26 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 27 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 28 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 29 day | harib2   |                                                                         |
+|        | harib2   |                                                                         |
+| 30 day | harib27  |                                                                         |
+|        | harib27  |                                                                         |

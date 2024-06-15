@@ -74,19 +74,22 @@ hankaku.asm: hankaku.txt
 hankaku.elf: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-bootpack.o: bootpack.c
-	# Compile bootpack.c to assembly with Intel syntax
-	$(CC) $(CFLAGS) -S $< -o bootpack.s
+# bootpack.o: bootpack.c
+# 	# Compile bootpack.c to assembly with Intel syntax
+# 	$(CC) $(CFLAGS) -S $< -o bootpack.s
 
-	# Compile the assembly code to an object file
-	$(CC) $(CFLAGS) -c bootpack.s -o $@
+# 	# Compile the assembly code to an object file
+# 	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
-	$(CC) $(CFLAGS) -c debug.c -o debug.o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+OBJ_FILES := bootpack.o debug.o
 
 asmhead.elf: asmhead.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l asmhead.lst
 
-haribote.sys: asmhead.elf bootpack.o naskfunc.elf hankaku.elf debug.o
+haribote.sys: asmhead.elf $(OBJ_FILES) naskfunc.elf hankaku.elf
 	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
 
 $(IMG): ipl10.bin haribote.sys

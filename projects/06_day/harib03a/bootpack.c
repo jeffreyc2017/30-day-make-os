@@ -1,6 +1,7 @@
 /* bootpack‚ÌƒƒCƒ“ */
 
-#include <stdio.h>
+// #include <stdio.h>
+#include "debug.h"
 
 void io_hlt(void);
 void io_cli(void);
