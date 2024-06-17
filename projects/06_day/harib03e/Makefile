@@ -85,11 +85,15 @@ OBJ_FILES := bootpack.obj debug.obj dsctbl.obj graphic.obj int.obj
 debug.obj: $(UTILS_FOLDER)/debug.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-asmhead.elf: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l asmhead.lst
+asmhead.bin: asmhead.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
 
-haribote.sys: asmhead.elf $(OBJ_FILES) naskfunc.elf hankaku.elf
-	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
+kernel.sys: $(OBJ_FILES) naskfunc.elf hankaku.elf
+	$(LD) -m elf_i386 --oformat binary -o kernel.sys -T kernel.ld $^
+
+haribote.sys: asmhead.bin kernel.sys
+	cat asmhead.bin > haribote.sys
+	cat kernel.sys >> haribote.sys
 
 $(IMG): ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
@@ -100,6 +104,8 @@ $(IMG): ipl10.bin haribote.sys
 
 	# Write the boot sector
 	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+
+	# dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
 
 	mkdir -p ./floppy
 	sudo mount -o loop $(IMG) ./floppy -o fat=12
