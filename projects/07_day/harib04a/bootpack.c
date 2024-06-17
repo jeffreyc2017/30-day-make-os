@@ -1,7 +1,8 @@
 /* bootpack‚ÌƒƒCƒ“ */
 
 #include "bootpack.h"
-#include <stdio.h>
+// #include <stdio.h>
+#include "debug.h"
 
 void HariMain(void)
 {

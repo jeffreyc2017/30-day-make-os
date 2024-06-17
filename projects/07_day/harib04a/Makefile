@@ -1,93 +1,133 @@
-OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
-		int.obj
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
 
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-MAKEFONT = $(TOOLPATH)makefont.exe
-BIN2OBJ  = $(TOOLPATH)bin2obj.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = $(TOOLPATH)haribote/haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
 
-# デフォルト動作
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
 
-default :
-	$(MAKE) img
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
+OBJCOPY = $(GCCPREFIX)objcopy
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
 
-# ファイル生成規則
+QEMU_FLAGS :=
+NASM_FLAGS :=
 
-ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin ipl10.lst
+ifdef DEBUG
+QEMU_FLAGS += -s -S
+QEMU_FLAGS += -monitor stdio
+CFLAGS += -g
+NASM_FLAGS += -F dwarf -g
+endif
 
-asmhead.bin : asmhead.nas Makefile
-	$(NASK) asmhead.nas asmhead.bin asmhead.lst
+LDFLAGS = -m elf_i386
+DEL = rm -f
 
-hankaku.bin : hankaku.txt Makefile
-	$(MAKEFONT) hankaku.txt hankaku.bin
+IMG = haribote.img
 
-hankaku.obj : hankaku.bin Makefile
-	$(BIN2OBJ) hankaku.bin hankaku.obj _hankaku
+UTILS_FOLDER := ../../../utils
+MAKEFONT := $(UTILS_FOLDER)/makefont
+CFLAGS += -I$(UTILS_FOLDER)
 
-bootpack.bim : $(OBJS_BOOTPACK) Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
-		$(OBJS_BOOTPACK)
-# 3MB+64KB=3136KB
+all: target-os $(IMG)
 
-bootpack.hrb : bootpack.bim Makefile
-	$(BIM2HRB) bootpack.bim bootpack.hrb 0
+target-os:
+	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
+	@echo "GCCPREFIX: $(GCCPREFIX)"
+	@echo $(UNAME)
+	@echo $(RASPBERRY_PI)
+	@echo $(RPI)
+	@echo $(IS_RASPBERRY_PI)
 
-haribote.sys : asmhead.bin bootpack.hrb Makefile
-	copy /B asmhead.bin+bootpack.hrb haribote.sys
+ipl10.bin: ipl10.nas
+	$(NASM) -f bin -o $@ $< -l ipl10.lst
 
-haribote.img : ipl10.bin haribote.sys Makefile
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl10.bin len:512 from:0 to:0 \
-		copy from:haribote.sys to:@: \
-		imgout:haribote.img
+naskfunc.elf: naskfunc.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l naskfunc.lst
 
-# 一般規則
+hankaku.asm: hankaku.txt
+	# Use the native gcc to build the tool on local machine.
+	gcc -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	$(MAKEFONT) -i $< -o $@ -f 1
 
-%.gas : %.c bootpack.h Makefile
-	$(CC1) -o $*.gas $*.c
+hankaku.elf: hankaku.asm
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-%.nas : %.gas Makefile
-	$(GAS2NASK) $*.gas $*.nas
+OBJ_FILES := bootpack.obj debug.obj dsctbl.obj graphic.obj int.obj
 
-%.obj : %.nas Makefile
-	$(NASK) $*.nas $*.obj $*.lst
+%.obj: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# コマンド
+debug.obj: $(UTILS_FOLDER)/debug.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-img :
-	$(MAKE) haribote.img
+asmhead.bin: asmhead.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
 
-run :
-	$(MAKE) img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+kernel.sys: $(OBJ_FILES) naskfunc.elf hankaku.elf
+	$(LD) $(LDFLAGS) --oformat binary -o kernel.sys -T kernel.ld $^
 
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: haribote.img
+haribote.sys: asmhead.bin kernel.sys
+	cat asmhead.bin > haribote.sys
+	cat kernel.sys >> haribote.sys
 
-clean :
+$(IMG): ipl10.bin haribote.sys
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$(IMG) bs=512 count=2880
+
+	# Format the image as FAT12
+	mkfs.fat -F 12 $(IMG)
+
+	# Write the boot sector
+	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+
+	# dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
+
+	mkdir -p ./floppy
+	sudo mount -o loop $(IMG) ./floppy -o fat=12
+	sudo cp haribote.sys ./floppy
+	sudo umount ./floppy
+	-$(DEL) -r ./floppy
+
+run: src_only $(IMG)
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=floppy,index=0,media=disk
+
+clean:
 	-$(DEL) *.bin
 	-$(DEL) *.lst
+	-$(DEL) *.elf
+	-$(DEL) *.o
 	-$(DEL) *.obj
-	-$(DEL) bootpack.map
-	-$(DEL) bootpack.bim
-	-$(DEL) bootpack.hrb
+	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
+	-$(DEL) hankaku.asm
 
-src_only :
-	$(MAKE) clean
-	-$(DEL) haribote.img
+src_only: clean
+	-$(DEL) $(IMG)
+
+.PHONY: all run clean src_only
