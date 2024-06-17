@@ -105,13 +105,13 @@ $(IMG): ipl10.bin haribote.sys
 	# Write the boot sector
 	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
 
-	# dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
+	dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop $(IMG) ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	# mkdir -p ./floppy
+	# sudo mount -o loop $(IMG) ./floppy -o fat=12
+	# sudo cp haribote.sys ./floppy
+	# sudo umount ./floppy
+	# -$(DEL) -r ./floppy
 
 run: src_only $(IMG)
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \

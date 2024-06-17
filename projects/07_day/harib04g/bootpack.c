@@ -1,7 +1,8 @@
 /* bootpack‚ÌƒƒCƒ“ */
 
 #include "bootpack.h"
-#include <stdio.h>
+// #include <stdio.h>
+#include "debug.h"
 
 extern struct FIFO8 keyfifo, mousefifo;
 void enable_mouse(void);

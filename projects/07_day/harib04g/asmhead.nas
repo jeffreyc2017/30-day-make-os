@@ -13,7 +13,7 @@ SCRNX	EQU		0x0ff4			; 解像度のX
 SCRNY	EQU		0x0ff6			; 解像度のY
 VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 
-		ORG		0xc400			; このプログラムがどこに読み込まれるのか
+		ORG		0xc200			; このプログラムがどこに読み込まれるのか
 
 ; 画面モードを設定
 
@@ -102,18 +102,20 @@ pipelineflush:
 
 ; bootpackの起動
 
-		MOV		EBX,BOTPAK
-		MOV		ECX,[EBX+16]
-		ADD		ECX,3			; ECX += 3;
-		SHR		ECX,2			; ECX /= 4;
-		JZ		skip			; 転送するべきものがない
-		MOV		ESI,[EBX+20]	; 転送元
-		ADD		ESI,EBX
-		MOV		EDI,[EBX+12]	; 転送先
-		CALL	memcpy
+;		MOV		EBX,BOTPAK
+;		MOV		ECX,[EBX+16]
+;		ADD		ECX,3			; ECX += 3;
+;		SHR		ECX,2			; ECX /= 4;
+;		JZ		skip			; 転送するべきものがない
+;		MOV		ESI,[EBX+20]	; 転送元
+;		ADD		ESI,EBX
+;		MOV		EDI,[EBX+12]	; 転送先
+;		CALL	memcpy
 skip:
-		MOV		ESP,[EBX+12]	; スタック初期値
-		JMP		DWORD 2*8:0x0000001b
+;		MOV		ESP,[EBX+12]	; スタック初期値
+;		JMP		DWORD 2*8:0x0000001b
+		MOV		ESP, 0xffff
+		JMP		DWORD 2*8:0x00000000
 
 waitkbdout:
 		IN		 AL,0x64

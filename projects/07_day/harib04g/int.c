@@ -1,7 +1,8 @@
 /* Š„‚è‚İŠÖŒW */
 
 #include "bootpack.h"
-#include <stdio.h>
+// #include <stdio.h>
+#include "debug.h"
 
 void init_pic(void)
 /* PIC‚Ì‰Šú‰» */
