@@ -1,10 +1,8 @@
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
 UNAME := $(shell uname -a)
 RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-ENV_RASPBERRY_PI := $(if $(RPI),1,0)
 
-ifdef RASPBERRY_PI
-	IS_RASPBERRY_PI := 1
-else ifdef ENV_RASPBERRY_PI
+ifeq ($(RASPBERRY_PI),raspberrypi)
 	IS_RASPBERRY_PI := 1
 else
 	IS_RASPBERRY_PI := 0
@@ -60,6 +58,10 @@ all: target-os $(IMG)
 target-os:
 	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
 	@echo "GCCPREFIX: $(GCCPREFIX)"
+	@echo $(UNAME)
+	@echo $(RASPBERRY_PI)
+	@echo $(RPI)
+	@echo $(IS_RASPBERRY_PI)
 
 ipl10.bin: ipl10.nas
 	$(NASM) -f bin -o $@ $< -l ipl10.lst
