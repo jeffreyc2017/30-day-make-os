@@ -277,13 +277,16 @@ skip:
 |        | 6       | harib03e | 中断处理程序的制作 |                                                               |
 | 07 day | 1       | harib04a | 获取按键编码       |                                                               |
 |        | 2       | harib04b | 加快中断处理       |                                                               |
-|        | 3       | harib04c |                    |                                                               |
-|        | 4       | harib04d |                    |                                                               |
-|        | 5       | harib04e |                    |                                                               |
-|        | 6       | harib04f |                    |                                                               |
-|        | 7       | harib04g |                    |                                                               |
-| 08 day | 1       | harib05  |                    |                                                               |
-|        | 2       | harib05  |                    |                                                               |
+|        | 3       | harib04c | 制作 FIFO 缓冲区   |                                                               |
+|        | 4       | harib04d | 改善 FIFO 缓冲区   |                                                               |
+|        | 5       | harib04e | 整理 FIFO 缓冲区   |                                                               |
+|        | 6       | harib04f | 总算讲到鼠标了     |                                                               |
+|        | 7       | harib04g | 从鼠标接收数据     |                                                               |
+| 08 day | 1       | harib05a | 鼠标解读(1)        |                                                               |
+|        | 2       | harib05b | 稍事整理           |                                                               |
+|        | 3       | harib05c | 鼠标解读(2)        |                                                               |
+|        | 4       | harib05d | 移动鼠标指针       |                                                               |
+|        | 5       | harib05e | 通往 32 位模式之路 |                                                               |
 | 09 day | 1       | harib06  |                    |                                                               |
 |        | 2       | harib06  |                    |                                                               |
 | 10 day | 1       | harib07  |                    |                                                               |
