@@ -275,8 +275,8 @@ skip:
 |        | 4       |          | 意犹未尽           | 这部分需要参考其他书籍                                        |
 |        | 5       | harib03d | 初始化 PIC         |                                                               |
 |        | 6       | harib03e | 中断处理程序的制作 |                                                               |
-| 07 day | 1       | harib04a |                    |                                                               |
-|        | 2       | harib04b |                    |                                                               |
+| 07 day | 1       | harib04a | 获取按键编码       |                                                               |
+|        | 2       | harib04b | 加快中断处理       |                                                               |
 |        | 3       | harib04c |                    |                                                               |
 |        | 4       | harib04d |                    |                                                               |
 |        | 5       | harib04e |                    |                                                               |
