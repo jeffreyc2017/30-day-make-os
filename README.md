@@ -295,8 +295,14 @@ skip:
 |        | 2       | harib07b | 叠加处理            | !运行黑屏(修改 bootpack.c 解决)[^4]                                                        |
 |        | 3       | harib07c | 提高叠加处理速度(1) |                                                                                            |
 |        | 4       | harib07d | 提高叠加处理速度(2) |                                                                                            |
-| 11 day | 1       | harib08  |                     |                                                                                            |
-|        | 2       | harib08  |                     |                                                                                            |
+| 11 day | 1       | harib08a | 鼠标显示问题        |                                                                                            |
+|        | 2       | harib08b |                     |                                                                                            |
+|        | 3       | harib08c |                     |                                                                                            |
+|        | 4       | harib08d |                     |                                                                                            |
+|        | 5       | harib08e |                     |                                                                                            |
+|        | 6       | harib08f |                     |                                                                                            |
+|        | 7       | harib08g |                     |                                                                                            |
+|        | 8       | harib08h |                     |                                                                                            |
 | 12 day | 1       | harib09  |                     |                                                                                            |
 |        | 2       | harib09  |                     |                                                                                            |
 | 13 day | 1       | harib10  |                     |                                                                                            |
