@@ -51,6 +51,9 @@ UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
 CFLAGS += -I$(UTILS_FOLDER)
 
+LIBC_DIR := $(UTILS_FOLDER)/libc
+CFLAGS += -I $(LIBC_DIR)/include
+
 all: target-os $(IMG)
 
 target-os:
@@ -75,12 +78,15 @@ hankaku.asm: hankaku.txt
 hankaku.elf: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-OBJ_FILES := bootpack.obj debug.obj dsctbl.obj graphic.obj int.obj fifo.obj
+OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj int.obj fifo.obj
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-debug.obj: $(UTILS_FOLDER)/debug.c
+# debug.obj: $(UTILS_FOLDER)/debug.c
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+stdio.obj: $(LIBC_DIR)/stdio/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 asmhead.bin: asmhead.nas
