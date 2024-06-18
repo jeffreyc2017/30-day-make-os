@@ -299,10 +299,10 @@ skip:
 |        | 2       | harib08b | 实现画面外的支持    |                                                                                            |
 |        | 3       | harib08c | shtctl 的指定省略   |                                                                                            |
 |        | 4       | harib08d | 显示窗口            |                                                                                            |
-|        | 5       | harib08e |                     |                                                                                            |
-|        | 6       | harib08f |                     |                                                                                            |
-|        | 7       | harib08g |                     |                                                                                            |
-|        | 8       | harib08h |                     |                                                                                            |
+|        | 5       | harib08e | 小实验              |                                                                                            |
+|        | 6       | harib08f | 高速计数器          |                                                                                            |
+|        | 7       | harib08g | 消除闪烁(1)         |                                                                                            |
+|        | 8       | harib08h | 消除闪烁(2)         |                                                                                            |
 | 12 day | 1       | harib09  |                     |                                                                                            |
 |        | 2       | harib09  |                     |                                                                                            |
 | 13 day | 1       | harib10  |                     |                                                                                            |
