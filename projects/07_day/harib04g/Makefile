@@ -25,9 +25,9 @@ OBJDUMP = $(GCCPREFIX)objdump
 CFLAGS = -fleading-underscore \
 		 -ffreestanding \
 		 -fno-stack-protector \
-		 -nostartfiles \
 		 -nostdlib \
 		 -nostdinc \
+		 -nostartfiles \
 		 -Wall \
 		 -fno-pie \
 		 -m32 \
@@ -54,6 +54,9 @@ UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
 CFLAGS += -I$(UTILS_FOLDER)
 
+LIBC_DIR := $(UTILS_FOLDER)/libc
+CFLAGS += -I $(LIBC_DIR)/include
+
 all: target-os $(IMG)
 
 target-os:
@@ -78,12 +81,15 @@ hankaku.asm: hankaku.txt
 hankaku.elf: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-OBJ_FILES := bootpack.obj debug.obj dsctbl.obj graphic.obj int.obj fifo.obj
+OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj int.obj fifo.obj
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-debug.obj: $(UTILS_FOLDER)/debug.c
+# debug.obj: $(UTILS_FOLDER)/debug.c
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+stdio.obj: $(LIBC_DIR)/stdio/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 asmhead.bin: asmhead.nas
@@ -106,13 +112,13 @@ $(IMG): ipl10.bin haribote.sys
 	# Write the boot sector
 	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
 
-	dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
+	# dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
 
-	# mkdir -p ./floppy
-	# sudo mount -o loop $(IMG) ./floppy -o fat=12
-	# sudo cp haribote.sys ./floppy
-	# sudo umount ./floppy
-	# -$(DEL) -r ./floppy
+	mkdir -p ./floppy
+	sudo mount -o loop $(IMG) ./floppy -o fat=12
+	sudo cp haribote.sys ./floppy
+	sudo umount ./floppy
+	-$(DEL) -r ./floppy
 
 run: src_only $(IMG)
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \

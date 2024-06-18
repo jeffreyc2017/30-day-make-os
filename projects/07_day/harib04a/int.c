@@ -1,8 +1,7 @@
 /* Š„‚è‚İŠÖŒW */
 
 #include "bootpack.h"
-// #include <stdio.h>
-#include "debug.h"
+#include <stdio.h>
 
 void init_pic(void)
 /* PIC‚Ì‰Šú‰» */
@@ -35,7 +34,7 @@ void inthandler21(int *esp)
 	io_out8(PIC0_OCW2, 0x61);	/* IRQ-01ó•tŠ®—¹‚ğPIC‚É’Ê’m */
 	data = io_in8(PORT_KEYDAT);
 
-	sprintf(s, "%02X", data);
+	sprintf(s, "%03X", data);
 	boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 0, 16, 15, 31);
 	putfonts8_asc(binfo->vram, binfo->scrnx, 0, 16, COL8_FFFFFF, s);
 
