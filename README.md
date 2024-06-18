@@ -297,8 +297,8 @@ skip:
 |        | 4       | harib07d | 提高叠加处理速度(2) |                                                                                            |
 | 11 day | 1       | harib08a | 鼠标显示问题        |                                                                                            |
 |        | 2       | harib08b | 实现画面外的支持    |                                                                                            |
-|        | 3       | harib08c |                     |                                                                                            |
-|        | 4       | harib08d |                     |                                                                                            |
+|        | 3       | harib08c | shtctl 的指定省略   |                                                                                            |
+|        | 4       | harib08d | 显示窗口            |                                                                                            |
 |        | 5       | harib08e |                     |                                                                                            |
 |        | 6       | harib08f |                     |                                                                                            |
 |        | 7       | harib08g |                     |                                                                                            |
