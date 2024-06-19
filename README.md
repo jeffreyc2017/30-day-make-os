@@ -255,98 +255,112 @@ skip:
 
 ## 各章简要
 
-| day    | section | code     | title               | description                                                                                |
-| ------ | ------- | -------- | ------------------- | ------------------------------------------------------------------------------------------ |
-| 01 day | 1       |          |                     |                                                                                            |
-| 02 day | 1       |          |                     |                                                                                            |
-| 03 day | 1       |          |                     |                                                                                            |
-| 04 day | 1       |          |                     |                                                                                            |
-| 05 day | 1       |          |                     | 保存内存中的启动信息，不用看                                                               |
-|        | 2       |          |                     | 增加结构体定义，有 C 语言基础可以不用看                                                    |
-|        | 3       |          |                     | 改为指针访问，有 C 语言基础可以不用看                                                      |
-|        | 4       |          |                     | 显示字符，本质上是写 VRAM                                                                  |
-|        | 5       |          |                     | 增加 ASCII 字符集，在 UTILS 下编写了一个 makefont 工具                                     |
-|        | 6       |          |                     | 显示字符串，5 基础上的扩展                                                                 |
-|        | 7       |          |                     | sprintf，增加 C 语言实现。暂未能像书中使用标准头文件和库[^1]                               |
-|        | 8       |          |                     | 显示鼠标箭头，本质是写 VRAM                                                                |
-|        | 9       |          |                     | GDT 与 IDT[^2]                                                                             |
-| 06 day | 1       | harib03a | 分割源文件          | 不用重点看。遗留问题：bootpack.obj 必须放在第二个链接位置[^3]                              |
-|        | 2       | harib03b | 整理 Makefile       | 不用重点看                                                                                 |
-|        | 3       | harib03c | 整理头文件          | C 语言类内容，不用重点看                                                                   |
-|        | 4       |          | 意犹未尽            | 这部分需要参考其他书籍                                                                     |
-|        | 5       | harib03d | 初始化 PIC          |                                                                                            |
-|        | 6       | harib03e | 中断处理程序的制作  |                                                                                            |
-| 07 day | 1       | harib04a | 获取按键编码        |                                                                                            |
-|        | 2       | harib04b | 加快中断处理        |                                                                                            |
-|        | 3       | harib04c | 制作 FIFO 缓冲区    |                                                                                            |
-|        | 4       | harib04d | 改善 FIFO 缓冲区    |                                                                                            |
-|        | 5       | harib04e | 整理 FIFO 缓冲区    |                                                                                            |
-|        | 6       | harib04f | 总算讲到鼠标了      |                                                                                            |
-|        | 7       | harib04g | 从鼠标接收数据      |                                                                                            |
-| 08 day | 1       | harib05a | 鼠标解读(1)         |                                                                                            |
-|        | 2       | harib05b | 稍事整理            |                                                                                            |
-|        | 3       | harib05c | 鼠标解读(2)         |                                                                                            |
-|        | 4       | harib05d | 移动鼠标指针        |                                                                                            |
-|        | 5       | harib05e | 通往 32 位模式之路  |                                                                                            |
-| 09 day | 1       | harib06a | 整理源文件          | 参照书中的 Makefile 进行了整理，尽量与原书中的结构和名称保持一致。此处 Makefile 可做为基线 |
-|        | 2       | harib06b | 内存容量检查(1)     | 运行结果为 32MB(这个结果是对的)，与书中 3072MB 不一致(书中问题是编译器优化导致的结果)      |
-|        | 3       | harib06c | 内存容量检查(2)     | 用汇编代码替换了 C 程序                                                                    |
-|        | 4       | harib06d | 挑战内存管理        |                                                                                            |
-| 10 day | 1       | harib07a | 内存管理(续)        |                                                                                            |
-|        | 2       | harib07b | 叠加处理            | !运行黑屏(修改 bootpack.c 解决)[^4]                                                        |
-|        | 3       | harib07c | 提高叠加处理速度(1) |                                                                                            |
-|        | 4       | harib07d | 提高叠加处理速度(2) |                                                                                            |
-| 11 day | 1       | harib08a | 鼠标显示问题        |                                                                                            |
-|        | 2       | harib08b | 实现画面外的支持    |                                                                                            |
-|        | 3       | harib08c | shtctl 的指定省略   |                                                                                            |
-|        | 4       | harib08d | 显示窗口            |                                                                                            |
-|        | 5       | harib08e | 小实验              |                                                                                            |
-|        | 6       | harib08f | 高速计数器          |                                                                                            |
-|        | 7       | harib08g | 消除闪烁(1)         |                                                                                            |
-|        | 8       | harib08h | 消除闪烁(2)         |                                                                                            |
-| 12 day | 1       | harib09a | 使用定时器          |                                                                                            |
-|        | 2       | harib09b | 计量时间            |                                                                                            |
-|        | 3       | harib09c | 超时功能            |                                                                                            |
-|        | 4       | harib09d | 使用多个定时器      |                                                                                            |
-|        | 5       | harib09e | 加快中断处理(1)     |                                                                                            |
-|        | 6       | harib09f | 加快中断处理(2)     |                                                                                            |
-|        | 7       | harib09g | 加快中断处理(3)     |                                                                                            |
-| 13 day | 1       | harib10  |                     |                                                                                            |
-|        | 2       | harib10  |                     |                                                                                            |
-| 14 day | 1       | harib11  |                     |                                                                                            |
-|        | 2       | harib11  |                     |                                                                                            |
-| 15 day | 1       | harib12  |                     |                                                                                            |
-|        | 2       | harib12  |                     |                                                                                            |
-| 16 day | 1       | harib13  |                     |                                                                                            |
-|        | 2       | harib13  |                     |                                                                                            |
-| 17 day | 1       | harib14  |                     |                                                                                            |
-|        | 2       | harib14  |                     |                                                                                            |
-| 18 day | 1       | harib15  |                     |                                                                                            |
-|        | 2       | harib15  |                     |                                                                                            |
-| 19 day | 1       | harib16  |                     |                                                                                            |
-|        | 2       | harib16  |                     |                                                                                            |
-| 20 day | 1       | harib17  |                     |                                                                                            |
-|        | 2       | harib17  |                     |                                                                                            |
-| 21 day | 1       | harib18  |                     |                                                                                            |
-|        | 2       | harib18  |                     |                                                                                            |
-| 22 day | 1       | harib19  |                     |                                                                                            |
-|        | 2       | harib19  |                     |                                                                                            |
-| 23 day | 1       | harib20  |                     |                                                                                            |
-|        | 2       | harib20  |                     |                                                                                            |
-| 24 day | 1       | harib21  |                     |                                                                                            |
-|        | 2       | harib21  |                     |                                                                                            |
-| 25 day | 1       | harib22  |                     |                                                                                            |
-|        | 2       | harib22  |                     |                                                                                            |
-| 26 day | 1       | harib23  |                     |                                                                                            |
-|        | 2       | harib23  |                     |                                                                                            |
-| 27 day | 1       | harib24  |                     |                                                                                            |
-|        | 2       | harib24  |                     |                                                                                            |
-| 28 day | 1       | harib25  |                     |                                                                                            |
-|        | 2       | harib25  |                     |                                                                                            |
-| 29 day | 1       | harib26  |                     |                                                                                            |
-|        | 2       | harib26  |                     |                                                                                            |
-| 30 day | 1       | harib27  |                     |                                                                                            |
-|        | 2       | harib27  |                     |                                                                                            |
+| day    | section | code     | title               | description                                                                                               |
+| ------ | ------- | -------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
+| 01 day | 1       |          |                     |                                                                                                           |
+| 02 day | 1       |          |                     |                                                                                                           |
+| 03 day | 1       |          |                     |                                                                                                           |
+| 04 day | 1       |          |                     |                                                                                                           |
+| 05 day | 1       |          |                     | 保存内存中的启动信息，不用看                                                                              |
+|        | 2       |          |                     | 增加结构体定义，有 C 语言基础可以不用看                                                                   |
+|        | 3       |          |                     | 改为指针访问，有 C 语言基础可以不用看                                                                     |
+|        | 4       |          |                     | 显示字符，本质上是写 VRAM                                                                                 |
+|        | 5       |          |                     | 增加 ASCII 字符集，在 UTILS 下编写了一个 makefont 工具                                                    |
+|        | 6       |          |                     | 显示字符串，5 基础上的扩展                                                                                |
+|        | 7       |          |                     | sprintf，增加 C 语言实现。暂未能像书中使用标准头文件和库[^1]                                              |
+|        | 8       |          |                     | 显示鼠标箭头，本质是写 VRAM                                                                               |
+|        | 9       |          |                     | GDT 与 IDT[^2]                                                                                            |
+| 06 day | 1       | harib03a | 分割源文件          | 不用重点看。遗留问题：bootpack.obj 必须放在第二个链接位置[^3]                                             |
+|        | 2       | harib03b | 整理 Makefile       | 不用重点看                                                                                                |
+|        | 3       | harib03c | 整理头文件          | C 语言类内容，不用重点看                                                                                  |
+|        | 4       |          | 意犹未尽            | 这部分需要参考其他书籍                                                                                    |
+|        | 5       | harib03d | 初始化 PIC          |                                                                                                           |
+|        | 6       | harib03e | 中断处理程序的制作  |                                                                                                           |
+| 07 day | 1       | harib04a | 获取按键编码        |                                                                                                           |
+|        | 2       | harib04b | 加快中断处理        |                                                                                                           |
+|        | 3       | harib04c | 制作 FIFO 缓冲区    |                                                                                                           |
+|        | 4       | harib04d | 改善 FIFO 缓冲区    |                                                                                                           |
+|        | 5       | harib04e | 整理 FIFO 缓冲区    |                                                                                                           |
+|        | 6       | harib04f | 总算讲到鼠标了      |                                                                                                           |
+|        | 7       | harib04g | 从鼠标接收数据      |                                                                                                           |
+| 08 day | 1       | harib05a | 鼠标解读(1)         |                                                                                                           |
+|        | 2       | harib05b | 稍事整理            |                                                                                                           |
+|        | 3       | harib05c | 鼠标解读(2)         |                                                                                                           |
+|        | 4       | harib05d | 移动鼠标指针        |                                                                                                           |
+|        | 5       | harib05e | 通往 32 位模式之路  |                                                                                                           |
+| 09 day | 1       | harib06a | 整理源文件          | 参照书中的 Makefile 进行了整理，尽量与原书中的结构和名称保持一致。此处 Makefile 可做为基线                |
+|        | 2       | harib06b | 内存容量检查(1)     | 运行结果为 32MB(这个结果是对的)，与书中 3072MB 不一致(书中问题是编译器优化导致的结果)                     |
+|        | 3       | harib06c | 内存容量检查(2)     | 用汇编代码替换了 C 程序                                                                                   |
+|        | 4       | harib06d | 挑战内存管理        |                                                                                                           |
+| 10 day | 1       | harib07a | 内存管理(续)        |                                                                                                           |
+|        | 2       | harib07b | 叠加处理            | !运行黑屏(修改 bootpack.c 解决)[^4]                                                                       |
+|        | 3       | harib07c | 提高叠加处理速度(1) |                                                                                                           |
+|        | 4       | harib07d | 提高叠加处理速度(2) |                                                                                                           |
+| 11 day | 1       | harib08a | 鼠标显示问题        |                                                                                                           |
+|        | 2       | harib08b | 实现画面外的支持    |                                                                                                           |
+|        | 3       | harib08c | shtctl 的指定省略   |                                                                                                           |
+|        | 4       | harib08d | 显示窗口            |                                                                                                           |
+|        | 5       | harib08e | 小实验              |                                                                                                           |
+|        | 6       | harib08f | 高速计数器          |                                                                                                           |
+|        | 7       | harib08g | 消除闪烁(1)         |                                                                                                           |
+|        | 8       | harib08h | 消除闪烁(2)         |                                                                                                           |
+| 12 day | 1       | harib09a | 使用定时器          |                                                                                                           |
+|        | 2       | harib09b | 计量时间            |                                                                                                           |
+|        | 3       | harib09c | 超时功能            |                                                                                                           |
+|        | 4       | harib09d | 使用多个定时器      |                                                                                                           |
+|        | 5       | harib09e | 加快中断处理(1)     |                                                                                                           |
+|        | 6       | harib09f | 加快中断处理(2)     |                                                                                                           |
+|        | 7       | harib09g | 加快中断处理(3)     |                                                                                                           |
+| 13 day | 1       | harib10a |                     |                                                                                                           |
+|        | 2       | harib10b |                     |                                                                                                           |
+|        | 3       | harib10c |                     | ?运行起来显示很卡                                                                                         |
+|        | 4       | harib10d |                     | ?运行起来显示很卡                                                                                         |
+|        | 5       | harib10e |                     | ?运行起来显示很卡                                                                                         |
+|        | 6       | harib10f |                     | ?运行起来显示很卡                                                                                         |
+|        | 7       | harib10g |                     | ?运行起来显示很卡                                                                                         |
+|        | 8       | harib10h |                     | ?运行起来显示很卡                                                                                         |
+|        | 9       | harib10i |                     | ?运行起来显示很卡                                                                                         |
+| 14 day | 1       | harib11a |                     | ?运行起来显示很卡                                                                                         |
+|        | 2       | harib11b |                     | ?运行起来显示很卡                                                                                         |
+|        | 3       | harib11c |                     | ?运行起来显示很卡                                                                                         |
+|        | 4       | harib11d |                     | ?display issues                                                                                           |
+|        | 5       | harib11e |                     | ?运行起来显示很卡, display is correct. There must be something changed for the display to work correctly. |
+|        | 6       | harib11f |                     | works great. Must be something fixed to make it run smoothly.                                             |
+|        | 7       | harib11g |                     | works great                                                                                               |
+|        | 8       | harib11h |                     | works great                                                                                               |
+|        | 9       | harib11i |                     | works great                                                                                               |
+| 15 day | 1       | harib12  |                     |                                                                                                           |
+|        | 2       | harib12  |                     |                                                                                                           |
+| 16 day | 1       | harib13  |                     |                                                                                                           |
+|        | 2       | harib13  |                     |                                                                                                           |
+| 17 day | 1       | harib14  |                     |                                                                                                           |
+|        | 2       | harib14  |                     |                                                                                                           |
+| 18 day | 1       | harib15  |                     |                                                                                                           |
+|        | 2       | harib15  |                     |                                                                                                           |
+| 19 day | 1       | harib16  |                     |                                                                                                           |
+|        | 2       | harib16  |                     |                                                                                                           |
+| 20 day | 1       | harib17  |                     |                                                                                                           |
+|        | 2       | harib17  |                     |                                                                                                           |
+| 21 day | 1       | harib18  |                     |                                                                                                           |
+|        | 2       | harib18  |                     |                                                                                                           |
+| 22 day | 1       | harib19  |                     |                                                                                                           |
+|        | 2       | harib19  |                     |                                                                                                           |
+| 23 day | 1       | harib20  |                     |                                                                                                           |
+|        | 2       | harib20  |                     |                                                                                                           |
+| 24 day | 1       | harib21  |                     |                                                                                                           |
+|        | 2       | harib21  |                     |                                                                                                           |
+| 25 day | 1       | harib22  |                     |                                                                                                           |
+|        | 2       | harib22  |                     |                                                                                                           |
+| 26 day | 1       | harib23  |                     |                                                                                                           |
+|        | 2       | harib23  |                     |                                                                                                           |
+| 27 day | 1       | harib24  |                     |                                                                                                           |
+|        | 2       | harib24  |                     |                                                                                                           |
+| 28 day | 1       | harib25  |                     |                                                                                                           |
+|        | 2       | harib25  |                     |                                                                                                           |
+| 29 day | 1       | harib26  |                     |                                                                                                           |
+|        | 2       | harib26  |                     |                                                                                                           |
+| 30 day | 1       | harib27  |                     |                                                                                                           |
+|        | 2       | harib27  |                     |                                                                                                           |
 
 [^1]: Link with standard C library.
 [^2]: GDT issue.

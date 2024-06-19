@@ -52,7 +52,10 @@ void HariMain(void)
 
 	memtotal = memtest(0x00400000, 0xbfffffff);
 	memman_init(memman);
-	memman_free(memman, 0x00001000, 0x0009e000); /* 0x00001000 - 0x0009efff */
+	  // ?中?0x00001000 ~ 0x0009e000
+  // ?????会造成??（原因未知），所以改?由0x00010000?始
+  memman_free(memman, 0x00010000, 0x0009e000); // 0x00010000 ~ 0x0009efff
+	// memman_free(memman, 0x00001000, 0x0009e000); /* 0x00001000 - 0x0009efff */
 	memman_free(memman, 0x00400000, memtotal - 0x00400000);
 
 	init_palette();
