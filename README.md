@@ -8,6 +8,7 @@
 2. 主要的修改在于 Makefile；
 3. 原代码的目标机器是 32 位 x86 CPU;
 4. 原代码使用 NASM(Netwide Assembler) syntax;
+5. 日文编码为 Japanese(Shift-JIS);
 
 ## -fleading-underscore
 
