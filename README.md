@@ -342,18 +342,18 @@ skip:
 |        | 4       | harib13d |                     | black screen                                                                                              |
 |        | 5       | harib13e |                     | ?运行起来显示很卡                                                                                         |
 | 17 day | 1       | harib14a |                     | works perfect(anything changed?)                                                                          |
-|        | 2       | harib14b |                     |                                                                                                           |
-|        | 3       | harib14c |                     |                                                                                                           |
-|        | 4       | harib14d |                     |                                                                                                           |
-|        | 5       | harib14e |                     |                                                                                                           |
-|        | 6       | harib14f |                     |                                                                                                           |
-|        | 7       | harib14g |                     |                                                                                                           |
+|        | 2       | harib14b |                     | works perfect                                                                                             |
+|        | 3       | harib14c |                     | works perfect                                                                                             |
+|        | 4       | harib14d |                     | works perfect                                                                                             |
+|        | 5       | harib14e |                     | works perfect                                                                                             |
+|        | 6       | harib14f |                     | works perfect                                                                                             |
+|        | 7       | harib14g |                     | works perfect                                                                                             |
 | 18 day | 1       | harib15a |                     |                                                                                                           |
 |        | 2       | harib15b |                     |                                                                                                           |
 |        | 3       | harib15c |                     |                                                                                                           |
 |        | 4       | harib15d |                     |                                                                                                           |
 |        | 5       | harib15e |                     |                                                                                                           |
-|        | 6       | harib15f |                     |                                                                                                           |
+|        | 6       | harib15f |                     | newly added strcmp.obj                                                                                    |
 |        | 7       | harib15g |                     |                                                                                                           |
 | 19 day | 1       | harib16a |                     |                                                                                                           |
 |        | 2       | harib16b |                     |                                                                                                           |
