@@ -341,7 +341,7 @@ skip:
 |        | 3       | harib13c |                     | black screen                                                                                              |
 |        | 4       | harib13d |                     | black screen                                                                                              |
 |        | 5       | harib13e |                     | ?运行起来显示很卡                                                                                         |
-| 17 day | 1       | harib14a |                     |                                                                                                           |
+| 17 day | 1       | harib14a |                     | works perfect(anything changed?)                                                                          |
 |        | 2       | harib14b |                     |                                                                                                           |
 |        | 3       | harib14c |                     |                                                                                                           |
 |        | 4       | harib14d |                     |                                                                                                           |
