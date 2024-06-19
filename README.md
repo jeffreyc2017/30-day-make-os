@@ -329,38 +329,120 @@ skip:
 |        | 7       | harib11g |                     | works great                                                                                               |
 |        | 8       | harib11h |                     | works great                                                                                               |
 |        | 9       | harib11i |                     | works great                                                                                               |
-| 15 day | 1       | harib12  |                     |                                                                                                           |
-|        | 2       | harib12  |                     |                                                                                                           |
-| 16 day | 1       | harib13  |                     |                                                                                                           |
-|        | 2       | harib13  |                     |                                                                                                           |
-| 17 day | 1       | harib14  |                     |                                                                                                           |
-|        | 2       | harib14  |                     |                                                                                                           |
-| 18 day | 1       | harib15  |                     |                                                                                                           |
-|        | 2       | harib15  |                     |                                                                                                           |
-| 19 day | 1       | harib16  |                     |                                                                                                           |
-|        | 2       | harib16  |                     |                                                                                                           |
-| 20 day | 1       | harib17  |                     |                                                                                                           |
-|        | 2       | harib17  |                     |                                                                                                           |
-| 21 day | 1       | harib18  |                     |                                                                                                           |
-|        | 2       | harib18  |                     |                                                                                                           |
-| 22 day | 1       | harib19  |                     |                                                                                                           |
-|        | 2       | harib19  |                     |                                                                                                           |
-| 23 day | 1       | harib20  |                     |                                                                                                           |
-|        | 2       | harib20  |                     |                                                                                                           |
-| 24 day | 1       | harib21  |                     |                                                                                                           |
-|        | 2       | harib21  |                     |                                                                                                           |
-| 25 day | 1       | harib22  |                     |                                                                                                           |
-|        | 2       | harib22  |                     |                                                                                                           |
-| 26 day | 1       | harib23  |                     |                                                                                                           |
-|        | 2       | harib23  |                     |                                                                                                           |
-| 27 day | 1       | harib24  |                     |                                                                                                           |
-|        | 2       | harib24  |                     |                                                                                                           |
-| 28 day | 1       | harib25  |                     |                                                                                                           |
-|        | 2       | harib25  |                     |                                                                                                           |
-| 29 day | 1       | harib26  |                     |                                                                                                           |
-|        | 2       | harib26  |                     |                                                                                                           |
-| 30 day | 1       | harib27  |                     |                                                                                                           |
-|        | 2       | harib27  |                     |                                                                                                           |
+| 15 day | 1       | harib12a |                     | works great                                                                                               |
+|        | 2       | harib12b |                     | works great                                                                                               |
+|        | 3       | harib12c |                     | works great                                                                                               |
+|        | 4       | harib12d |                     | works great                                                                                               |
+|        | 5       | harib12e |                     | ?运行起来显示很卡                                                                                         |
+|        | 6       | harib12f |                     | ?运行起来显示很卡                                                                                         |
+|        | 7       | harib12g |                     | ?运行起来显示很卡                                                                                         |
+| 16 day | 1       | harib13a |                     |                                                                                                           |
+|        | 2       | harib13b |                     |                                                                                                           |
+|        | 3       | harib13c |                     |                                                                                                           |
+|        | 4       | harib13d |                     |                                                                                                           |
+|        | 5       | harib13e |                     |                                                                                                           |
+| 17 day | 1       | harib14a |                     |                                                                                                           |
+|        | 2       | harib14b |                     |                                                                                                           |
+|        | 3       | harib14c |                     |                                                                                                           |
+|        | 4       | harib14d |                     |                                                                                                           |
+|        | 5       | harib14e |                     |                                                                                                           |
+|        | 6       | harib14f |                     |                                                                                                           |
+|        | 7       | harib14g |                     |                                                                                                           |
+| 18 day | 1       | harib15a |                     |                                                                                                           |
+|        | 2       | harib15b |                     |                                                                                                           |
+|        | 3       | harib15c |                     |                                                                                                           |
+|        | 4       | harib15d |                     |                                                                                                           |
+|        | 5       | harib15e |                     |                                                                                                           |
+|        | 6       | harib15f |                     |                                                                                                           |
+|        | 7       | harib15g |                     |                                                                                                           |
+| 19 day | 1       | harib16a |                     |                                                                                                           |
+|        | 2       | harib16b |                     |                                                                                                           |
+|        | 3       | harib16c |                     |                                                                                                           |
+|        | 4       | harib16d |                     |                                                                                                           |
+|        | 5       | harib16e |                     |                                                                                                           |
+| 20 day | 1       | harib17a |                     |                                                                                                           |
+|        | 2       | harib17b |                     |                                                                                                           |
+|        | 3       | harib17c |                     |                                                                                                           |
+|        | 4       | harib17d |                     |                                                                                                           |
+|        | 5       | harib17e |                     |                                                                                                           |
+|        | 6       | harib17f |                     |                                                                                                           |
+|        | 7       | harib17g |                     |                                                                                                           |
+|        | 8       | harib17h |                     |                                                                                                           |
+| 21 day | 1       | harib18a |                     |                                                                                                           |
+|        | 2       | harib18b |                     |                                                                                                           |
+|        | 3       | harib18c |                     |                                                                                                           |
+|        | 4       | harib18d |                     |                                                                                                           |
+|        | 5       | harib18e |                     |                                                                                                           |
+|        | 6       | harib18f |                     |                                                                                                           |
+|        | 7       | harib18g |                     |                                                                                                           |
+| 22 day | 1       | harib19a |                     |                                                                                                           |
+|        | 2       | harib19b |                     |                                                                                                           |
+|        | 3       | harib19c |                     |                                                                                                           |
+|        | 4       | harib19d |                     |                                                                                                           |
+|        | 5       | harib19e |                     |                                                                                                           |
+|        | 6       | harib19f |                     |                                                                                                           |
+|        | 7       | harib19g |                     |                                                                                                           |
+| 23 day | 1       | harib20a |                     |                                                                                                           |
+|        | 2       | harib20b |                     |                                                                                                           |
+|        | 3       | harib20c |                     |                                                                                                           |
+|        | 4       | harib20d |                     |                                                                                                           |
+|        | 5       | harib20e |                     |                                                                                                           |
+|        | 6       | harib20f |                     |                                                                                                           |
+|        | 7       | harib20g |                     |                                                                                                           |
+|        | 8       | harib20h |                     |                                                                                                           |
+| 24 day | 1       | harib21a |                     |                                                                                                           |
+|        | 2       | harib21b |                     |                                                                                                           |
+|        | 3       | harib21c |                     |                                                                                                           |
+|        | 4       | harib21d |                     |                                                                                                           |
+|        | 5       | harib21e |                     |                                                                                                           |
+|        | 6       | harib21f |                     |                                                                                                           |
+|        | 7       | harib21g |                     |                                                                                                           |
+|        | 8       | harib21h |                     |                                                                                                           |
+| 25 day | 1       | harib22a |                     |                                                                                                           |
+|        | 2       | harib22b |                     |                                                                                                           |
+|        | 3       | harib22c |                     |                                                                                                           |
+|        | 4       | harib22d |                     |                                                                                                           |
+|        | 5       | harib22e |                     |                                                                                                           |
+|        | 6       | harib22f |                     |                                                                                                           |
+|        | 7       | harib22g |                     |                                                                                                           |
+|        | 8       | harib22h |                     |                                                                                                           |
+|        | 9       | harib22i |                     |                                                                                                           |
+|        | 10      | harib22j |                     |                                                                                                           |
+| 26 day | 1       | harib23a |                     |                                                                                                           |
+|        | 2       | harib23b |                     |                                                                                                           |
+|        | 3       | harib23c |                     |                                                                                                           |
+|        | 4       | harib23d |                     |                                                                                                           |
+|        | 5       | harib23e |                     |                                                                                                           |
+|        | 6       | harib23f |                     |                                                                                                           |
+|        | 7       | harib23g |                     |                                                                                                           |
+|        | 8       | harib23h |                     |                                                                                                           |
+|        | 9       | harib23i |                     |                                                                                                           |
+|        | 10      | harib23j |                     |                                                                                                           |
+| 27 day | 1       | harib24a |                     |                                                                                                           |
+|        | 2       | harib24b |                     |                                                                                                           |
+|        | 3       | harib24c |                     |                                                                                                           |
+|        | 4       | harib24d |                     |                                                                                                           |
+|        | 5       | harib24e |                     |                                                                                                           |
+|        | 6       | harib24f |                     |                                                                                                           |
+|        | 7       | harib24g |                     |                                                                                                           |
+| 28 day | 1       | harib25a |                     |                                                                                                           |
+|        | 2       | harib25b |                     |                                                                                                           |
+|        | 3       | harib25c |                     |                                                                                                           |
+|        | 4       | harib25d |                     |                                                                                                           |
+|        | 5       | harib25e |                     |                                                                                                           |
+|        | 6       | harib25f |                     |                                                                                                           |
+|        | 7       | harib25g |                     |                                                                                                           |
+| 29 day | 1       | harib26a |                     |                                                                                                           |
+|        | 2       | harib26b |                     |                                                                                                           |
+|        | 3       | harib26c |                     |                                                                                                           |
+|        | 4       | harib26d |                     |                                                                                                           |
+|        | 5       | harib26e |                     |                                                                                                           |
+| 30 day | 1       | harib27a |                     |                                                                                                           |
+|        | 2       | harib27b |                     |                                                                                                           |
+|        | 3       | harib27c |                     |                                                                                                           |
+|        | 4       | harib27d |                     |                                                                                                           |
+|        | 5       | harib27e |                     |                                                                                                           |
+|        | 6       | harib27f |                     |                                                                                                           |
 
 [^1]: Link with standard C library.
 [^2]: GDT issue.
