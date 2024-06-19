@@ -336,11 +336,11 @@ skip:
 |        | 5       | harib12e |                     | ?运行起来显示很卡                                                                                         |
 |        | 6       | harib12f |                     | ?运行起来显示很卡                                                                                         |
 |        | 7       | harib12g |                     | ?运行起来显示很卡                                                                                         |
-| 16 day | 1       | harib13a |                     |                                                                                                           |
-|        | 2       | harib13b |                     |                                                                                                           |
-|        | 3       | harib13c |                     |                                                                                                           |
-|        | 4       | harib13d |                     |                                                                                                           |
-|        | 5       | harib13e |                     |                                                                                                           |
+| 16 day | 1       | harib13a |                     | ?运行起来显示很卡                                                                                         |
+|        | 2       | harib13b |                     | ?运行起来显示很卡                                                                                         |
+|        | 3       | harib13c |                     | black screen                                                                                              |
+|        | 4       | harib13d |                     | black screen                                                                                              |
+|        | 5       | harib13e |                     | ?运行起来显示很卡                                                                                         |
 | 17 day | 1       | harib14a |                     |                                                                                                           |
 |        | 2       | harib14b |                     |                                                                                                           |
 |        | 3       | harib14c |                     |                                                                                                           |
