@@ -6,6 +6,7 @@
 *.o
 *.obj
 *.s
+*.hrb
 
 makefont
 hankaku.asm
