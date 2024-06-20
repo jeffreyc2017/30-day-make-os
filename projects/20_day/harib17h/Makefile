@@ -90,20 +90,20 @@ hankaku.asm: hankaku.txt
 hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-kernel.sys: $(OBJS_BOOTPACK) hello.obj hello2.obj
+kernel.sys: $(OBJS_BOOTPACK)
 	$(LD) $(LDFLAGS) --oformat binary -o kernel.sys -T kernel.ld $^
 
-hello.obj: hello.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hello.lst
+hello.hrb: hello.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello.lst
 
-hello2.obj: hello2.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hello2.lst
+hello2.hrb: hello2.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
 
 haribote.sys: asmhead.bin kernel.sys
 	cat asmhead.bin > haribote.sys
 	cat kernel.sys >> haribote.sys
 
-haribote.img: ipl10.bin haribote.sys
+haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
@@ -115,11 +115,18 @@ haribote.img: ipl10.bin haribote.sys
 
 	# dd if=haribote.sys of=$@ seek=33 bs=512 conv=notrunc
 
+	# copy to 0x4400
 	mkdir -p ./floppy
 	sudo mount -o loop $@ ./floppy -o fat=12
 	sudo cp haribote.sys ./floppy
+	sudo cp hello.hrb ./floppy
+	sudo cp hello2.hrb ./floppy
 	sudo umount ./floppy
 	-$(DEL) -r ./floppy
+
+	# copy to 0x4200
+	# mcopy -i $@ haribote.sys ::/
+	# mcopy -i $@ hlt.bin ::/
 
 # ˆê”Ê‹K‘¥
 
@@ -153,6 +160,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 	-$(DEL) hankaku.asm
