@@ -379,12 +379,12 @@ skip:
 |        | 7       | harib17g | 当心寄存器                   |                                                                                                           |
 |        | 8       | harib17h | 用 API 显示字符串            |                                                                                                           |
 | 21 day | 1       | harib18a |                              |                                                                                                           |
-|        | 2       | harib18b | 运行 a 后不返回提示符[^6]    |                                                                                                           |
-|        | 3       | harib18c | 运行 a 后不返回提示符        |                                                                                                           |
+|        | 2       | harib18b |                              | 运行 a 后不返回提示符[^6]                                                                                 |
+|        | 3       | harib18c |                              | 运行 a 后不返回提示符                                                                                     |
 |        | 4       | harib18d |                              |                                                                                                           |
 |        | 5       | harib18e |                              |                                                                                                           |
 |        | 6       | harib18f |                              |                                                                                                           |
-|        | 7       | harib18g |                              |                                                                                                           |
+|        | 7       | harib18g |                              | works perfect                                                                                             |
 | 22 day | 1       | harib19a |                              |                                                                                                           |
 |        | 2       | harib19b |                              |                                                                                                           |
 |        | 3       | harib19c |                              |                                                                                                           |
