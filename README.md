@@ -14,6 +14,16 @@
 
 - mtools
 
+```sh
+sudo apt install mtools
+```
+
+- i686-linux-gnu
+
+```sh
+$ sudo apt install gcc-i686-linux-gnu g++-i686-linux-gnu
+```
+
 ## -fleading-underscore
 
 旧版本的 GCC（GNU Compiler Collection）在编译时，为了兼容某些老库，会在符号名前自动添加一个下划线。然而，新版本的 GCC 已经不再默认添加这个下划线。但是，如果需要，可以通过编译选项重新开启这个功能。
