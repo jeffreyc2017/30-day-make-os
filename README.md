@@ -257,6 +257,12 @@ skip:
 ; [FILE "naskfunc.nas"]			; ソースファイル名情報
 ```
 
+### unrecognized instructions(2)
+
+```sh
+; [FILE "a_nask.nas"]				;
+```
+
 ## 各章简要
 
 | day    | section | code     | title                        | description                                                                                               |

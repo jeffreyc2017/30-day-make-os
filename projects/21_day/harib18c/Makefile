@@ -121,7 +121,8 @@ crack1.hrb: crack1.c
 	$(CC) $(APP_CFLAGS) -c crack1.c -o crack1.obj
 	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@
 
-haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb a.hrb hello3.hrb
+haribote.img: ipl10.bin haribote.sys \
+				hello.hrb hello2.hrb a.hrb hello3.hrb crack1.hrb
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
@@ -143,6 +144,7 @@ haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb a.hrb hello3.hrb
 	sudo cp hello2.hrb ./floppy
 	sudo cp a.hrb ./floppy
 	sudo cp hello3.hrb ./floppy
+	sudo cp crack1.hrb ./floppy
 	sudo umount ./floppy
 	-$(DEL) -r ./floppy
 
