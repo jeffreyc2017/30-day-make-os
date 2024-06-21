@@ -106,31 +106,41 @@ hello.hrb: hello.nas
 hello2.hrb: hello2.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
 
-a_nask.obj: a_nask.nas
-	$(AS) -f elf $< -o $@
+a.obj: a.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-a.hrb: a_nask.obj a.c
-	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+a.hrb: a_nask.obj a.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-hello3.hrb: a_nask.obj hello3.c
-	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+hello3.obj: hello3.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-hello4.hrb: a_nask.obj hello4.c
-	$(CC) $(APP_CFLAGS) -c hello4.c -o hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@
+hello3.hrb: a_nask.obj hello3.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-hello5.hrb: hello5.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello5.lst
+hello4.obj: hello4.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-winhelo.hrb: a_nask.obj winhelo.c
-	$(CC) $(APP_CFLAGS) -c winhelo.c -o winhelo.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary winhelo.obj a_nask.obj -o $@
+hello4.hrb: a_nask.obj hello4.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-winhelo2.hrb: a_nask.obj winhelo2.c
-	$(CC) $(APP_CFLAGS) -c winhelo2.c -o winhelo2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary winhelo2.obj a_nask.obj -o $@
+hello5.obj: hello5.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
+
+hello5.hrb: hello5.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+winhelo.obj: winhelo.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+winhelo.hrb: a_nask.obj winhelo.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+winhelo2.obj: winhelo2.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+winhelo2.hrb: a_nask.obj winhelo2.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
 bug1.hrb: a_nask.obj bug1.c
 	$(CC) $(APP_CFLAGS) -c bug1.c -o bug1.obj
