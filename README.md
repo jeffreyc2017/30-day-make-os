@@ -395,8 +395,8 @@ skip:
 |        | 5       | harib18e |                              |                                                                                                           |
 |        | 6       | harib18f |                              |                                                                                                           |
 |        | 7       | harib18g |                              | works perfect                                                                                             |
-| 22 day | 1       | harib19a |                              |                                                                                                           |
-|        | 2       | harib19b |                              |                                                                                                           |
+| 22 day | 1       | harib19a |                              | Started to use mtools.                                                                                    |
+|        | 2       | harib19b |                              | [^7]                                                                                                      |
 |        | 3       | harib19c |                              |                                                                                                           |
 |        | 4       | harib19d |                              |                                                                                                           |
 |        | 5       | harib19e |                              |                                                                                                           |
@@ -470,6 +470,18 @@ skip:
 [^4]: Need to check what's the cause of this issue. kernel.ld?
 [^5]: JMP location.
 [^6]: 运行 a 后不返回提示符
+[^7]:
+
+```sh
+gcc -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -c bug1.c -o bug1.obj
+ld -m elf_i386 --oformat binary -e HariMain --oformat binary bug1.obj a_nask.obj -o bug1.hrb
+ld: warning: cannot find entry symbol HariMain; defaulting to 0000000008048000
+ld: bug1.obj: in function `_HariMain':
+bug1.c:(.text+0x69): undefined reference to `___stack_chk_fail'
+make: *** [Makefile:122: bug1.hrb] Error 1
+```
+
+Add compile flag `-fno-stack-protector` to let it pass.
 
 ### Issues
 
