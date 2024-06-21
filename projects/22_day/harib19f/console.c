@@ -286,7 +286,7 @@ int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline)
 		/* ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚Á‚½ê‡ */
 		p = (char *) memman_alloc_4k(memman, finfo->size);
 		file_loadfile(finfo->clustno, finfo->size, p, fat, (char *) (ADR_DISKIMG + 0x003e00));
-		if (finfo->size >= 36 && strncmp(p + 4, "Hari", 4) == 0 && *p == 0x00) {
+		// if (finfo->size >= 36 && strncmp(p + 4, "Hari", 4) == 0 && *p == 0x00) {
 			segsiz = *((int *) (p + 0x0000));
 			esp    = *((int *) (p + 0x000c));
 			datsiz = *((int *) (p + 0x0010));
@@ -300,9 +300,9 @@ int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline)
 			}
 			start_app(0x1b, 1003 * 8, esp, 1004 * 8, &(task->tss.esp0));
 			memman_free_4k(memman, (int) q, segsiz);
-		} else {
-			cons_putstr0(cons, ".hrb file format error.\n");
-		}
+		// } else {
+		// 	cons_putstr0(cons, ".hrb file format error.\n");
+		// }
 		memman_free_4k(memman, (int) p, finfo->size);
 		cons_newline(cons);
 		return 1;
