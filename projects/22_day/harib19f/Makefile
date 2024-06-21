@@ -106,39 +106,53 @@ hello.hrb: hello.nas
 hello2.hrb: hello2.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
 
-a_nask.obj: a_nask.nas
-	$(AS) -f elf $< -o $@
+a.obj: a.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-a.hrb: a_nask.obj a.c
-	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+a.hrb: a_nask.obj a.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-hello3.hrb: a_nask.obj hello3.c
-	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+hello3.obj: hello3.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-hello4.hrb: a_nask.obj hello4.c
-	$(CC) $(APP_CFLAGS) -c hello4.c -o hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@
+hello3.hrb: a_nask.obj hello3.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-hello5.hrb: hello5.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello5.lst
+hello4.obj: hello4.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-winhelo.hrb: a_nask.obj winhelo.c
+hello4.hrb: a_nask.obj hello4.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+hello5.obj: hello5.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
+
+hello5.hrb: hello5.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c winhelo.c -o winhelo.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary winhelo.obj a_nask.obj -o $@
 
-bug1.hrb: a_nask.obj bug1.c
-	$(CC) $(APP_CFLAGS) -c bug1.c -o bug1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug1.obj a_nask.obj -o $@
+winhelo.hrb: a_nask.obj winhelo.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-bug2.hrb: bug2.c
-	$(CC) $(APP_CFLAGS) -c bug2.c -o bug2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug2.obj -o $@
+bug1.obj: bug1.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-bug3.hrb: a_nask.obj bug3.c
-	$(CC) $(APP_CFLAGS) -c bug3.c -o bug3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug3.obj a_nask.obj -o $@
+bug1.hrb: a_nask.obj bug1.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+bug2.obj: bug2.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+bug2.hrb: bug2.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+bug3.obj: bug3.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+bug3.hrb: a_nask.obj bug3.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb bug1.hrb bug2.hrb bug3.hrb \
