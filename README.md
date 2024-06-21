@@ -425,7 +425,7 @@ skip:
 |        | 4       | harib20d |                              |                                                                                                           |
 |        | 5       | harib20e |                              |                                                                                                           |
 |        | 6       | harib20f |                              |                                                                                                           |
-|        | 7       | harib20g |                              |                                                                                                           |
+|        | 7       | harib20g |                              | 从此开始引入 bootpack.lds，不用再对 asmhead.nas 和 bootpack.c 做额外修改。以后把之前的代码都改过来。      |
 |        | 8       | harib20h |                              |                                                                                                           |
 | 24 day | 1       | harib21a |                              |                                                                                                           |
 |        | 2       | harib21b |                              |                                                                                                           |
