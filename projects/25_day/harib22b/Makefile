@@ -1,224 +1,287 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
 		mtask.obj window.obj console.obj file.obj
+OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
 
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-MAKEFONT = $(TOOLPATH)makefont.exe
-BIN2OBJ  = $(TOOLPATH)bin2obj.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = $(TOOLPATH)haribote/haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
 
-# ÉfÉtÉHÉãÉgìÆçÏ
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
 
-default :
-	$(MAKE) img
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
 
-# ÉtÉ@ÉCÉãê∂ê¨ãKë•
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
+OBJCOPY = $(GCCPREFIX)objcopy
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
 
-ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin ipl10.lst
+APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib
+APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
 
-asmhead.bin : asmhead.nas Makefile
-	$(NASK) asmhead.nas asmhead.bin asmhead.lst
+QEMU_FLAGS :=
+NASM_FLAGS :=
 
-hankaku.bin : hankaku.txt Makefile
-	$(MAKEFONT) hankaku.txt hankaku.bin
+ifdef DEBUG
+# QEMU_FLAGS += -s -S
+# QEMU_FLAGS += -monitor stdio
+QEMU_FLAGS += -d in_asm
+CFLAGS += -g
+NASM_FLAGS += -g
+endif
 
-hankaku.obj : hankaku.bin Makefile
-	$(BIN2OBJ) hankaku.bin hankaku.obj _hankaku
+LDFLAGS = -m elf_i386
+DEL = rm -f
 
-bootpack.bim : $(OBJS_BOOTPACK) Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
-		$(OBJS_BOOTPACK)
-# 3MB+64KB=3136KB
+IMG = haribote.img
 
-bootpack.hrb : bootpack.bim Makefile
-	$(BIM2HRB) bootpack.bim bootpack.hrb 0
+UTILS_FOLDER := ../../../utils
+MAKEFONT := $(UTILS_FOLDER)/makefont
+CFLAGS += -I$(UTILS_FOLDER)
 
-haribote.sys : asmhead.bin bootpack.hrb Makefile
-	copy /B asmhead.bin+bootpack.hrb haribote.sys
+LIBC_DIR := $(UTILS_FOLDER)/libc
+CFLAGS += -I $(LIBC_DIR)/include
 
-hello.hrb : hello.nas Makefile
-	$(NASK) hello.nas hello.hrb hello.lst
+APP_CFLAGS += -I $(LIBC_DIR)/include
 
-hello2.hrb : hello2.nas Makefile
-	$(NASK) hello2.nas hello2.hrb hello2.lst
+# ¬Éf¬Ét¬ÉH¬É¬ã¬Ég¬ì≈Ω¬çƒõ
 
-a.bim : a.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:a.bim map:a.map a.obj a_nask.obj
+all: target-os $(IMG)
 
-a.hrb : a.bim Makefile
-	$(BIM2HRB) a.bim a.hrb 0
+target-os:
+	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
+	@echo "GCCPREFIX: $(GCCPREFIX)"
+	@echo $(UNAME)
+	@echo $(RASPBERRY_PI)
+	@echo $(RPI)
+	@echo $(IS_RASPBERRY_PI)
 
-hello3.bim : hello3.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:hello3.bim map:hello3.map hello3.obj a_nask.obj
+# ¬Ét¬É@¬ÉC¬É¬ã¬ê≈õ¬ê≈π¬ãK¬ëƒΩ
 
-hello3.hrb : hello3.bim Makefile
-	$(BIM2HRB) hello3.bim hello3.hrb 0
+ipl10.bin: ipl10.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l ipl10.lst
 
-hello4.bim : hello4.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:hello4.bim stack:1k map:hello4.map \
-		hello4.obj a_nask.obj
+asmhead.bin: asmhead.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
 
-hello4.hrb : hello4.bim Makefile
-	$(BIM2HRB) hello4.bim hello4.hrb 0
+hankaku.asm: hankaku.txt
+	# Use the native gcc to build the tool on local machine.
+	gcc -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	$(MAKEFONT) -i $< -o $@ -f 1
 
-hello5.bim : hello5.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:hello5.bim stack:1k map:hello5.map hello5.obj
+hankaku.obj: hankaku.asm
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-hello5.hrb : hello5.bim Makefile
-	$(BIM2HRB) hello5.bim hello5.hrb 0
+bootpack.hrb: $(OBJS_BOOTPACK)
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-winhelo.bim : winhelo.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:winhelo.bim stack:1k map:winhelo.map \
-		winhelo.obj a_nask.obj
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > haribote.sys
+	cat bootpack.hrb >> haribote.sys
 
-winhelo.hrb : winhelo.bim Makefile
-	$(BIM2HRB) winhelo.bim winhelo.hrb 0
+hello.hrb: hello.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello.lst
 
-winhelo2.bim : winhelo2.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:winhelo2.bim stack:1k map:winhelo2.map \
-		winhelo2.obj a_nask.obj
+hello2.hrb: hello2.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
 
-winhelo2.hrb : winhelo2.bim Makefile
-	$(BIM2HRB) winhelo2.bim winhelo2.hrb 0
+a.obj: a.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-winhelo3.bim : winhelo3.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:winhelo3.bim stack:1k map:winhelo3.map \
-		winhelo3.obj a_nask.obj
+a.hrb: a_nask.obj a.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-winhelo3.hrb : winhelo3.bim Makefile
-	$(BIM2HRB) winhelo3.bim winhelo3.hrb 40k
+hello3.obj: hello3.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-star1.bim : star1.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:star1.bim stack:1k map:star1.map \
-		star1.obj a_nask.obj
+hello3.hrb: a_nask.obj hello3.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-star1.hrb : star1.bim Makefile
-	$(BIM2HRB) star1.bim star1.hrb 47k
+hello4.obj: hello4.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-stars.bim : stars.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:stars.bim stack:1k map:stars.map \
-		stars.obj a_nask.obj
+hello4.hrb: a_nask.obj hello4.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-stars.hrb : stars.bim Makefile
-	$(BIM2HRB) stars.bim stars.hrb 47k
+hello5.obj: hello5.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
-stars2.bim : stars2.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:stars2.bim stack:1k map:stars2.map \
-		stars2.obj a_nask.obj
+hello5.hrb: hello5.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-stars2.hrb : stars2.bim Makefile
-	$(BIM2HRB) stars2.bim stars2.hrb 47k
+winhelo.obj: winhelo.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-lines.bim : lines.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:lines.bim stack:1k map:lines.map \
-		lines.obj a_nask.obj
+winhelo.hrb: a_nask.obj winhelo.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-lines.hrb : lines.bim Makefile
-	$(BIM2HRB) lines.bim lines.hrb 48k
+winhelo2.obj: winhelo2.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-walk.bim : walk.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:walk.bim stack:1k map:walk.map \
-		walk.obj a_nask.obj
+winhelo2.hrb: a_nask.obj winhelo2.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-walk.hrb : walk.bim Makefile
-	$(BIM2HRB) walk.bim walk.hrb 48k
+winhelo3.obj: winhelo3.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-noodle.bim : noodle.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:noodle.bim stack:1k map:noodle.map \
-		noodle.obj a_nask.obj
+winhelo3.hrb: a_nask.obj winhelo3.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-noodle.hrb : noodle.bim Makefile
-	$(BIM2HRB) noodle.bim noodle.hrb 40k
+star1.obj: star1.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-beepdown.bim : beepdown.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:beepdown.bim stack:1k map:beepdown.map \
-		beepdown.obj a_nask.obj
+star1.hrb: a_nask.obj star1.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-beepdown.hrb : beepdown.bim Makefile
-	$(BIM2HRB) beepdown.bim beepdown.hrb 40k
+stars.obj: stars.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-color.bim : color.obj a_nask.obj Makefile
-	$(OBJ2BIM) @$(RULEFILE) out:color.bim stack:1k map:color.map \
-		color.obj a_nask.obj
+stars.hrb: a_nask.obj stars.obj rand.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
-color.hrb : color.bim Makefile
-	$(BIM2HRB) color.bim color.hrb 56k
+stars2.obj: stars2.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-haribote.img : ipl10.bin haribote.sys Makefile \
+stars2.hrb: a_nask.obj stars2.obj rand.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+lines.obj: lines.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+lines.hrb: a_nask.obj lines.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+walk.obj: walk.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+walk.hrb: a_nask.obj walk.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+noodle.obj: noodle.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+appstdio.obj: $(LIBC_DIR)/stdio/stdio.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+noodle.hrb: a_nask.obj noodle.obj appstdio.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+beepdown.obj: beepdown.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+beepdown.hrb: a_nask.obj beepdown.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+color.obj: color.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+color.hrb: a_nask.obj color.obj
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+
+haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \
 		winhelo.hrb winhelo2.hrb winhelo3.hrb star1.hrb stars.hrb stars2.hrb \
 		lines.hrb walk.hrb noodle.hrb beepdown.hrb color.hrb
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:ipl10.bin len:512 from:0 to:0 \
-		copy from:haribote.sys to:@: \
-		copy from:ipl10.nas to:@: \
-		copy from:make.bat to:@: \
-		copy from:hello.hrb to:@: \
-		copy from:hello2.hrb to:@: \
-		copy from:a.hrb to:@: \
-		copy from:hello3.hrb to:@: \
-		copy from:hello4.hrb to:@: \
-		copy from:hello5.hrb to:@: \
-		copy from:winhelo.hrb to:@: \
-		copy from:winhelo2.hrb to:@: \
-		copy from:winhelo3.hrb to:@: \
-		copy from:star1.hrb to:@: \
-		copy from:stars.hrb to:@: \
-		copy from:stars2.hrb to:@: \
-		copy from:lines.hrb to:@: \
-		copy from:walk.hrb to:@: \
-		copy from:noodle.hrb to:@: \
-		copy from:beepdown.hrb to:@: \
-		copy from:color.hrb to:@: \
-		imgout:haribote.img
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
-# àÍî ãKë•
+	# Format the image as FAT12
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
-%.gas : %.c bootpack.h Makefile
-	$(CC1) -o $*.gas $*.c
+	# Write the boot sector
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-%.nas : %.gas Makefile
-	$(GAS2NASK) $*.gas $*.nas
+	# copy to 0x4200
+	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ ipl10.nas ::/
+	mcopy -i $@ Makefile ::/
+	mcopy -i $@ hello.hrb ::/
+	mcopy -i $@ hello2.hrb ::/
+	mcopy -i $@ a.hrb ::/
+	mcopy -i $@ hello3.hrb ::/
+	mcopy -i $@ hello4.hrb ::/
+	mcopy -i $@ hello5.hrb ::/
+	mcopy -i $@ winhelo.hrb ::/
+	mcopy -i $@ winhelo2.hrb ::/
+	mcopy -i $@ winhelo3.hrb ::/
+	mcopy -i $@ star1.hrb ::/
+	mcopy -i $@ stars.hrb ::/
+	mcopy -i $@ stars2.hrb ::/
+	mcopy -i $@ lines.hrb ::/
+	mcopy -i $@ walk.hrb ::/
+	mcopy -i $@ noodle.hrb ::/
+	mcopy -i $@ beepdown.hrb ::/
+	mcopy -i $@ color.hrb ::/
 
-%.obj : %.nas Makefile
-	$(NASK) $*.nas $*.obj $*.lst
+# ¬àƒô¬îƒò¬ãK¬ëƒΩ
 
-# ÉRÉ}ÉìÉh
+naskfunc.obj: naskfunc.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l naskfunc.lst
 
-img :
-	$(MAKE) haribote.img
+a_nask.obj: a_nask.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l a_nask.lst
 
-run :
-	$(MAKE) img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+%.obj: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: haribote.img
+stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-clean :
+strcmp.obj: $(LIBC_DIR)/string/strcmp.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+strncmp.obj: $(LIBC_DIR)/string/strncmp.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+rand.obj: $(LIBC_DIR)/stdlib/rand.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ¬ÉR¬É}¬É¬ì¬Éh
+
+img: haribote.img
+
+run: src_only img
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=floppy,index=0,media=disk
+
+clean:
 	-$(DEL) *.bin
 	-$(DEL) *.lst
+	-$(DEL) *.elf
+	-$(DEL) *.o
 	-$(DEL) *.obj
-	-$(DEL) *.map
-	-$(DEL) *.bim
 	-$(DEL) *.hrb
+	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
+	-$(DEL) hankaku.asm
+	-$(DEL) kernel.sys
 
-src_only :
-	$(MAKE) clean
-	-$(DEL) haribote.img
+src_only: clean
+	-$(DEL) $(IMG)
+
+.PHONY: all run clean src_only
