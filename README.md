@@ -433,7 +433,7 @@ skip:
 |        | 4       | harib21d |                              |                                                                                                           |
 |        | 5       | harib21e |                              |                                                                                                           |
 |        | 6       | harib21f |                              |                                                                                                           |
-|        | 7       | harib21g |                              |                                                                                                           |
+|        | 7       | harib21g |                              | 遇到编译问题[^8]。将 app.lds 中.data 0x0400 改为 0x0800                                                   |
 |        | 8       | harib21h |                              |                                                                                                           |
 | 25 day | 1       | harib22a |                              |                                                                                                           |
 |        | 2       | harib22b |                              |                                                                                                           |
@@ -499,6 +499,12 @@ make: *** [Makefile:122: bug1.hrb] Error 1
 ```
 
 Add compile flag `-fno-stack-protector` to let it pass.
+
+[^8]:
+
+```sh
+ld: section .data VMA [0000000000000400,000000000000053f] overlaps section .text VMA [0000000000000030,0000000000000647]
+```
 
 ### Issues
 
