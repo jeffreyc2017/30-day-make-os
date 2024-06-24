@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api018.nas"]
+; [FILE "api018.nas"]
 
 		GLOBAL	_api_settimer
 

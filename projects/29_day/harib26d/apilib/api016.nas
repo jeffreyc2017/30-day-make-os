@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api016.nas"]
+; [FILE "api016.nas"]
 
 		GLOBAL	_api_alloctimer
 

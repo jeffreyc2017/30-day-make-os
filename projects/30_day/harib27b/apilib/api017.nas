@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api017.nas"]
+; [FILE "api017.nas"]
 
 		GLOBAL	_api_inittimer
 

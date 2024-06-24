@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api023.nas"]
+; [FILE "api023.nas"]
 
 		GLOBAL	_api_fseek
 

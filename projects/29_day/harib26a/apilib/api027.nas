@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api027.nas"]
+; [FILE "api027.nas"]
 
 		GLOBAL	_api_getlang
 

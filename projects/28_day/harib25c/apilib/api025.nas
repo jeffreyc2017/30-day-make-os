@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api025.nas"]
+; [FILE "api025.nas"]
 
 		GLOBAL	_api_fread
 

@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api012.nas"]
+; [FILE "api012.nas"]
 
 		GLOBAL	_api_refreshwin
 

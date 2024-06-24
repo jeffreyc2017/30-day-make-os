@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api022.nas"]
+; [FILE "api022.nas"]
 
 		GLOBAL	_api_fclose
 

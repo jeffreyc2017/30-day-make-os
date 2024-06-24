@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api021.nas"]
+; [FILE "api021.nas"]
 
 		GLOBAL	_api_fopen
 
