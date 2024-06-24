@@ -508,6 +508,8 @@ ld: section .data VMA [0000000000000400,000000000000053f] overlaps section .text
 
 hour is not displayed.
 
+winhelo doesn't work.
+
 ### Issues
 
 - mcopy/mount/dd 0x4200/0xc200 vs 0x4400/0xc400

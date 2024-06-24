@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api015.nas"]
+; [FILE "api015.nas"]
 
 		GLOBAL	_api_getkey
 

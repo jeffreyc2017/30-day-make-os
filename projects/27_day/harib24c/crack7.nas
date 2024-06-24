@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "crack7.nas"]
+;[FILE "crack7.nas"]
 
 		GLOBAL	_HariMain
 
