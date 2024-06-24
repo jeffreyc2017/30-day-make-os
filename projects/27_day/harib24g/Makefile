@@ -1,142 +1,219 @@
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
+		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
+		mtask.obj window.obj console.obj file.obj
+OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
 
-MAKE     = $(TOOLPATH)make.exe -r
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+OBJS_API =	api001.obj api002.obj api003.obj api004.obj api005.obj api006.obj \
+			api007.obj api008.obj api009.obj api010.obj api011.obj api012.obj \
+			api013.obj api014.obj api015.obj api016.obj api017.obj api018.obj \
+			api019.obj api020.obj
 
-# ÉfÉtÉHÉãÉgìÆçÏ
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
 
-default :
-	$(MAKE) haribote.img
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
 
-# ÉtÉ@ÉCÉãê∂ê¨ãKë•
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
 
-haribote.img : haribote/ipl10.bin haribote/haribote.sys Makefile \
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
+
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
+OBJCOPY = $(GCCPREFIX)objcopy
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
+
+APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib
+APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
+
+QEMU_FLAGS :=
+NASM_FLAGS :=
+
+ifdef DEBUG
+# QEMU_FLAGS += -s -S
+# QEMU_FLAGS += -monitor stdio
+QEMU_FLAGS += -d in_asm
+CFLAGS += -g
+NASM_FLAGS += -g
+endif
+
+LDFLAGS = -m elf_i386
+DEL = rm -f
+
+IMG = haribote.img
+
+UTILS_FOLDER := ../../../utils
+MAKEFONT := $(UTILS_FOLDER)/makefont
+CFLAGS += -I$(UTILS_FOLDER)
+
+LIBC_DIR := $(UTILS_FOLDER)/libc
+CFLAGS += -I $(LIBC_DIR)/include
+
+APP_CFLAGS += -I $(LIBC_DIR)/include
+
+# ¬Éf¬Ét¬ÉH¬É¬ã¬Ég¬ì≈Ω¬çƒõ
+
+all: target-os $(IMG)
+
+target-os:
+	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
+	@echo "GCCPREFIX: $(GCCPREFIX)"
+	@echo $(UNAME)
+	@echo $(RASPBERRY_PI)
+	@echo $(RPI)
+	@echo $(IS_RASPBERRY_PI)
+
+# ¬Ét¬É@¬ÉC¬É¬ã¬ê≈õ¬ê≈π¬ãK¬ëƒΩ
+
+haribote.img: haribote/ipl10.bin haribote/haribote.sys \
 		a/a.hrb hello3/hello3.hrb hello4/hello4.hrb hello5/hello5.hrb \
 		winhelo/winhelo.hrb winhelo2/winhelo2.hrb winhelo3/winhelo3.hrb \
 		star1/star1.hrb stars/stars.hrb stars2/stars2.hrb \
 		lines/lines.hrb walk/walk.hrb noodle/noodle.hrb \
 		beepdown/beepdown.hrb color/color.hrb color2/color2.hrb
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:haribote/ipl10.bin len:512 from:0 to:0 \
-		copy from:haribote/haribote.sys to:@: \
-		copy from:haribote/ipl10.nas to:@: \
-		copy from:make.bat to:@: \
-		copy from:a/a.hrb to:@: \
-		copy from:hello3/hello3.hrb to:@: \
-		copy from:hello4/hello4.hrb to:@: \
-		copy from:hello5/hello5.hrb to:@: \
-		copy from:winhelo/winhelo.hrb to:@: \
-		copy from:winhelo2/winhelo2.hrb to:@: \
-		copy from:winhelo3/winhelo3.hrb to:@: \
-		copy from:star1/star1.hrb to:@: \
-		copy from:stars/stars.hrb to:@: \
-		copy from:stars2/stars2.hrb to:@: \
-		copy from:lines/lines.hrb to:@: \
-		copy from:walk/walk.hrb to:@: \
-		copy from:noodle/noodle.hrb to:@: \
-		copy from:beepdown/beepdown.hrb to:@: \
-		copy from:color/color.hrb to:@: \
-		copy from:color2/color2.hrb to:@: \
-		imgout:haribote.img
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
-# ÉRÉ}ÉìÉh
+	# Format the image as FAT12
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
-run :
-	$(MAKE) haribote.img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+	# Write the boot sector
+	dd if=haribote/ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-install :
-	$(MAKE) haribote.img
-	$(IMGTOL) w a: haribote.img
+	# copy to 0x4200
+	mcopy -i $@ haribote/haribote.sys ::/
+	mcopy -i $@ haribote/ipl10.nas ::/
+	mcopy -i $@ Makefile ::/
+	mcopy -i $@ a/a.hrb ::/
+	mcopy -i $@ hello3/hello3.hrb ::/
+	mcopy -i $@ hello4/hello4.hrb ::/
+	mcopy -i $@ hello5/hello5.hrb ::/
+	mcopy -i $@ winhelo/winhelo.hrb ::/
+	mcopy -i $@ winhelo2/winhelo2.hrb ::/
+	mcopy -i $@ winhelo3/winhelo3.hrb ::/
+	mcopy -i $@ star1/star1.hrb ::/
+	mcopy -i $@ stars/stars.hrb ::/
+	mcopy -i $@ stars2/stars2.hrb ::/
+	mcopy -i $@ lines/lines.hrb ::/
+	mcopy -i $@ walk/walk.hrb ::/
+	mcopy -i $@ noodle/noodle.hrb ::/
+	mcopy -i $@ beepdown/beepdown.hrb ::/
+	mcopy -i $@ color/color.hrb ::/
+	mcopy -i $@ color2/color2.hrb ::/
 
-full :
-	$(MAKE) -C haribote
-	$(MAKE) -C apilib
-	$(MAKE) -C a
-	$(MAKE) -C hello3
-	$(MAKE) -C hello4
-	$(MAKE) -C hello5
-	$(MAKE) -C winhelo
-	$(MAKE) -C winhelo2
-	$(MAKE) -C winhelo3
-	$(MAKE) -C star1
-	$(MAKE) -C stars
-	$(MAKE) -C stars2
-	$(MAKE) -C lines
-	$(MAKE) -C walk
-	$(MAKE) -C noodle
-	$(MAKE) -C beepdown
-	$(MAKE) -C color
-	$(MAKE) -C color2
-	$(MAKE) haribote.img
+# ¬ÉR¬É}¬É¬ì¬Éh
 
-run_full :
-	$(MAKE) full
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+img: haribote.img
 
-install_full :
-	$(MAKE) full
-	$(IMGTOL) w a: haribote.img
+run: src_only img
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
-run_os :
-	$(MAKE) -C haribote
-	$(MAKE) run
+full:
+	make haribote
+	make apilib
+	make a
+	make hello3
+	make hello4
+	make hello5
+	make winhelo
+	make winhelo2
+	make winhelo3
+	make star1
+	make stars
+	make stars2
+	make lines
+	make walk
+	make noodle
+	make beepdown
+	make color
+	make color2
+	make haribote.img
 
-clean :
-# âΩÇ‡ÇµÇ»Ç¢
+run_full: full run
 
-src_only :
-	$(MAKE) clean
-	-$(DEL) haribote.img
+run_os: haribote.img run
 
-clean_full :
-	$(MAKE) -C haribote		clean
-	$(MAKE) -C apilib		clean
-	$(MAKE) -C a			clean
-	$(MAKE) -C hello3		clean
-	$(MAKE) -C hello4		clean
-	$(MAKE) -C hello5		clean
-	$(MAKE) -C winhelo		clean
-	$(MAKE) -C winhelo2		clean
-	$(MAKE) -C winhelo3		clean
-	$(MAKE) -C star1		clean
-	$(MAKE) -C stars		clean
-	$(MAKE) -C stars2		clean
-	$(MAKE) -C lines		clean
-	$(MAKE) -C walk			clean
-	$(MAKE) -C noodle		clean
-	$(MAKE) -C beepdown		clean
-	$(MAKE) -C color		clean
-	$(MAKE) -C color2		clean
+clean:
+	-$(DEL) *.bin
+	-$(DEL) *.lst
+	-$(DEL) *.elf
+	-$(DEL) *.o
+	-$(DEL) *.obj
+	-$(DEL) *.hrb
+	-$(DEL) bootpack.s
+	-$(DEL) haribote.sys
+	-$(DEL) hankaku.asm
+	-$(DEL) kernel.sys
+
+src_only: clean
+	-$(DEL) $(IMG)
+
+clean_full:
+	make haribote	clean
+	make apilib		clean
+	make a			clean
+	make hello3		clean
+	make hello4		clean
+	make hello5		clean
+	make winhelo	clean
+	make winhelo2	clean
+	make winhelo3	clean
+	make star1		clean
+	make stars		clean
+	make stars2		clean
+	make lines		clean
+	make walk		clean
+	make noodle		clean
+	make beepdown	clean
+	make color		clean
+	make color2		clean
 
 src_only_full :
-	$(MAKE) -C haribote		src_only
-	$(MAKE) -C apilib		src_only
-	$(MAKE) -C a			src_only
-	$(MAKE) -C hello3		src_only
-	$(MAKE) -C hello4		src_only
-	$(MAKE) -C hello5		src_only
-	$(MAKE) -C winhelo		src_only
-	$(MAKE) -C winhelo2		src_only
-	$(MAKE) -C winhelo3		src_only
-	$(MAKE) -C star1		src_only
-	$(MAKE) -C stars		src_only
-	$(MAKE) -C stars2		src_only
-	$(MAKE) -C lines		src_only
-	$(MAKE) -C walk			src_only
-	$(MAKE) -C noodle		src_only
-	$(MAKE) -C beepdown		src_only
-	$(MAKE) -C color		src_only
-	$(MAKE) -C color2		src_only
+	make haribote	src_only
+	make apilib		src_only
+	make a			src_only
+	make hello3		src_only
+	make hello4		src_only
+	make hello5		src_only
+	make winhelo	src_only
+	make winhelo2	src_only
+	make winhelo3	src_only
+	make star1		src_only
+	make stars		src_only
+	make stars2		src_only
+	make lines		src_only
+	make walk		src_only
+	make noodle		src_only
+	make beepdown	src_only
+	make color		src_only
+	make color2		src_only
 	-$(DEL) haribote.img
 
-refresh :
-	$(MAKE) full
-	$(MAKE) clean_full
+refresh: full clean_full
 	-$(DEL) haribote.img
+
+.PHONY: all run clean src_only

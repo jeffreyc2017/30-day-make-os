@@ -3,77 +3,88 @@ INCPATH  = ../../z_tools/haribote/
 APILIBPATH   = ../apilib/
 HARIBOTEPATH = ../haribote/
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -I../ -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-MAKEFONT = $(TOOLPATH)makefont.exe
-BIN2OBJ  = $(TOOLPATH)bin2obj.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = ../haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-GOLIB    = $(TOOLPATH)golib00.exe 
-COPY     = copy
-DEL      = del
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
+
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
+
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
+
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
+
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
+OBJCOPY = $(GCCPREFIX)objcopy
+OBJDUMP = $(GCCPREFIX)objdump
+DEL = rm -f
+
+APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
+APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
 
 # デフォルト動作
 
-default :
-	$(MAKE) $(APP).hrb
+default: $(APP).hrb
 
 # ファイル生成規則
 
-$(APP).bim : $(APP).obj $(APILIBPATH)apilib.lib Makefile ../app_make.txt
-	$(OBJ2BIM) @$(RULEFILE) out:$(APP).bim map:$(APP).map stack:$(STACK) \
-		$(APP).obj $(APILIBPATH)apilib.lib
+$(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
-$(APP).hrb : $(APP).bim Makefile ../app_make.txt
-	$(BIM2HRB) $(APP).bim $(APP).hrb $(MALLOC)
 
-haribote.img : ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
-		Makefile ../app_make.txt
-	$(EDIMG)   imgin:../../z_tools/fdimg0at.tek \
-		wbinimg src:../haribote/ipl10.bin len:512 from:0 to:0 \
-		copy from:../haribote/haribote.sys to:@: \
-		copy from:$(APP).hrb to:@: \
-		imgout:haribote.img
+haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
+		../app_make.txt
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$@ bs=512 count=2880
+
+	# Format the image as FAT12
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
+
+	# Write the boot sector
+	dd if=../haribote/ipl10.bin of=$@ bs=512 count=1 conv=notrunc
+
+	# copy to 0x4200
+	mcopy -i $@ ../haribote/haribote.sys ::/
+	mcopy -i $@ a.hrb ::/
 
 # 一般規則
 
-%.gas : %.c ../apilib.h Makefile ../app_make.txt
-	$(CC1) -o $*.gas $*.c
+%.obj: %.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-%.nas : %.gas Makefile ../app_make.txt
-	$(GAS2NASK) $*.gas $*.nas
+#%.nas %.lst: %.c
+#	$(CC) $(APP_CFLAGS) -S -fverbose-asm -Wa,-adhln=$*.lst -o $*.nas $<
 
-%.obj : %.nas Makefile ../app_make.txt
-	$(NASK) $*.nas $*.obj $*.lst
+#%.obj: %.nas
+#	cat $<
+#	$(AS) -c $< -o $@
 
 # コマンド
 
-run :
-	$(MAKE) haribote.img
-	$(COPY) haribote.img ..\..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../../z_tools/qemu
+run : haribote.img
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$<,format=raw,if=floppy,index=0,media=disk
 
-full :
-	$(MAKE) -C $(APILIBPATH)
-	$(MAKE) $(APP).hrb
+full : $(APP).hrb $(APILIBPATH)apilib.lib
 
-run_full :
-	$(MAKE) -C $(APILIBPATH)
-	$(MAKE) -C ../haribote
-	$(MAKE) run
+run_full : full run
 
-clean :
+clean:
 	-$(DEL) *.lst
 	-$(DEL) *.obj
-	-$(DEL) *.map
-	-$(DEL) *.bim
 	-$(DEL) haribote.img
 
-src_only :
-	$(MAKE) clean
+src_only : clean
 	-$(DEL) $(APP).hrb
