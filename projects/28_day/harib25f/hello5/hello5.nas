@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "hello5.nas"]
+; [FILE "hello5.nas"]
 
 		GLOBAL	_HariMain
 
