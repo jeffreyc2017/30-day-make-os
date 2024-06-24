@@ -506,6 +506,8 @@ Add compile flag `-fno-stack-protector` to let it pass.
 ld: section .data VMA [0000000000000400,000000000000053f] overlaps section .text VMA [0000000000000030,0000000000000647]
 ```
 
+hour is not displayed.
+
 ### Issues
 
 - mcopy/mount/dd 0x4200/0xc200 vs 0x4400/0xc400
