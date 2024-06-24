@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "alloca.nas"]
+; [FILE "alloca.nas"]
 
 		GLOBAL	__alloca
 
