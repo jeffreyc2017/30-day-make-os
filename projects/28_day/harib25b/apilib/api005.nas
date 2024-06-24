@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api005.nas"]
+; [FILE "api005.nas"]
 
 		GLOBAL	_api_openwin
 

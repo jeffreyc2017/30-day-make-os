@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api006.nas"]
+; [FILE "api006.nas"]
 
 		GLOBAL	_api_putstrwin
 

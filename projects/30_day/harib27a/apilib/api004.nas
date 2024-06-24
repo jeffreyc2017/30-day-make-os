@@ -1,7 +1,7 @@
 ; [FORMAT "WCOFF"]
 ; [INSTRSET "i486p"]
 [BITS 32]
-[FILE "api004.nas"]
+; [FILE "api004.nas"]
 
 		GLOBAL	_api_end
 
