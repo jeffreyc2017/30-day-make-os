@@ -26,6 +26,7 @@ ifeq ($(IS_RASPBERRY_PI),1)
 	GCCPREFIX := i686-linux-gnu-
 endif
 
+MAKE = make
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -133,25 +134,25 @@ run: src_only img
 	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
 full:
-	make haribote
-	make apilib
-	make a
-	make hello3
-	make hello4
-	make hello5
-	make winhelo
-	make winhelo2
-	make winhelo3
-	make star1
-	make stars
-	make stars2
-	make lines
-	make walk
-	make noodle
-	make beepdown
-	make color
-	make color2
-	make haribote.img
+	$(MAKE) -C haribote
+	$(MAKE) -C apilib
+	$(MAKE) -C a
+	$(MAKE) -C hello3
+	$(MAKE) -C hello4
+	$(MAKE) -C hello5
+	$(MAKE) -C winhelo
+	$(MAKE) -C winhelo2
+	$(MAKE) -C winhelo3
+	$(MAKE) -C star1
+	$(MAKE) -C stars
+	$(MAKE) -C stars2
+	$(MAKE) -C lines
+	$(MAKE) -C walk
+	$(MAKE) -C noodle
+	$(MAKE) -C beepdown
+	$(MAKE) -C color
+	$(MAKE) -C color2
+	$(MAKE) haribote.img
 
 run_full: full run
 
@@ -173,44 +174,44 @@ src_only: clean
 	-$(DEL) $(IMG)
 
 clean_full:
-	make haribote	clean
-	make apilib		clean
-	make a			clean
-	make hello3		clean
-	make hello4		clean
-	make hello5		clean
-	make winhelo	clean
-	make winhelo2	clean
-	make winhelo3	clean
-	make star1		clean
-	make stars		clean
-	make stars2		clean
-	make lines		clean
-	make walk		clean
-	make noodle		clean
-	make beepdown	clean
-	make color		clean
-	make color2		clean
+	$(MAKE) -C haribote	clean
+	$(MAKE) -C apilib		clean
+	$(MAKE) -C a			clean
+	$(MAKE) -C hello3		clean
+	$(MAKE) -C hello4		clean
+	$(MAKE) -C hello5		clean
+	$(MAKE) -C winhelo		clean
+	$(MAKE) -C winhelo2	clean
+	$(MAKE) -C winhelo3	clean
+	$(MAKE) -C star1		clean
+	$(MAKE) -C stars		clean
+	$(MAKE) -C stars2		clean
+	$(MAKE) -C lines		clean
+	$(MAKE) -C walk		clean
+	$(MAKE) -C noodle		clean
+	$(MAKE) -C beepdown	clean
+	$(MAKE) -C color		clean
+	$(MAKE) -C color2		clean
 
 src_only_full :
-	make haribote	src_only
-	make apilib		src_only
-	make a			src_only
-	make hello3		src_only
-	make hello4		src_only
-	make hello5		src_only
-	make winhelo	src_only
-	make winhelo2	src_only
-	make winhelo3	src_only
-	make star1		src_only
-	make stars		src_only
-	make stars2		src_only
-	make lines		src_only
-	make walk		src_only
-	make noodle		src_only
-	make beepdown	src_only
-	make color		src_only
-	make color2		src_only
+	$(MAKE) -C haribote	src_only
+	$(MAKE) -C apilib		src_only
+	$(MAKE) -C a			src_only
+	$(MAKE) -C hello3		src_only
+	$(MAKE) -C hello4		src_only
+	$(MAKE) -C hello5		src_only
+	$(MAKE) -C winhelo		src_only
+	$(MAKE) -C winhelo2	src_only
+	$(MAKE) -C winhelo3	src_only
+	$(MAKE) -C star1		src_only
+	$(MAKE) -C stars		src_only
+	$(MAKE) -C stars2		src_only
+	$(MAKE) -C lines		src_only
+	$(MAKE) -C walk		src_only
+	$(MAKE) -C noodle		src_only
+	$(MAKE) -C beepdown	src_only
+	$(MAKE) -C color		src_only
+	$(MAKE) -C color2		src_only
 	-$(DEL) haribote.img
 
 refresh: full clean_full

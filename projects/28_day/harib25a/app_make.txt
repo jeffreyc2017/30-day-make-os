@@ -48,11 +48,6 @@ default: $(APP).hrb
 $(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
-# stars.hrb: stars.obj $(APILIBPATH)apilib.lib rand.obj
-#	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
-
-# stars2.hrb: stars2.obj $(APILIBPATH)apilib.lib rand.obj
-#	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
 haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 		../app_make.txt

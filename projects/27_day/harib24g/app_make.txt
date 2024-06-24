@@ -1,3 +1,5 @@
+OBJS_APP = stdio.obj strcmp.obj strncmp.obj rand.obj
+
 TOOLPATH = ../../z_tools/
 INCPATH  = ../../z_tools/haribote/
 APILIBPATH   = ../apilib/
@@ -32,13 +34,18 @@ DEL = rm -f
 APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
 APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
 
+UTILS_FOLDER := ../../../../utils
+LIBC_DIR := $(UTILS_FOLDER)/libc
+
+APP_CFLAGS += -I $(LIBC_DIR)/include
+
 # デフォルト動作
 
 default: $(APP).hrb
 
 # ファイル生成規則
 
-$(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib
+$(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
 
@@ -71,6 +78,9 @@ haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 #	cat $<
 #	$(AS) -c $< -o $@
 
+%.obj: %.nas
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
+
 # コマンド
 
 run : haribote.img
@@ -88,3 +98,15 @@ clean:
 
 src_only : clean
 	-$(DEL) $(APP).hrb
+
+stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+strcmp.obj: $(LIBC_DIR)/string/strcmp.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+strncmp.obj: $(LIBC_DIR)/string/strncmp.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+
+rand.obj: $(LIBC_DIR)/stdlib/rand.c
+	$(CC) $(APP_CFLAGS) -c $< -o $@
