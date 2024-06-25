@@ -470,7 +470,7 @@ skip:
 |        | 6       | harib25f |                              |                                                                                                           |
 |        | 7       | harib25g |                              |                                                                                                           |
 | 29 day | 1       | harib26a |                              |                                                                                                           |
-|        | 2       | harib26b |                              |                                                                                                           |
+|        | 2       | harib26b | 此处引入 tek 压缩            |                                                                                                           |
 |        | 3       | harib26c |                              |                                                                                                           |
 |        | 4       | harib26d |                              |                                                                                                           |
 |        | 5       | harib26e |                              |                                                                                                           |

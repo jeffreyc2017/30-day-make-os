@@ -1,20 +1,88 @@
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
+		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
+		mtask.obj window.obj console.obj file.obj
+OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
 
-MAKE     = $(TOOLPATH)make.exe -r
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
 
-# ÉfÉtÉHÉãÉgìÆçÏ
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
 
-default :
-	$(MAKE) haribote.img
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
 
-# ÉtÉ@ÉCÉãê∂ê¨ãKë•
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
 
-haribote.img : haribote/ipl20.bin haribote/haribote.sys Makefile \
+MAKE = make
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
+OBJCOPY = $(GCCPREFIX)objcopy
+OBJDUMP = $(GCCPREFIX)objdump
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
+
+APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib
+APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
+
+QEMU_FLAGS :=
+NASM_FLAGS :=
+
+ifdef DEBUG
+# QEMU_FLAGS += -s -S
+# QEMU_FLAGS += -monitor stdio
+QEMU_FLAGS += -d in_asm
+CFLAGS += -g
+NASM_FLAGS += -g
+endif
+
+LDFLAGS = -m elf_i386
+DEL = rm -f
+
+IMG = haribote.img
+
+UTILS_FOLDER := ../../../utils
+MAKEFONT := $(UTILS_FOLDER)/makefont
+CFLAGS += -I$(UTILS_FOLDER)
+
+LIBC_DIR := $(UTILS_FOLDER)/libc
+CFLAGS += -I $(LIBC_DIR)/include
+
+APP_CFLAGS += -I $(LIBC_DIR)/include
+
+# ¬Éf¬Ét¬ÉH¬É¬ã¬Ég¬ì≈Ω¬çƒõ
+
+all: target-os $(IMG)
+
+target-os:
+	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
+	@echo "GCCPREFIX: $(GCCPREFIX)"
+	@echo $(UNAME)
+	@echo $(RASPBERRY_PI)
+	@echo $(RPI)
+	@echo $(IS_RASPBERRY_PI)
+
+# ¬Ét¬É@¬ÉC¬É¬ã¬ê≈õ¬ê≈π¬ãK¬ëƒΩ
+
+haribote.img: haribote/ipl20.bin haribote/haribote.sys \
 		a/a.hrb hello3/hello3.hrb hello4/hello4.hrb hello5/hello5.hrb \
 		winhelo/winhelo.hrb winhelo2/winhelo2.hrb winhelo3/winhelo3.hrb \
 		star1/star1.hrb stars/stars.hrb stars2/stars2.hrb \
@@ -23,50 +91,56 @@ haribote.img : haribote/ipl20.bin haribote/haribote.sys Makefile \
 		sosu/sosu.hrb sosu2/sosu2.hrb sosu3/sosu3.hrb \
 		typeipl/typeipl.hrb type/type.hrb iroha/iroha.hrb \
 		chklang/chklang.hrb
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:haribote/ipl20.bin len:512 from:0 to:0 \
-		copy from:haribote/haribote.sys to:@: \
-		copy from:haribote/ipl20.nas to:@: \
-		copy from:make.bat to:@: \
-		copy from:a/a.hrb to:@: \
-		copy from:hello3/hello3.hrb to:@: \
-		copy from:hello4/hello4.hrb to:@: \
-		copy from:hello5/hello5.hrb to:@: \
-		copy from:winhelo/winhelo.hrb to:@: \
-		copy from:winhelo2/winhelo2.hrb to:@: \
-		copy from:winhelo3/winhelo3.hrb to:@: \
-		copy from:star1/star1.hrb to:@: \
-		copy from:stars/stars.hrb to:@: \
-		copy from:stars2/stars2.hrb to:@: \
-		copy from:lines/lines.hrb to:@: \
-		copy from:walk/walk.hrb to:@: \
-		copy from:noodle/noodle.hrb to:@: \
-		copy from:beepdown/beepdown.hrb to:@: \
-		copy from:color/color.hrb to:@: \
-		copy from:color2/color2.hrb to:@: \
-		copy from:sosu/sosu.hrb to:@: \
-		copy from:sosu2/sosu2.hrb to:@: \
-		copy from:sosu3/sosu3.hrb to:@: \
-		copy from:typeipl/typeipl.hrb to:@: \
-		copy from:type/type.hrb to:@: \
-		copy from:iroha/iroha.hrb to:@: \
-		copy from:chklang/chklang.hrb to:@: \
-		copy from:euc.txt to:@: \
-		copy from:nihongo/nihongo.fnt to:@: \
-		imgout:haribote.img
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
-# ÉRÉ}ÉìÉh
+	# Format the image as FAT12
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
-run :
-	$(MAKE) haribote.img
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+	# Write the boot sector
+	dd if=haribote/ipl20.bin of=$@ bs=512 count=1 conv=notrunc
 
-install :
-	$(MAKE) haribote.img
-	$(IMGTOL) w a: haribote.img
+	# copy to 0x4200
+	mcopy -i $@ haribote/haribote.sys ::/
+	mcopy -i $@ haribote/ipl20.nas ::/
+	mcopy -i $@ Makefile ::/
+	mcopy -i $@ a/a.hrb ::/
+	mcopy -i $@ hello3/hello3.hrb ::/
+	mcopy -i $@ hello4/hello4.hrb ::/
+	mcopy -i $@ hello5/hello5.hrb ::/
+	mcopy -i $@ winhelo/winhelo.hrb ::/
+	mcopy -i $@ winhelo2/winhelo2.hrb ::/
+	mcopy -i $@ winhelo3/winhelo3.hrb ::/
+	mcopy -i $@ star1/star1.hrb ::/
+	mcopy -i $@ stars/stars.hrb ::/
+	mcopy -i $@ stars2/stars2.hrb ::/
+	mcopy -i $@ lines/lines.hrb ::/
+	mcopy -i $@ walk/walk.hrb ::/
+	mcopy -i $@ noodle/noodle.hrb ::/
+	mcopy -i $@ beepdown/beepdown.hrb ::/
+	mcopy -i $@ color/color.hrb ::/
+	mcopy -i $@ color2/color2.hrb ::/
+	mcopy -i $@ sosu/sosu.hrb ::/
+	mcopy -i $@ sosu2/sosu2.hrb ::/
+	mcopy -i $@ sosu3/sosu3.hrb ::/
+	mcopy -i $@ typeipl/typeipl.hrb ::/
+	mcopy -i $@ type/type.hrb ::/
+	mcopy -i $@ iroha/iroha.hrb ::/
+	mcopy -i $@ chklang/chklang.hrb ::/
+	mcopy -i $@ euc.txt ::/
+	mcopy -i $@ nihongo/nihongo.fnt ::/
 
-full :
+# ¬ÉR¬É}¬É¬ì¬Éh
+
+img: haribote.img
+
+run: src_only img
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=floppy,index=0,media=disk
+
+full:
 	$(MAKE) -C haribote
 	$(MAKE) -C apilib
 	$(MAKE) -C a
@@ -94,25 +168,24 @@ full :
 	$(MAKE) -C chklang
 	$(MAKE) haribote.img
 
-run_full :
-	$(MAKE) full
-	$(COPY) haribote.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
+run_full: full run
 
-install_full :
-	$(MAKE) full
-	$(IMGTOL) w a: haribote.img
+run_os: haribote.img run
 
-run_os :
-	$(MAKE) -C haribote
-	$(MAKE) run
+clean:
+	-$(DEL) *.bin
+	-$(DEL) *.lst
+	-$(DEL) *.elf
+	-$(DEL) *.o
+	-$(DEL) *.obj
+	-$(DEL) *.hrb
+	-$(DEL) bootpack.s
+	-$(DEL) haribote.sys
+	-$(DEL) hankaku.asm
+	-$(DEL) kernel.sys
 
-clean :
-# âΩÇ‡ÇµÇ»Ç¢
-
-src_only :
-	$(MAKE) clean
-	-$(DEL) haribote.img
+src_only: clean
+	-$(DEL) $(IMG)
 
 clean_full :
 	$(MAKE) -C haribote		clean
@@ -169,7 +242,7 @@ src_only_full :
 	$(MAKE) -C chklang		src_only
 	-$(DEL) haribote.img
 
-refresh :
-	$(MAKE) full
-	$(MAKE) clean_full
+refresh: full clean_full
 	-$(DEL) haribote.img
+
+.PHONY: all run clean src_only
