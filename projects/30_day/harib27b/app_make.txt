@@ -49,7 +49,7 @@ $(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
 
-haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
+haribote.img: ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 		../app_make.txt
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
@@ -60,7 +60,7 @@ haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=../haribote/ipl10.bin of=$@ bs=512 count=1 conv=notrunc
+	dd if=../haribote/ipl20.bin of=$@ bs=512 count=1 conv=notrunc
 
 	# copy to 0x4200
 	mcopy -i $@ ../haribote/haribote.sys ::/

@@ -468,9 +468,9 @@ skip:
 |        | 4       | harib25d |                              |                                                                                                           |
 |        | 5       | harib25e |                              |                                                                                                           |
 |        | 6       | harib25f |                              |                                                                                                           |
-|        | 7       | harib25g |                              |                                                                                                           |
+|        | 7       | harib25g |                              | 从此 ipl10->ipl20                                                                                         |
 | 29 day | 1       | harib26a |                              |                                                                                                           |
-|        | 2       | harib26b | 此处引入 tek 压缩            |                                                                                                           |
+|        | 2       | harib26b |                              | 此处引入 tek 压缩                                                                                         |
 |        | 3       | harib26c |                              |                                                                                                           |
 |        | 4       | harib26d |                              |                                                                                                           |
 |        | 5       | harib26e |                              |                                                                                                           |
@@ -478,7 +478,7 @@ skip:
 |        | 2       | harib27b |                              |                                                                                                           |
 |        | 3       | harib27c |                              |                                                                                                           |
 |        | 4       | harib27d |                              |                                                                                                           |
-|        | 5       | harib27e |                              |                                                                                                           |
+|        | 5       | harib27e |                              | 从此 ipl20->ipl09                                                                                         |
 |        | 6       | harib27f |                              |                                                                                                           |
 
 [^1]: Link with standard C library.
