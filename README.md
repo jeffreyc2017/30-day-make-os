@@ -45,6 +45,16 @@ sudo apt install nasm
 sudo apt install qemu-system
 ```
 
+- hexedit
+
+```sh
+sudo apt install hexedit
+```
+
+- hexdump
+
+- VScode extension Hex Editor
+
 ## 运行环境
 
 此项目在 RaspberryPi 5 和 x86 Ubuntu 上运行通过。
