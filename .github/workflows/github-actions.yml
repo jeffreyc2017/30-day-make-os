@@ -16,7 +16,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - name: Tools install
-        run: npm install
+        run: apt install mtools
       - name: Make tests
-        run: npm test
+        run: make -C ./projects/02_day/helloos5
       - run: echo "🍏 This job's status is ${{ job.status }}."
