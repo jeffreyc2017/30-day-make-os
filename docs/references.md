@@ -1,4 +1,4 @@
-## References
+# References
 
 - [Original book website](http://hrb.osask.jp)
 - https://viterbi-web.usc.edu/~yudewei/main/sources/books/30天自制操作系统/

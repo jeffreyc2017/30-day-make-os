@@ -1,20 +1,14 @@
 - Welcome
 
-  - [notes](README.md)
+  - [30daymakeos](README.md)
 
-- Computer Science
+  - [chapters](chapters.md)
 
-  - [Hardware](hardware.md)
+  - [modifications](modifications.md)
 
-    - [Ram](ram.md)
-
-  - Artificial Intelligence
-
-    - [Stable Diffusion](stable-diffusion.md)
-    - [OpenAI](openai.md)
+  - [Q&A](Q&A.md)
+  - [references](references.md)
 
   - [Tools](tools.md)
 
-- Spiritual Exploration
-
-  - [Buddhism](buddhism.md)
+  - [04 day](04_day.md)

@@ -97,6 +97,15 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 
 ### x86 PC
 
+## 项目结构
+
+.
+├── docs Github pages 文件夹
+├── projects 项目代码
+├── README.md 说明（本文档）
+├── [resources](## 资源文件) 从网络搜集的 PDF 电子书和光盘映像
+└── utils 运行项目代码用到的辅助工具
+
 ## 资源文件
 
 - [《30 天自制操作系统》](<resources/[30天自制操作系统].(川合秀实).周自恒等.扫描版.pdf>)
