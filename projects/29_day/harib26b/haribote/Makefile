@@ -38,10 +38,8 @@ CFLAGS = -fleading-underscore \
 		 -fno-pie \
 		 -m32 \
 		 -mtune=i486 -march=i486 \
-		 -masm=intel
-
-APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib
-APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
+		 -masm=intel \
+		 -xc
 
 QEMU_FLAGS :=
 NASM_FLAGS :=
@@ -113,6 +111,9 @@ strncmp.obj: $(LIBC_DIR)/string/strncmp.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 rand.obj: $(LIBC_DIR)/stdlib/rand.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+setjmp.obj: $(LIBC_DIR)/setjmp/setjmp.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # ƒRƒ}ƒ“ƒh

@@ -191,7 +191,7 @@
 |        | 6       | harib25f |                                |                                                                                                           |
 |        | 7       | harib25g |                                | 从此 ipl10->ipl20                                                                                         |
 | 29 day | 1       | harib26a |                                |                                                                                                           |
-|        | 2       | harib26b |                                | 此处引入 tek 压缩                                                                                         |
+|        | 2       | harib26b |                                | 此处引入 tek 压缩[^9]                                                                                     |
 |        | 3       | harib26c |                                |                                                                                                           |
 |        | 4       | harib26d |                                |                                                                                                           |
 |        | 5       | harib26e |                                |                                                                                                           |
@@ -230,3 +230,15 @@ ld: section .data VMA [0000000000000400,000000000000053f] overlaps section .text
 hour is not displayed.
 
 winhelo doesn't work.
+
+[^9]:
+
+```sh
+30day-os-rpi/projects/29_day/harib26b/haribote$ make
+gcc -fleading-underscore -ffreestanding -fno-stack-protector -nostdlib -nostdinc -nostartfiles -Wall -fno-pie -m32 -mtune=i486 -march=i486 -masm=intel -I../../../../utils -I ../../../../utils/libc/include -c tek.c -o tek.obj
+tek.c:2:10: fatal error: setjmp.h: No such file or directory
+    2 | #include <setjmp.h>
+      |          ^~~~~~~~~~
+compilation terminated.
+make: *** [Makefile:104: tek.obj] Error 1
+```
