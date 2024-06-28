@@ -1,7 +1,7 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
 		mtask.obj window.obj console.obj file.obj tek.obj
-OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
+OBJS_BOOTPACK +=  stdio.obj string.obj setjmp.obj
 
 IS_RASPBERRY_PI := $(if $(RPI),1,0)
 UNAME := $(shell uname -a)
@@ -38,8 +38,7 @@ CFLAGS = -fleading-underscore \
 		 -fno-pie \
 		 -m32 \
 		 -mtune=i486 -march=i486 \
-		 -masm=intel \
-		 -xc
+		 -masm=intel
 
 QEMU_FLAGS :=
 NASM_FLAGS :=
@@ -101,20 +100,12 @@ haribote.sys: asmhead.bin bootpack.hrb
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+vpath %.c $(LIBC_DIR)/src
+
+%.obj: %.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
-strcmp.obj: $(LIBC_DIR)/string/strcmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strncmp.obj: $(LIBC_DIR)/string/strncmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-rand.obj: $(LIBC_DIR)/stdlib/rand.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-setjmp.obj: $(LIBC_DIR)/setjmp/setjmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.S $(LIBC_DIR)/src
 
 # ƒRƒ}ƒ“ƒh
 
