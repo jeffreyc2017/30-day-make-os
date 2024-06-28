@@ -1,8 +1,3 @@
-OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
-		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
-		mtask.obj window.obj console.obj file.obj
-OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
-
 IS_RASPBERRY_PI := $(if $(RPI),1,0)
 UNAME := $(shell uname -a)
 RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
