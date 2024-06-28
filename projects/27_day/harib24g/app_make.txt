@@ -1,4 +1,4 @@
-OBJS_APP = stdio.obj strcmp.obj strncmp.obj rand.obj
+OBJS_APP = stdio.obj string.obj rand.obj setjmp.obj
 
 TOOLPATH = ../../z_tools/
 INCPATH  = ../../z_tools/haribote/
@@ -23,13 +23,14 @@ ifeq ($(IS_RASPBERRY_PI),1)
 	GCCPREFIX := i686-linux-gnu-
 endif
 
-NASM = nasm
-CC = $(GCCPREFIX)gcc
-AS = $(GCCPREFIX)as
-LD = $(GCCPREFIX)ld
-OBJCOPY = $(GCCPREFIX)objcopy
-OBJDUMP = $(GCCPREFIX)objdump
-DEL = rm -f
+NASM     = nasm
+CC       = $(GCCPREFIX)gcc
+AS       = $(GCCPREFIX)as
+LD       = $(GCCPREFIX)ld
+OBJCOPY  = $(GCCPREFIX)objcopy
+OBJDUMP  = $(GCCPREFIX)objdump
+COPY     = cp
+DEL      = rm -f
 
 APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
 APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
@@ -45,7 +46,7 @@ default: $(APP).hrb
 
 # ファイル生成規則
 
-$(APP).hrb: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
+$(APP).bim: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
 
@@ -70,6 +71,11 @@ haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 
 %.obj: %.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
+vpath %.c $(LIBC_DIR)/src
+
+%.obj: %.S
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+vpath %.S $(LIBC_DIR)/src
 
 #%.nas %.lst: %.c
 #	$(CC) $(APP_CFLAGS) -S -fverbose-asm -Wa,-adhln=$*.lst -o $*.nas $<
@@ -80,6 +86,12 @@ haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 
 %.obj: %.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
+
+%.org : %.bim Makefile ../app_make.txt
+	mv $*.bim $*.org
+
+%.hrb : %.org Makefile ../app_make.txt
+	$(COPY) $*.org $*.hrb
 
 # コマンド
 
@@ -94,19 +106,8 @@ run_full : full run
 clean:
 	-$(DEL) *.lst
 	-$(DEL) *.obj
+	-$(DEL) *.org
 	-$(DEL) haribote.img
 
 src_only : clean
 	-$(DEL) $(APP).hrb
-
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
-	$(CC) $(APP_CFLAGS) -c $< -o $@
-
-strcmp.obj: $(LIBC_DIR)/string/strcmp.c
-	$(CC) $(APP_CFLAGS) -c $< -o $@
-
-strncmp.obj: $(LIBC_DIR)/string/strncmp.c
-	$(CC) $(APP_CFLAGS) -c $< -o $@
-
-rand.obj: $(LIBC_DIR)/stdlib/rand.c
-	$(CC) $(APP_CFLAGS) -c $< -o $@
