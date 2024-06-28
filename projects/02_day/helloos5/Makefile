@@ -4,9 +4,11 @@ all: helloos.img
 # 编译 ipl.bin
 
 ipl.bin: ipl.nas
-	nasm -f bin -o ipl.bin ipl.nas
+	nasm -f bin -o ipl.bin ipl.nas -l ipl.lst
 
 # 生成 helloos.img
+
+img: helloos.img
 
 helloos.img: ipl.bin
 	dd if=ipl.bin of=helloos.img bs=512 count=1 conv=notrunc

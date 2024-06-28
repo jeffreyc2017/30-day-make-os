@@ -11,4 +11,5 @@
 
   - [Tools](tools.md)
 
+  - [02 day](02_day.md)
   - [04 day](04_day.md)

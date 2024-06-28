@@ -1,1 +1,1 @@
-nasm -f bin -o ipl.bin ipl.nas
+nasm -f bin -o ipl.bin ipl.nas -l ipl.lst
