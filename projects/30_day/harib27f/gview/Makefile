@@ -14,6 +14,14 @@ MAKEFONT = $(TOOLPATH)makefont.exe
 COPY     = cp
 DEL      = rm
 
+APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
+APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
+
+UTILS_FOLDER := ../../../../utils
+LIBC_DIR := $(UTILS_FOLDER)/libc
+
+APP_CFLAGS += -I $(LIBC_DIR)/include
+
 # デフォルト動作
 
 default :
@@ -21,7 +29,7 @@ default :
 
 # ファイル生成規則
 
-$(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib Makefile
+$(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
 haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
