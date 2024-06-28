@@ -185,7 +185,7 @@ walk.hrb: walk.obj apilib.lib
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-appstdio.obj: $(LIBC_DIR)/stdio/stdio.c
+appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: noodle.obj apilib.lib appstdio.obj
@@ -253,7 +253,7 @@ haribote.img: ipl10.bin haribote.sys \
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 strcmp.obj: $(LIBC_DIR)/string/strcmp.c

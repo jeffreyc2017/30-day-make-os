@@ -82,10 +82,10 @@ target-os:
 # t@CśŹKĽ
 
 ipl10.bin: ipl10.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
 
 asmhead.bin: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -93,20 +93,20 @@ hankaku.asm: hankaku.txt
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.obj: hankaku.asm
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T app.lds $^
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > haribote.sys
 	cat bootpack.hrb >> haribote.sys
 
 hello.hrb: hello.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
 
 hello2.hrb: hello2.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
 
 a.obj: a.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
@@ -127,7 +127,7 @@ hello4.hrb: a_nask.obj hello4.obj
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
 
 hello5.obj: hello5.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l $*.lst
 
 hello5.hrb: hello5.obj
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
@@ -183,7 +183,7 @@ walk.hrb: a_nask.obj walk.obj
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-appstdio.obj: $(LIBC_DIR)/stdio/stdio.c
+appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: a_nask.obj noodle.obj appstdio.obj
@@ -256,7 +256,7 @@ a_nask.obj: a_nask.nas
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 strcmp.obj: $(LIBC_DIR)/string/strcmp.c

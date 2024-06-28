@@ -183,7 +183,7 @@ walk.hrb: a_nask.obj walk.obj
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
-appstdio.obj: $(LIBC_DIR)/stdio/stdio.c
+appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: a_nask.obj noodle.obj appstdio.obj
@@ -256,7 +256,7 @@ a_nask.obj: a_nask.nas
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 strcmp.obj: $(LIBC_DIR)/string/strcmp.c

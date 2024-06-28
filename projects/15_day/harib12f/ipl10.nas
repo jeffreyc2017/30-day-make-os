@@ -78,7 +78,7 @@ next:
 ; “Ç‚ÝI‚í‚Á‚½‚Ì‚Åharibote.sys‚ðŽÀs‚¾I
 
 		MOV		[0x0ff0],CH		; IPL‚ª‚Ç‚±‚Ü‚Å“Ç‚ñ‚¾‚Ì‚©‚ðƒƒ‚
-		JMP		0xc400
+		JMP		0xc200
 
 error:
 		MOV		SI,msg

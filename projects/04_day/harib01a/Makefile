@@ -1,16 +1,44 @@
 # Compiler and linker options for x86 32-bit CPU
-ifndef GCCPREFIX
-GCCPREFIX := x86_64-linux-gnu-
+
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
+
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
 endif
 
+# Default GCCPREFIX for x86 PC
+GCCPREFIX :=
+
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
+	GCCPREFIX := i686-linux-gnu-
+endif
+
+NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
-NASM = nasm
 LD = $(GCCPREFIX)ld
 OBJCOPY = $(GCCPREFIX)objcopy
-CFLAGS = -ffreestanding -nostdlib -nostartfiles -Wall -fno-pie -m32
-LDFLAGS = -m elf_i386 -Ttext 0x1000 -z noexecstack
+CFLAGS = -fleading-underscore \
+		 -ffreestanding \
+		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
+		 -nostartfiles \
+		 -Wall \
+		 -fno-pie \
+		 -m32 \
+		 -mtune=i486 -march=i486 \
+		 -masm=intel
+
+LDFLAGS = -m elf_i386
 DEL = rm -f
+
+IMG = haribote.img
 
 # Default action
 all: haribote.img
@@ -18,42 +46,41 @@ all: haribote.img
 # File generation rules
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o ipl10.bin ipl10.nas -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l $*.lst
 
 asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o asmhead.bin asmhead.nas -l asmhead.lst
+	$(NASM) -f bin -o $@ $< -l $*.lst
 
 naskfunc.obj: naskfunc.nas
-	$(NASM) -f elf32 -o naskfunc.obj naskfunc.nas -l naskfunc.lst
+	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
 
-bootpack.elf: bootpack.c naskfunc.obj
-	$(CC) $(CFLAGS) -c bootpack.c -o bootpack.o
-	$(LD) $(LDFLAGS) -o bootpack.elf bootpack.o naskfunc.obj
+bootpack.hrb: bootpack.obj naskfunc.obj
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T app.lds $^
 
-bootpack.bin: bootpack.elf
-	$(OBJCOPY) -O binary bootpack.elf bootpack.bin
-
-haribote.sys: asmhead.bin bootpack.bin
-	cat $^ > $@
-
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 haribote.img: ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=haribote.img bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 haribote.img
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop haribote.img ./floppy
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
+	
+%.obj: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-run: haribote.img
-	qemu-system-i386 -drive file=haribote.img,format=raw,if=floppy
+img: haribote.img
+
+run: img
+	qemu-system-i386 -drive file=$(IMG),format=raw,if=floppy
 
 clean:
 	-$(DEL) *.bin
@@ -65,4 +92,4 @@ clean:
 	-$(DEL) haribote.sys
 
 src_only: clean
-	-$(DEL) haribote.img
+	-$(DEL) $(IMG)

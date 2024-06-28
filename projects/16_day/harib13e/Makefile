@@ -124,7 +124,7 @@ naskfunc.obj: naskfunc.nas
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # ƒRƒ}ƒ“ƒh

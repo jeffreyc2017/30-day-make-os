@@ -88,7 +88,7 @@ OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj int.obj
 # debug.obj: $(UTILS_FOLDER)/debug.c
 # 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 asmhead.bin: asmhead.nas

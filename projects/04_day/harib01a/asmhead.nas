@@ -13,7 +13,7 @@ SCRNX	EQU		0x0ff4			; X resolution
 SCRNY	EQU		0x0ff6			; Y resolution
 VRAM	EQU		0x0ff8			; Start address of graphic buffer
 
-		ORG		0xc400			; Where this program is loaded
+		ORG		0xc200			; Where this program is loaded
 
 ; Set the screen mode
 
@@ -110,12 +110,10 @@ pipelineflush:
 		MOV		ESI,[EBX+20]	; Source
 		ADD		ESI,EBX
 		MOV		EDI,[EBX+12]	; Destination
-;		CALL	memcpy
+		CALL	memcpy
 skip:
-;		MOV		ESP,[EBX+12]	; Initial value of stack
-;		JMP		DWORD 2*8:0x0000001b
-		MOV   ESP, 0xffff
-		JMP   DWORD 2*8:0x00000000
+		MOV		ESP,[EBX+12]	; Initial value of stack
+		JMP		DWORD 2*8:0x0000001b
 
 waitkbdout:
 		IN		 AL,0x64

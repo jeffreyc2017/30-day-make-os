@@ -192,7 +192,7 @@ a_nask.obj: a_nask.nas
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-stdio.obj: $(LIBC_DIR)/stdio/stdio.c
+stdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 strcmp.obj: $(LIBC_DIR)/string/strcmp.c
