@@ -1,10 +1,21 @@
+IS_RASPBERRY_PI := $(if $(RPI),1,0)
+UNAME := $(shell uname -a)
+RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
+
+ifeq ($(RASPBERRY_PI),raspberrypi)
+	IS_RASPBERRY_PI := 1
+else
+	IS_RASPBERRY_PI := 0
+endif
+
 # Default GCCPREFIX for x86 PC
 GCCPREFIX :=
 
-# Define GCCPREFIX for Raspberry Pi
-ifeq ($(filter RPI,$(MAKECMDGOALS)),RPI)
+# Set GCCPREFIX for Raspberry Pi
+ifeq ($(IS_RASPBERRY_PI),1)
 	GCCPREFIX := i686-linux-gnu-
 endif
+
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -51,27 +62,27 @@ bootpack.o: bootpack.c
 	# Compile the assembly code to an object file
 	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
-asmhead.elf: asmhead.nas
-	$(NASM) -f elf32 -o $@ $< -l asmhead.lst
+asmhead.bin: asmhead.nas
+	$(NASM) -f bin -o $@ $< -l asmhead.lst
 
-haribote.sys: asmhead.elf bootpack.o naskfunc.elf
-	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
+bootpack.hrb: bootpack.o naskfunc.elf
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
 $(IMG): ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $(IMG)
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop $(IMG) ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
 run: src_only $(IMG)
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive file=$(IMG),format=raw,if=floppy,index=0,media=disk

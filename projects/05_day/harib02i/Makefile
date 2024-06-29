@@ -53,6 +53,7 @@ IMG = haribote.img
 
 UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
+CFLAGS += -I$(UTILS_FOLDER)/libc/include
 
 all: target-os $(IMG)
 
@@ -81,32 +82,33 @@ hankaku.elf: hankaku.asm
 # 	# Compile the assembly code to an object file
 # 	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
+asmhead.bin: asmhead.nas
+	$(NASM) -f bin -o $@ $< -l asmhead.lst
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.c $(UTILS_FOLDER)/libc/src
 
-OBJ_FILES := bootpack.o debug.o
+OBJ_FILES := bootpack.o stdio.o
 
-asmhead.elf: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l asmhead.lst
+bootpack.hrb: bootpack.o naskfunc.elf hankaku.elf $(OBJ_FILES)
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-haribote.sys: asmhead.elf $(OBJ_FILES) naskfunc.elf hankaku.elf
-	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
 $(IMG): ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $(IMG)
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop $(IMG) ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
 run: src_only $(IMG)
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
