@@ -35,21 +35,15 @@ haribote.sys : asmhead.bin bootpack.bin
 
 haribote.img : ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=haribote.img bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 haribote.img
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=haribote.img bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	# dd if=haribote.sys of=haribote.img seek=33 bs=512 conv=notrunc
-
-	mkdir -p ./floppy
-	sudo mount -o loop haribote.img ./floppy
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
 run :haribote.img
 	qemu-system-x86_64 -drive file=haribote.img,format=raw,if=floppy

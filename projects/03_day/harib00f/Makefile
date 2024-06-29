@@ -15,23 +15,19 @@ haribote.sys : haribote.nas
 # Create disk image and write the boot sector
 haribote.img: ipl.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=haribote.img bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 haribote.img
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl.bin of=haribote.img bs=512 count=1 conv=notrunc
+	dd if=ipl.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop haribote.img ./floppy
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
 # Run the image with QEMU
 run: haribote.img
-	qemu-system-x86_64 -drive file=haribote.img,format=raw,if=floppy
+	qemu-system-x86_64 -drive file=$<,format=raw,if=floppy
 
 # Clean build artifacts
 clean :
