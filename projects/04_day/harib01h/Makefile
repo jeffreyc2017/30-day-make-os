@@ -1,10 +1,5 @@
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Define GCCPREFIX for Raspberry Pi
-ifeq ($(filter RPI,$(MAKECMDGOALS)),RPI)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -39,41 +34,39 @@ IMG = haribote.img
 all: $(IMG)
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
-naskfunc.elf: naskfunc.nas
-	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
+asmhead.bin: asmhead.nas
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
-bootpack.o: bootpack.c
-	# Compile bootpack.c to assembly with Intel syntax
-	$(CC) $(CFLAGS) -S $< -o bootpack.s
+naskfunc.obj: naskfunc.nas
+	$(NASM) -f elf32 -o $@ $< -l $(basename $@).lst
 
-	# Compile the assembly code to an object file
-	$(CC) $(CFLAGS) -c bootpack.s -o $@
+bootpack.hrb: bootpack.obj naskfunc.obj
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-asmhead.elf: asmhead.nas
-	$(NASM) -f elf32 -o $@ $< -l asmhead.lst
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
-haribote.sys: asmhead.elf bootpack.o naskfunc.elf
-	$(LD) $(LDFLAGS) --oformat binary $^ -o $@ -T haribote.ld
-
-$(IMG): ipl10.bin haribote.sys
+haribote.img: ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $(IMG)
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p ./floppy
-	sudo mount -o loop $(IMG) ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
-run: src_only $(IMG)
+%.obj: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+img: haribote.img
+
+run: src_only img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
 clean:
@@ -88,4 +81,4 @@ clean:
 src_only: clean
 	-$(DEL) $(IMG)
 
-.PHONY: all run clean src_only RPI
+.phony: all run clean src_only

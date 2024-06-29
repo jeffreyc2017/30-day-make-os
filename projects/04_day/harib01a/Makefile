@@ -1,22 +1,5 @@
-# Compiler and linker options for x86 32-bit CPU
-
-IS_RASPBERRY_PI := $(if $(RPI),1,0)
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-
-ifeq ($(RASPBERRY_PI),raspberrypi)
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -46,20 +29,21 @@ all: haribote.img
 # File generation rules
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o $@ $< -l $*.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o $@ $< -l $*.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 naskfunc.obj: naskfunc.nas
-	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: bootpack.obj naskfunc.obj
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T app.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
 	cat bootpack.hrb >> $@
+
 haribote.img: ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
@@ -73,7 +57,7 @@ haribote.img: ipl10.bin haribote.sys
 	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
 	mcopy -i $@ haribote.sys ::/
-	
+
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -88,6 +72,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 
