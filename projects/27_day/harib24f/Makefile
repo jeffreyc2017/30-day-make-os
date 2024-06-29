@@ -1,7 +1,7 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
 		mtask.obj window.obj console.obj file.obj
-OBJS_BOOTPACK += stdio.obj strcmp.obj strncmp.obj
+OBJS_BOOTPACK += stdio.obj string.obj
 
 OBJS_API =	api001.obj api002.obj api003.obj api004.obj api005.obj api006.obj \
 			api007.obj api008.obj api009.obj api010.obj api011.obj api012.obj \
@@ -252,18 +252,7 @@ haribote.img: ipl10.bin haribote.sys \
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-stdio.obj: $(LIBC_DIR)/src/stdio.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strcmp.obj: $(LIBC_DIR)/string/strcmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strncmp.obj: $(LIBC_DIR)/string/strncmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-rand.obj: $(LIBC_DIR)/stdlib/rand.c
-	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.c $(LIBC_DIR)/src
 
 # R}h
 

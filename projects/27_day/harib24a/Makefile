@@ -1,7 +1,7 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
 		mtask.obj window.obj console.obj file.obj
-OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
+OBJS_BOOTPACK +=  stdio.obj string.obj
 
 IS_RASPBERRY_PI := $(if $(RPI),1,0)
 UNAME := $(shell uname -a)
@@ -99,8 +99,8 @@ bootpack.hrb: $(OBJS_BOOTPACK)
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T app.lds $^
 
 haribote.sys: asmhead.bin bootpack.hrb
-	cat asmhead.bin > haribote.sys
-	cat bootpack.hrb >> haribote.sys
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
 hello.hrb: hello.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
@@ -255,18 +255,7 @@ a_nask.obj: a_nask.nas
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-stdio.obj: $(LIBC_DIR)/src/stdio.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strcmp.obj: $(LIBC_DIR)/string/strcmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strncmp.obj: $(LIBC_DIR)/string/strncmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-rand.obj: $(LIBC_DIR)/stdlib/rand.c
-	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.c $(LIBC_DIR)/src
 
 # R}h
 
