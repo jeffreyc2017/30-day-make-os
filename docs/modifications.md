@@ -43,10 +43,8 @@ entry:
 		MOV		EDI,[EBX+12]	; 転送先
 ;		CALL	memcpy
 skip:
-;		MOV		ESP,[EBX+12]	; スタック初期値
-;		JMP		DWORD 2*8:0x0000001b
-		MOV   ESP, 0xffff
-		JMP   DWORD 2*8:0x00000000
+		MOV		ESP,[EBX+12]	; スタック初期値
+		JMP		DWORD 2*8:0x0000001b
 ```
 
 ### unrecognized instructions

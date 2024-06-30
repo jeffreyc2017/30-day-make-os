@@ -51,3 +51,9 @@ DS——数据段寄存器（data segment）
 FS——没有名称（segment part 2）
 
 GS——没有名称（segment part 3）
+
+# Memory map
+
+[memory map](<https://wiki.osdev.org/Memory_Map_(x86)>)
+
+> 0x00007C00 0x00007DFF 512 bytes Your OS BootSector
