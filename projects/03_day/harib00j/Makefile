@@ -1,7 +1,10 @@
-# Compiler and linker options
-CC = aarch64-linux-gnu-gcc
-AS = aarch64-linux-gnu-as
-LD = aarch64-linux-gnu-ld
+UTILS_FOLDER := ../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
+
+NASM = nasm
+CC = $(GCCPREFIX)gcc
+AS = $(GCCPREFIX)as
+LD = $(GCCPREFIX)ld
 CFLAGS = -ffreestanding -nostdlib -nostartfiles
 LDFLAGS = -Ttext 0x1000
 DEL      = rm -f
@@ -12,10 +15,10 @@ all: haribote.img
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
 ipl10.bin : ipl10.nas
-	nasm -f bin -o ipl10.bin ipl10.nas
+	$(NASM) -f bin -o ipl10.bin ipl10.nas
 
 asmhead.bin : asmhead.nas
-	nasm -f bin -o asmhead.bin asmhead.nas
+	$(NASM) -f bin -o asmhead.bin asmhead.nas
 
 bootpack.bin : bootpack.c
 	# $(CC) $(CFLAGS) -c $< -o bootpack.o
@@ -25,7 +28,7 @@ bootpack.bin : bootpack.c
 	$(CC) $(CFLAGS) -c $< -o bootpack.bin
 
 naskfunc.obj : naskfunc.nas
-	nasm -f bin -o naskfunc.obj naskfunc.nas
+	$(NASM) -f bin -o naskfunc.obj naskfunc.nas
 
 haribote.sys : asmhead.bin bootpack.bin naskfunc.obj
 	cat $^ > $@

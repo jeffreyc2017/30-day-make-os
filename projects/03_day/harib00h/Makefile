@@ -1,3 +1,4 @@
+NASM     = nasm
 DEL      = rm -f
 
 # Default action
@@ -5,12 +6,10 @@ all: haribote.img
 
 # Build boot sector binary
 ipl10.bin: ipl10.nas
-	nasm -f bin -o ipl10.bin ipl10.nas
-
+	$(NASM) -f bin -o ipl10.bin ipl10.nas
 
 haribote.sys : haribote.nas
-	nasm -f bin -o haribote.sys haribote.nas
-
+	$(NASM) -f bin -o haribote.sys haribote.nas
 
 # Create disk image and write the boot sector
 haribote.img: ipl10.bin haribote.sys
