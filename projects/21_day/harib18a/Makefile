@@ -1,7 +1,7 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
 		mtask.obj window.obj console.obj file.obj
-OBJS_BOOTPACK +=  stdio.obj strcmp.obj strncmp.obj
+OBJS_BOOTPACK +=  stdio.obj string.obj
 
 IS_RASPBERRY_PI := $(if $(RPI),1,0)
 UNAME := $(shell uname -a)
@@ -90,8 +90,12 @@ hankaku.asm: hankaku.txt
 hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-kernel.sys: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o kernel.sys -T kernel.ld $^
+bootpack.hrb: $(OBJS_BOOTPACK)
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > haribote.sys
+	cat bootpack.hrb >> haribote.sys
 
 hello.hrb: hello.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello.lst
@@ -99,34 +103,20 @@ hello.hrb: hello.nas
 hello2.hrb: hello2.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello2.lst
 
-haribote.sys: asmhead.bin kernel.sys
-	cat asmhead.bin > haribote.sys
-	cat kernel.sys >> haribote.sys
-
 haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	# dd if=haribote.sys of=$@ seek=33 bs=512 conv=notrunc
-
-	# copy to 0x4400
-	mkdir -p ./floppy
-	sudo mount -o loop $@ ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo cp hello.hrb ./floppy
-	sudo cp hello2.hrb ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
-
 	# copy to 0x4200
-	# mcopy -i $@ haribote.sys ::/
-	# mcopy -i $@ hlt.bin ::/
+	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ hello.hrb ::/
+	mcopy -i $@ hello2.hrb ::/
 
 # ˆê”Ê‹K‘¥
 
@@ -136,15 +126,7 @@ naskfunc.obj: naskfunc.nas
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-stdio.obj: $(LIBC_DIR)/src/stdio.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strcmp.obj: $(LIBC_DIR)/string/strcmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-strncmp.obj: $(LIBC_DIR)/string/strncmp.c
-	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.c $(LIBC_DIR)/src
 
 # ƒRƒ}ƒ“ƒh
 
