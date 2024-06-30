@@ -7,9 +7,13 @@ INCPATH  = ../../z_tools/haribote/
 APILIBPATH   = ../apilib/
 HARIBOTEPATH = ../haribote/
 
+UTILS_FOLDER := ../../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
+
 MAKE     = make
 NASM     = nasm
-CC       = gcc
+CC       = $(GCCPREFIX)gcc
+LD       = $(GCCPREFIX)ld
 MAKEFONT = $(TOOLPATH)makefont.exe
 COPY     = cp
 DEL      = rm
@@ -17,7 +21,6 @@ DEL      = rm
 APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
 APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
 
-UTILS_FOLDER := ../../../../utils
 LIBC_DIR := $(UTILS_FOLDER)/libc
 
 APP_CFLAGS += -I $(LIBC_DIR)/include
