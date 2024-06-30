@@ -25,6 +25,8 @@ OBJDUMP = $(GCCPREFIX)objdump
 CFLAGS = -fleading-underscore \
 		 -ffreestanding \
 		 -fno-stack-protector \
+		 -nostdlib \
+		 -nostdinc \
 		 -nostartfiles \
 		 -Wall \
 		 -fno-pie \
@@ -49,7 +51,6 @@ IMG = haribote.img
 
 UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
-CFLAGS += -I$(UTILS_FOLDER)
 
 LIBC_DIR := $(UTILS_FOLDER)/libc
 CFLAGS += -I $(LIBC_DIR)/include
@@ -82,40 +83,29 @@ OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj int.obj
 
 %.obj: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-# debug.obj: $(UTILS_FOLDER)/debug.c
-# 	$(CC) $(CFLAGS) -c $< -o $@
-
-stdio.obj: $(LIBC_DIR)/src/stdio.c
-	$(CC) $(CFLAGS) -c $< -o $@
+vpath %.c $(UTILS_FOLDER)/libc/src
 
 asmhead.bin: asmhead.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
 
-kernel.sys: $(OBJ_FILES) naskfunc.elf hankaku.elf
-	$(LD) $(LDFLAGS) --oformat binary -o kernel.sys -T kernel.ld $^
+bootpack.hrb: naskfunc.elf hankaku.elf $(OBJ_FILES)
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-haribote.sys: asmhead.bin kernel.sys
-	cat asmhead.bin > haribote.sys
-	cat kernel.sys >> haribote.sys
+haribote.sys: asmhead.bin bootpack.hrb
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
 $(IMG): ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $(IMG)
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=ipl10.bin of=$(IMG) bs=512 count=1 conv=notrunc
+	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	# dd if=haribote.sys of=$(IMG) seek=33 bs=512 conv=notrunc
-
-	mkdir -p ./floppy
-	sudo mount -o loop $(IMG) ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	mcopy -i $@ haribote.sys ::/
 
 run: src_only $(IMG)
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
@@ -127,6 +117,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 	-$(DEL) hankaku.asm
