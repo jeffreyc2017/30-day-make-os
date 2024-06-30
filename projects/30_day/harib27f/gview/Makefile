@@ -16,7 +16,7 @@ CC       = $(GCCPREFIX)gcc
 LD       = $(GCCPREFIX)ld
 MAKEFONT = $(TOOLPATH)makefont.exe
 COPY     = cp
-DEL      = rm
+DEL      = rm -f
 
 APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
 APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
