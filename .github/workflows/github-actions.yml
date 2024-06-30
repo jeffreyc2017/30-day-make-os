@@ -17,6 +17,8 @@ jobs:
           ls ${{ github.workspace }}
       - name: Tools install
         run: sudo apt-get install mtools nasm
-      - name: Make tests
-        run: make -C ./projects/02_day/helloos5
+      - name: Make clean test
+        run: make check_clean
+      - name: Make test
+        run: make check
       - run: echo "🍏 This job's status is ${{ job.status }}."
