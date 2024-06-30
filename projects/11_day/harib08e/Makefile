@@ -89,30 +89,25 @@ hankaku.asm: hankaku.txt
 hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
 
-kernel.sys: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o kernel.sys -T kernel.ld $^
+bootpack.hrb: $(OBJS_BOOTPACK)
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-haribote.sys: asmhead.bin kernel.sys
+haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > haribote.sys
-	cat kernel.sys >> haribote.sys
+	cat bootpack.hrb >> haribote.sys
 
 haribote.img: ipl10.bin haribote.sys
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.fat -F 12 $@
+	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc
 
-	# dd if=haribote.sys of=$@ seek=33 bs=512 conv=notrunc
-
-	mkdir -p ./floppy
-	sudo mount -o loop $@ ./floppy -o fat=12
-	sudo cp haribote.sys ./floppy
-	sudo umount ./floppy
-	-$(DEL) -r ./floppy
+	# copy to 0x4200
+	mcopy -i $@ haribote.sys ::/
 
 # ˆê”Ê‹K‘¥
 
@@ -140,6 +135,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 	-$(DEL) hankaku.asm
