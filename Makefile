@@ -22,3 +22,5 @@ src_only: $(MAKEFILES)
 		echo "Running make in $$subdir"; \
 		$(MAKE) -C $$subdir src_only || exit 1; \
 	done
+
+	git restore "**/*.hrb" "**/*.lib" "**/*.sys" "**/*.bin" "**/*.img"
