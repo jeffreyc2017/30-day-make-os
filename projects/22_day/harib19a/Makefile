@@ -143,8 +143,6 @@ haribote.img: ipl10.bin haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
-	# mkfs.fat -F 12 $@
 	mkfs.msdos -F 12 $@
 
 	# Write the boot sector
