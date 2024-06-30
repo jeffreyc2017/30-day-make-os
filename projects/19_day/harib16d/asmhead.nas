@@ -166,12 +166,10 @@ pipelineflush:
 		MOV		ESI,[EBX+20]	; 転送元
 		ADD		ESI,EBX
 		MOV		EDI,[EBX+12]	; 転送先
-;		CALL	memcpy
+		CALL	memcpy
 skip:
-;		MOV		ESP,[EBX+12]	; スタック初期値
-;		JMP		DWORD 2*8:0x0000001b
-		MOV		ESP, 0xffff
-		JMP		DWORD 2*8:0x00000000
+		MOV		ESP,[EBX+12]	; スタック初期値
+		JMP		DWORD 2*8:0x0000001b
 
 waitkbdout:
 		IN		 AL,0x64
