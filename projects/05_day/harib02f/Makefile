@@ -1,22 +1,5 @@
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-ENV_RASPBERRY_PI := $(if $(RPI),1,0)
-
-ifdef RASPBERRY_PI
-	IS_RASPBERRY_PI := 1
-else ifdef ENV_RASPBERRY_PI
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -65,7 +48,7 @@ naskfunc.elf: naskfunc.nas
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
-	gcc -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	$(CC) -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
