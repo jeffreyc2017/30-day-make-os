@@ -3,29 +3,15 @@ OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		mtask.obj window.obj console.obj file.obj tek.obj
 OBJS_BOOTPACK +=  stdio.obj string.obj setjmp.obj
 
-IS_RASPBERRY_PI := $(if $(RPI),1,0)
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-
-ifeq ($(RASPBERRY_PI),raspberrypi)
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 MAKE = make
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
 LD = $(GCCPREFIX)ld
+AR = $(GCCPREFIX)AR
 OBJCOPY = $(GCCPREFIX)objcopy
 OBJDUMP = $(GCCPREFIX)objdump
 CFLAGS = -fleading-underscore \

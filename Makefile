@@ -1,32 +1,9 @@
 # The root directory to start the search
 ROOT_DIR := ./projects
 
-# The command to find Makefiles in sub-directories
-MAKEFILES := $(shell find $(ROOT_DIR) -name Makefile)
+.PHONY: all src_only git_restore
 
-.PHONY: all src_only
-all: $(MAKEFILES)
-	@echo "Found the following Makefiles:"
-	@echo "$(MAKEFILES)" | tr ' ' '\n'
-	@for makefile in $(MAKEFILES); do \
-		subdir=$$(dirname $$makefile); \
-		echo "Running make in $$subdir"; \
-		$(MAKE) -C $$subdir || exit 1; \
-	done
-
-src_only: $(MAKEFILES)
-	@echo "Found the following Makefiles:"
-	@echo "$(MAKEFILES)" | tr ' ' '\n'
-	@for makefile in $(MAKEFILES); do \
-		subdir=$$(dirname $$makefile); \
-		echo "Running make in $$subdir"; \
-		$(MAKE) -C $$subdir src_only || exit 1; \
-	done
-
-git_restore:
-	git restore "**/*.hrb" "**/*.lib" "**/*.sys" "**/*.bin" "**/*.img"
-
-check:
+all:
 	$(MAKE) -C $(ROOT_DIR)/02_day/helloos5
 
 	$(MAKE) -C $(ROOT_DIR)/03_day/harib00a
@@ -255,7 +232,7 @@ check:
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27e full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27f full
 
-check_clean:
+src_only:
 	$(MAKE) -C $(ROOT_DIR)/02_day/helloos5 src_only
 
 	$(MAKE) -C $(ROOT_DIR)/03_day/harib00a src_only
@@ -483,3 +460,6 @@ check_clean:
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27d src_only_full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27e src_only_full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27f src_only_full
+
+git_restore:
+	git restore "**/*.hrb" "**/*.lib" "**/*.sys" "**/*.bin" "**/*.img" "**/*.obj"

@@ -34,3 +34,11 @@ find . -type f -print0 | xargs -0 dos2unix
 
 [nasm](https://nasm.us)
 [MinGW-w64](https://www.mingw-w64.org/)
+
+## macOS
+
+[mtools](https://formulae.brew.sh/formula/mtools)
+
+```sh
+brew install i386-elf-binutils i386-elf-gcc
+```

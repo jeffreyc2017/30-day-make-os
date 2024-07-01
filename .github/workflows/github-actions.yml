@@ -18,7 +18,7 @@ jobs:
       - name: Tools install
         run: sudo apt-get install mtools nasm
       - name: Make clean test
-        run: make check_clean
+        run: make src_only
       - name: Make test
-        run: make check
+        run: make all
       - run: echo "🍏 This job's status is ${{ job.status }}."

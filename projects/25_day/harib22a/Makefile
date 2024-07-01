@@ -3,23 +3,8 @@ OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		mtask.obj window.obj console.obj file.obj
 OBJS_BOOTPACK +=  stdio.obj string.obj
 
-IS_RASPBERRY_PI := $(if $(RPI),1,0)
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-
-ifeq ($(RASPBERRY_PI),raspberrypi)
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -74,7 +59,7 @@ all: target-os $(IMG)
 target-os:
 	@echo "Running on Raspberry Pi? $(IS_RASPBERRY_PI)"
 	@echo "GCCPREFIX: $(GCCPREFIX)"
-	@echo $(UNAME)
+	@echo "UNAME: $(UNAME)"
 	@echo $(RASPBERRY_PI)
 	@echo $(RPI)
 	@echo $(IS_RASPBERRY_PI)
@@ -205,7 +190,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# Format the image as FAT12
 	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
 	# mkfs.fat -F 12 $@
-	mkfs.msdos -F 12 $@
+	# mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc

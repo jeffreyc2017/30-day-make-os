@@ -65,3 +65,7 @@ skip:
 ```sh
 ; [FILE "a_nask.nas"]				;
 ```
+
+### 30_day
+
+In 27d,e,f renamed bmp.nasm to bmp.nas so it can be found by the Makefile and compiled.

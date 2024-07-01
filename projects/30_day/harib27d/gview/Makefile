@@ -43,7 +43,7 @@ haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	# Format the image as FAT12
 	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
 	# mkfs.fat -F 12 $@
-	mkfs.msdos -F 12 $@
+	# mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=../haribote/ipl20.bin of=$@ bs=512 count=1 conv=notrunc
@@ -72,7 +72,7 @@ vpath %.c $(LIBC_DIR)/src
 run :
 	$(MAKE) haribote.img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
-	file=$<,format=raw,if=floppy,index=0,media=disk
+	file=haribote.img,format=raw,if=floppy,index=0,media=disk
 
 full :
 	$(MAKE) -C $(APILIBPATH)

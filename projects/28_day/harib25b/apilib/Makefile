@@ -4,28 +4,14 @@ OBJS_API =	api001.obj api002.obj api003.obj api004.obj api005.obj api006.obj \
 			api019.obj api020.obj \
 			alloca.obj
 
-IS_RASPBERRY_PI := $(if $(RPI),1,0)
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-
-ifeq ($(RASPBERRY_PI),raspberrypi)
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
 LD = $(GCCPREFIX)ld
+AR = $(GCCPREFIX)AR
 OBJCOPY = $(GCCPREFIX)objcopy
 OBJDUMP = $(GCCPREFIX)objdump
 CFLAGS = -fleading-underscore \
@@ -59,7 +45,6 @@ DEL = rm -f
 
 IMG = haribote.img
 
-UTILS_FOLDER := ../../../utils
 MAKEFONT := $(UTILS_FOLDER)/makefont
 CFLAGS += -I$(UTILS_FOLDER)
 
@@ -75,7 +60,7 @@ default: apilib.lib
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
 apilib.lib: $(OBJS_API)
-	ar rcs $@ $^
+	$(AR) rcs $@ $^
 
 # àÍî ãKë•
 

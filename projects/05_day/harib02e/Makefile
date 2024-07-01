@@ -48,7 +48,7 @@ naskfunc.elf: naskfunc.nas
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
-	$(CC) -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
+	gcc -o $(MAKEFONT) $(UTILS_FOLDER)/makefont.c
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
@@ -76,7 +76,7 @@ $(IMG): ipl10.bin haribote.sys
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	mkfs.msdos -F 12 $@
+	# mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=ipl10.bin of=$@ bs=512 count=1 conv=notrunc

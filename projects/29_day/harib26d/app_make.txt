@@ -5,23 +5,8 @@ INCPATH  = ../../z_tools/haribote/
 APILIBPATH   = ../apilib/
 HARIBOTEPATH = ../haribote/
 
-IS_RASPBERRY_PI := $(if $(RPI),1,0)
-UNAME := $(shell uname -a)
-RASPBERRY_PI := $(findstring raspberrypi,$(UNAME))
-
-ifeq ($(RASPBERRY_PI),raspberrypi)
-	IS_RASPBERRY_PI := 1
-else
-	IS_RASPBERRY_PI := 0
-endif
-
-# Default GCCPREFIX for x86 PC
-GCCPREFIX :=
-
-# Set GCCPREFIX for Raspberry Pi
-ifeq ($(IS_RASPBERRY_PI),1)
-	GCCPREFIX := i686-linux-gnu-
-endif
+UTILS_FOLDER := ../../../../utils
+include $(UTILS_FOLDER)/platform_config.mk
 
 NASM     = nasm
 CC       = $(GCCPREFIX)gcc
@@ -58,7 +43,7 @@ haribote.img: ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	# Format the image as FAT12
 	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
 	# mkfs.fat -F 12 $@
-	mkfs.msdos -F 12 $@
+	# mkfs.msdos -F 12 $@
 
 	# Write the boot sector
 	dd if=../haribote/ipl20.bin of=$@ bs=512 count=1 conv=notrunc
