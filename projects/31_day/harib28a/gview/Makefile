@@ -87,6 +87,7 @@ clean :
 	-$(DEL) *.lst
 	-$(DEL) gview.obj
 	-$(DEL) jpeg.obj
+	-$(DEL) bmp.obj
 	-$(DEL) *.map
 	-$(DEL) *.bim
 	-$(DEL) *.org
