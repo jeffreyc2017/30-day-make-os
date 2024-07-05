@@ -2,7 +2,8 @@
 
 ## 项目目标
 
-《30 天自制操作系统》书中的代码在 windows 环境下开发，并使用了作者定制的工具。本项目的目标是能够在 Linux 环境下（包括 x86 和 ARM CPU，即 Intel/AMD CPU 和 Raspberry Pi）也可以运行并验证书中代码，
+《30 天自制操作系统》书中的代码在 windows 环境下开发，并使用了作者定制的工具。本项目的目标是能够在 Linux / macOS 环境下（包括 x86 和 ARM CPU，即 Intel/AMD CPU 和 Raspberry Pi）也可以运行并验证书中代码。
+另外在 30 天的基础上，增加了 31 day，用于清理源代码中的各种编译告警，以及优化。
 
 ### 预置条件
 
@@ -57,7 +58,9 @@ sudo apt install hexedit
 
 ## 运行环境
 
-此项目在 RaspberryPi 5 和 x86 Ubuntu 上运行通过。
+此项目在 RaspberryPi 5, x86 Ubuntu 和 MacBookPro(Intel CPU) 上运行通过。
+
+> [!note]我目前没有 m1 CPU 的苹果设备，没有办法在其上编译验证。不过想来工具链是相同的，应该没有问题。
 
 ### RaspberryPi
 
@@ -103,11 +106,4 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 ├── docs Github pages 文件夹
 ├── projects 项目代码
 ├── README.md 说明（本文档）
-├── [resources](## 资源文件) 从网络搜集的 PDF 电子书和光盘映像
 └── utils 运行项目代码用到的辅助工具
-
-## 资源文件
-
-- [《30 天自制操作系统》](<resources/[30天自制操作系统].(川合秀实).周自恒等.扫描版.pdf>)
-- [《30 天自制操作系统》网页版](resources/30天自制操作系统.html)
-- [原书 CD 镜像包](resources/《30天自制操作系统》原版-30days-Origin.iso)

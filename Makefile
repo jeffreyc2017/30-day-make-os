@@ -232,6 +232,8 @@ all:
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27e full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27f full
 
+	$(MAKE) -C $(ROOT_DIR)/31_day/harib28a full
+
 src_only:
 	$(MAKE) -C $(ROOT_DIR)/02_day/helloos5 src_only
 
@@ -460,6 +462,8 @@ src_only:
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27d src_only_full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27e src_only_full
 	$(MAKE) -C $(ROOT_DIR)/30_day/harib27f src_only_full
+
+	$(MAKE) -C $(ROOT_DIR)/31_day/harib28a src_only_full
 
 git_restore:
 	git restore "**/*.hrb" "**/*.lib" "**/*.sys" "**/*.bin" "**/*.img" "**/*.obj"

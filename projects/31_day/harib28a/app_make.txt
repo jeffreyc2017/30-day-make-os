@@ -1,8 +1,6 @@
-APP      = gview
-STACK    = 4480k
-MALLOC   = 0k
+OBJS_APP = stdio.obj string.obj rand.obj setjmp.obj
 
-TOOLPATH =
+TOOLPATH = ../../z_tools/
 INCPATH  = ../../z_tools/haribote/
 APILIBPATH   = ../apilib/
 HARIBOTEPATH = ../haribote/
@@ -10,34 +8,36 @@ HARIBOTEPATH = ../haribote/
 UTILS_FOLDER := ../../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
-MAKE     = make
 NASM     = nasm
 CC       = $(GCCPREFIX)gcc
+AS       = $(GCCPREFIX)as
 LD       = $(GCCPREFIX)ld
-MAKEFONT = $(TOOLPATH)makefont.exe
+OBJCOPY  = $(GCCPREFIX)objcopy
+OBJDUMP  = $(GCCPREFIX)objdump
 COPY     = cp
-DEL      = rm
+DEL      = rm -f
 
 APP_CFLAGS 	= -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../
 APP_LDFLAGS = -m elf_i386 --oformat binary -e _HariMain
 
+UTILS_FOLDER := ../../../../utils
 LIBC_DIR := $(UTILS_FOLDER)/libc
 
 APP_CFLAGS += -I $(LIBC_DIR)/include
 
 # デフォルト動作
 
-default :
-	$(MAKE) $(APP).hrb
+default: $(APP).hrb
 
 # ファイル生成規則
 
-$(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
+$(APP).bim: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
 
-haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
-		Makefile
-# Create an empty 1.44MB floppy image
+
+haribote.img: ../haribote/ipl09.bin ../haribote/haribote.sys $(APP).hrb \
+		../app_make.txt
+	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
@@ -46,11 +46,11 @@ haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	# mkfs.msdos -F 12 $@
 
 	# Write the boot sector
-	dd if=../haribote/ipl20.bin of=$@ bs=512 count=1 conv=notrunc
+	dd if=../haribote/ipl09.bin of=$@ bs=512 count=1 conv=notrunc
 
+	# copy to 0x4200
 	mcopy -i $@ ../haribote/haribote.sys ::/
-	mcopy -i $@ $(APP).hrb ::/
-	mcopy -i $@ ../nihongo/nihongo.fnt ::/
+	mcopy -i $@ a.hrb ::/
 
 # 一般規則
 
@@ -58,40 +58,41 @@ haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 vpath %.c $(LIBC_DIR)/src
 
-%.obj : %.nas Makefile
+%.obj: %.S
+	$(CC) $(APP_CFLAGS) -c $< -o $@
+vpath %.S $(LIBC_DIR)/src
+
+#%.nas %.lst: %.c
+#	$(CC) $(APP_CFLAGS) -S -fverbose-asm -Wa,-adhln=$*.lst -o $*.nas $<
+
+#%.obj: %.nas
+#	cat $<
+#	$(AS) -c $< -o $@
+
+%.obj: %.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
 
-%.org : %.bim Makefile
+%.org : %.bim Makefile ../app_make.txt
 	mv $*.bim $*.org
 
-%.hrb : %.org Makefile
+%.hrb : %.org Makefile ../app_make.txt
 	$(COPY) $*.org $*.hrb
 
 # コマンド
 
-run :
-	$(MAKE) haribote.img
+run : haribote.img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
-	file=haribote.img,format=raw,if=floppy,index=0,media=disk
+	file=$<,format=raw,if=floppy,index=0,media=disk
 
-full :
-	$(MAKE) -C $(APILIBPATH)
-	$(MAKE) $(APP).hrb
+full : $(APP).hrb $(APILIBPATH)apilib.lib
 
-run_full :
-	$(MAKE) -C $(APILIBPATH)
-	$(MAKE) -C ../haribote
-	$(MAKE) run
+run_full : full run
 
-clean :
+clean:
 	-$(DEL) *.lst
-	-$(DEL) gview.obj
-	-$(DEL) jpeg.obj
-	-$(DEL) *.map
-	-$(DEL) *.bim
+	-$(DEL) *.obj
 	-$(DEL) *.org
 	-$(DEL) haribote.img
 
-src_only :
-	$(MAKE) clean
+src_only : clean
 	-$(DEL) $(APP).hrb
