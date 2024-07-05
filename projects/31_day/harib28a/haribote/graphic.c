@@ -176,7 +176,7 @@ void putfonts8_asc(char *vram, int xsize, int x, int y, char c, unsigned char *s
 	return;
 }
 
-void init_mouse_cursor8(char *mouse, char bc)
+void init_mouse_cursor8(char *mouse, char backgroud_color)
 /* マウスカーソルを準備（16x16） */
 {
 	static char cursor[16][16] = {
@@ -201,14 +201,19 @@ void init_mouse_cursor8(char *mouse, char bc)
 
 	for (y = 0; y < 16; y++) {
 		for (x = 0; x < 16; x++) {
-			if (cursor[y][x] == '*') {
-				mouse[y * 16 + x] = COL8_000000;
-			}
-			if (cursor[y][x] == 'O') {
-				mouse[y * 16 + x] = COL8_FFFFFF;
-			}
-			if (cursor[y][x] == '.') {
-				mouse[y * 16 + x] = bc;
+			int point = y * 16 + x;
+			switch (cursor[y][x]) {
+			case '*':
+				mouse[point] = COL8_000000;
+				break;
+
+			case 'O':
+				mouse[point] = COL8_FFFFFF;
+				break;
+
+			case '.':
+				mouse[point] = backgroud_color;
+				break;
 			}
 		}
 	}

@@ -5,7 +5,7 @@
   - [chapters](chapters.md)
 
   - [modifications](modifications.md)
-
+  - [memory map](memory_map.md)
   - [Q&A](Q&A.md)
   - [references](references.md)
 

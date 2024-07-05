@@ -42,9 +42,9 @@
 |        | 4       | harib02d |                                | 显示字符，本质上是写 VRAM                                                                                 |
 |        | 5       | harib02e |                                | 增加 ASCII 字符集，在 UTILS 下编写了一个 makefont 工具                                                    |
 |        | 6       | harib02f |                                | 显示字符串，5 基础上的扩展                                                                                |
-|        | 7       | harib02g |                                | sprintf，增加 C 语言实现。暂未能像书中使用标准头文件和库[^1]                                              |
+|        | 7       | harib02g |                                | sprintf，增加 C 语言实现。自定义标准头文件和库[^1]                                                        |
 |        | 8       | harib02h |                                | 显示鼠标箭头，本质是写 VRAM                                                                               |
-|        | 9       | harib02i |                                | GDT 与 IDT[^2]                                                                                            |
+|        | 9       | harib02i | GDT 与 IDT 的初始化            | GDT 与 IDT                                                                                                |
 | 06 day | 1       | harib03a | 分割源文件                     | 不用重点看。遗留问题：bootpack.obj 必须放在第二个链接位置[^3]                                             |
 |        | 2       | harib03b | 整理 Makefile                  | 不用重点看                                                                                                |
 |        | 3       | harib03c | 整理头文件                     | C 语言类内容，不用重点看                                                                                  |
@@ -219,8 +219,7 @@
 |        | 5       | harib27e |                                | 从此 ipl20->ipl09                                                                                         |
 |        | 6       | harib27f |                                |                                                                                                           |
 
-[^1]: Link with standard C library.
-[^2]: GDT issue.
+[^1]: 见 utils/libc.
 [^3]: The position of bootpack.obj when linking into haribote.sys.
 [^4]: Need to check what's the cause of this issue. kernel.ld?
 [^5]: JMP location.
