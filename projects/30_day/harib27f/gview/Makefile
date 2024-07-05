@@ -25,12 +25,12 @@ LIBC_DIR := $(UTILS_FOLDER)/libc
 
 APP_CFLAGS += -I $(LIBC_DIR)/include
 
-# ƒfƒtƒHƒ‹ƒg“®ì
+# ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
 
 default :
 	$(MAKE) $(APP).hrb
 
-# ƒtƒ@ƒCƒ‹¶¬‹K‘¥
+# ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½ï¿½
 
 $(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
 	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
@@ -52,7 +52,7 @@ haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	mcopy -i $@ $(APP).hrb ::/
 	mcopy -i $@ ../nihongo/nihongo.fnt ::/
 
-# ˆê”Ê‹K‘¥
+# ï¿½ï¿½Ê‹Kï¿½ï¿½
 
 %.obj: %.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
@@ -67,12 +67,12 @@ vpath %.c $(LIBC_DIR)/src
 %.hrb : %.org Makefile
 	$(COPY) $*.org $*.hrb
 
-# ƒRƒ}ƒ“ƒh
+# ï¿½Rï¿½}ï¿½ï¿½ï¿½h
 
 run :
 	$(MAKE) haribote.img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
-	file=$<,format=raw,if=floppy,index=0,media=disk
+	file=haribote.img,format=raw,if=floppy,index=0,media=disk
 
 full :
 	$(MAKE) -C $(APILIBPATH)
@@ -87,6 +87,7 @@ clean :
 	-$(DEL) *.lst
 	-$(DEL) gview.obj
 	-$(DEL) jpeg.obj
+	-$(DEL) bmp.obj
 	-$(DEL) *.map
 	-$(DEL) *.bim
 	-$(DEL) *.org
