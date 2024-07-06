@@ -42,3 +42,9 @@ find . -type f -print0 | xargs -0 dos2unix
 ```sh
 brew install i386-elf-binutils i386-elf-gcc
 ```
+
+## 像书中那样查看文件行数
+
+```sh
+wc *.h *.c -l
+```

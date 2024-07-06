@@ -88,10 +88,4 @@ A 1.44 MB floppy disk typically uses the FAT12 file system. FAT12 is specificall
 
 In some cases, writing directly to the image may suffice, especially if the filesystem structure is simple and does not require additional metadata or directory structures.
 
-### 像书中那样查看文件行数
-
-```sh
-wc *.h *.c -l
-```
-
 powered by [docsify](https://docsify.js.org/#/)
