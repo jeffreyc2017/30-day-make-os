@@ -7,6 +7,8 @@
 *.obj
 *.s
 *.hrb
+*.org
+*.lib
 
 makefont
 hankaku.asm
