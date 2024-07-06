@@ -19,7 +19,7 @@ haribote.img: ipl.bin haribote.sys
 
 	# Format the image as FAT12
 	# $(MAKEFS) -F 12 $@
-	# mformat -f 1440 -F i:$@
+	mformat -f 1440 -i $@ ::
 
 	# Write the boot sector
 	dd if=ipl.bin of=$@ bs=512 count=1 conv=notrunc
