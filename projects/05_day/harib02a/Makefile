@@ -35,10 +35,10 @@ IMG = haribote.img
 all: $(IMG)
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 naskfunc.elf: naskfunc.nas
-	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.o: bootpack.c
 	# Compile bootpack.c to assembly with Intel syntax
@@ -48,7 +48,7 @@ bootpack.o: bootpack.c
 	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
 asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o $@ $< -l asmhead.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: bootpack.o naskfunc.elf
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^

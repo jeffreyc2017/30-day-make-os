@@ -73,10 +73,10 @@ target-os:
 # t@CśŹKĽ
 
 ipl10.bin: ipl10.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basename $@).lst
 
 asmhead.bin: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l asmhead.lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basename $@).lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -84,14 +84,14 @@ hankaku.asm: hankaku.txt
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.obj: hankaku.asm
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
 haribote.sys: asmhead.bin bootpack.hrb
-	cat asmhead.bin > haribote.sys
-	cat bootpack.hrb >> haribote.sys
+	cat asmhead.bin > $@
+	cat bootpack.hrb >> $@
 
 apilib.lib: $(OBJS_API)
 	$(AR) rcs $@ $^

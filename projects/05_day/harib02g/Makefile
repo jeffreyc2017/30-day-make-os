@@ -42,10 +42,10 @@ target-os:
 	@echo "GCCPREFIX: $(GCCPREFIX)"
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 naskfunc.elf: naskfunc.nas
-	$(NASM) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) -f elf32 -o $@ $< -l $(basename $@).lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -63,7 +63,7 @@ bootpack.o: bootpack.c
 	$(CC) $(CFLAGS) -c bootpack.s -o $@
 
 asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o $@ $< -l asmhead.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 stdio.obj: $(UTILS_FOLDER)/libc/src/stdio.c
 	$(CC) $(CFLAGS) -c $< -o $@

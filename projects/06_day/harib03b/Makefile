@@ -48,10 +48,10 @@ target-os:
 	@echo "GCCPREFIX: $(GCCPREFIX)"
 
 ipl10.bin: ipl10.nas
-	$(NASM) -f bin -o $@ $< -l ipl10.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 
 naskfunc.elf: naskfunc.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -59,14 +59,7 @@ hankaku.asm: hankaku.txt
 	$(MAKEFONT) -i $< -o $@ -f 1
 
 hankaku.elf: hankaku.asm
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hankaku.lst
-
-# bootpack.o: bootpack.c
-# 	# Compile bootpack.c to assembly with Intel syntax
-# 	$(CC) $(CFLAGS) -S $< -o bootpack.s
-
-# 	# Compile the assembly code to an object file
-# 	$(CC) $(CFLAGS) -c bootpack.s -o $@
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj
 
@@ -75,7 +68,7 @@ OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj
 vpath %.c $(UTILS_FOLDER)/libc/src
 
 asmhead.bin: asmhead.nas
-	$(NASM) -f bin -o $@ $< -l asmhead.lst
+	$(NASM) -f bin -o $@ $< -l $(basename $@).lst
 bootpack.hrb: naskfunc.elf hankaku.elf $(OBJ_FILES)
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 

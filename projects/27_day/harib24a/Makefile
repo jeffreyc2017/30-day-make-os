@@ -233,7 +233,7 @@ haribote.img: ipl10.bin haribote.sys \
 # ęĘKĽ
 
 naskfunc.obj: naskfunc.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l naskfunc.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 a_nask.obj: a_nask.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l a_nask.lst
