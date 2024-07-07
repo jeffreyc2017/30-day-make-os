@@ -34,7 +34,7 @@ void inthandler21(int *esp)
 	io_out8(PIC0_OCW2, 0x61);	/* IRQ-01Žó•tŠ®—¹‚ðPIC‚É’Ê’m */
 	data = io_in8(PORT_KEYDAT);
 
-	sprintf(s, "%03X", data);
+	sprintf(s, "%02X", data);
 	boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 0, 16, 15, 31);
 	putfonts8_asc(binfo->vram, binfo->scrnx, 0, 16, COL8_FFFFFF, s);
 
