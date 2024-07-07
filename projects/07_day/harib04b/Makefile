@@ -71,7 +71,7 @@ OBJ_FILES := bootpack.obj stdio.obj dsctbl.obj graphic.obj int.obj
 vpath %.c $(UTILS_FOLDER)/libc/src
 
 asmhead.bin: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basenamem $@).lst
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: naskfunc.elf hankaku.elf $(OBJ_FILES)
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
