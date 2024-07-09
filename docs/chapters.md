@@ -67,8 +67,8 @@
 |        | 2       | harib06b | 内存容量检查(1)                | 运行结果为 32MB(这个结果是对的)，与书中 3072MB 不一致(书中问题是编译器优化导致的结果)。为与书中结果一致，需要设置 QEMU 内存为 32MB(QEMU 帮助文档指出默认内存为 128MiB)。 |
 |        | 3       | harib06c | 内存容量检查(2)                | 用汇编代码替换了 C 程序进行内存容量检查                                                                                                                                  |
 |        | 4       | harib06d | 挑战内存管理                   | 似乎作者的电脑内存是 128MB，这个数字在书中出现多次                                                                                                                       |
-| 10 day | 1       | harib07a | 内存管理(续)                   |                                                                                                                                                                          |
-|        | 2       | harib07b | 叠加处理                       | !运行黑屏(修改 bootpack.c 解决)[^4]                                                                                                                                      |
+| 10 day | 1       | harib07a | 内存管理(续)                   | 主要讲向上向下取整的方法，非重点                                                                                                                                         |
+|        | 2       | harib07b | 叠加处理                       |                                                                                                                                                                          |
 |        | 3       | harib07c | 提高叠加处理速度(1)            |                                                                                                                                                                          |
 |        | 4       | harib07d | 提高叠加处理速度(2)            |                                                                                                                                                                          |
 | 11 day | 1       | harib08a | 鼠标显示问题                   |                                                                                                                                                                          |
@@ -220,8 +220,6 @@
 |        | 6       | harib27f |                                |                                                                                                                                                                          |
 
 [^1]: 见 utils/libc.
-[^3]: The position of bootpack.obj when linking into haribote.sys.
-[^4]: Need to check what's the cause of this issue. kernel.ld?
 [^5]: JMP location.
 [^6]: 运行 a 后不返回提示符
 [^7]:
