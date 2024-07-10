@@ -76,6 +76,7 @@ void HariMain(void)
 
 	for (;;) {
 		count++;
+		sprintf(s, "%010d", count);
 
 		io_cli();
 		if (fifo8_status(&keyfifo) + fifo8_status(&mousefifo) + fifo8_status(&timerfifo) == 0) {
