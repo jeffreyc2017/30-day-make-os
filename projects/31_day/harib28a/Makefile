@@ -210,16 +210,16 @@ run: src_only img
 	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
 haribote.iso: haribote.img
-	hdiutil makehybrid -iso -joliet -o $@ $<
+	# hdiutil makehybrid -iso -joliet -o $@ $<
+	mkisofs -b $< -o $@ -input-charset utf8 $<
 
-run-cd: haribote.iso
-	qemu-system-i386 -boot d -cdrom haribote.iso -m 512
+run-cd: full haribote.iso
+	qemu-system-i386 -boot d -cdrom haribote.iso -m 32
 
-run-usb: src_only usb
-	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
-	file=$(IMG),format=raw,if=none,id=usbdrive \
-	-device usb-ehci,id=ehci -device usb-storage,drive=usbdrive
-
+run-usb: full haribote.iso
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std \
+	-drive file=haribote.iso,format=raw,if=none,id=usbdrive \
+	-device usb-ehci -device usb-storage,drive=usbdrive
 
 full:
 	$(MAKE) -C haribote
