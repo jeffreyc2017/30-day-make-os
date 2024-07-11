@@ -63,6 +63,79 @@ target-os:
 
 # t@CśŹKĽ
 
+usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
+		a/a.hrb hello3/hello3.hrb hello4/hello4.hrb hello5/hello5.hrb \
+		winhelo/winhelo.hrb winhelo2/winhelo2.hrb winhelo3/winhelo3.hrb \
+		star1/star1.hrb stars/stars.hrb stars2/stars2.hrb \
+		lines/lines.hrb walk/walk.hrb noodle/noodle.hrb \
+		beepdown/beepdown.hrb color/color.hrb color2/color2.hrb \
+		sosu/sosu.hrb sosu2/sosu2.hrb sosu3/sosu3.hrb \
+		type/type.hrb iroha/iroha.hrb chklang/chklang.hrb \
+		notrec/notrec.hrb bball/bball.hrb invader/invader.hrb \
+		calc/calc.hrb tview/tview.hrb mmlplay/mmlplay.hrb gview/gview.hrb
+	# Create an empty 1.44MB floppy image
+	dd if=/dev/zero of=$@ bs=1m count=64
+
+	# Format the image as FAT32
+	hdiutil attach -nomount $@
+	diskutil partitionDisk $@ 1 MBRFormat "MS-DOS FAT32" "HARIBOTE" 100%
+
+	# Mount the image
+	mkdir -p mnt
+	sudo mount -t msdos $@ mnt
+
+	# Write the boot sector (assuming ipl09usb.bin is the bootloader)
+	sudo dd if=haribote/ipl09usb.bin of=$@ bs=512 count=1
+
+	# Copy files to the USB drive image
+	sudo cp haribote/haribote.sys mnt/
+	sudo cp haribote/ipl09usb.nas mnt/
+	sudo cp Makefile mnt/
+	sudo cp a/a.hrb mnt/
+	sudo cp hello3/hello3.hrb mnt/
+	sudo cp hello4/hello4.hrb mnt/
+	sudo cp hello5/hello5.hrb mnt/
+	sudo cp winhelo/winhelo.hrb mnt/
+	sudo cp winhelo2/winhelo2.hrb mnt/
+	sudo cp winhelo3/winhelo3.hrb mnt/
+	sudo cp star1/star1.hrb mnt/
+	sudo cp stars/stars.hrb mnt/
+	sudo cp stars2/stars2.hrb mnt/
+	sudo cp lines/lines.hrb mnt/
+	sudo cp walk/walk.hrb mnt/
+	sudo cp noodle/noodle.hrb mnt/
+	sudo cp beepdown/beepdown.hrb mnt/
+	sudo cp color/color.hrb mnt/
+	sudo cp color2/color2.hrb mnt/
+	sudo cp sosu/sosu.hrb mnt/
+	sudo cp sosu2/sosu2.hrb mnt/
+	sudo cp sosu3/sosu3.hrb mnt/
+	sudo cp type/type.hrb mnt/
+	sudo cp iroha/iroha.hrb mnt/
+	sudo cp chklang/chklang.hrb mnt/
+	sudo cp euc.txt mnt/
+	sudo cp notrec/notrec.hrb mnt/
+	sudo cp bball/bball.hrb mnt/
+	sudo cp invader/invader.hrb mnt/
+	sudo cp calc/calc.hrb mnt/
+	sudo cp tview/tview.hrb mnt/
+	sudo cp mmlplay/mmlplay.hrb mnt/
+	sudo cp mmldata/kirakira.mml mnt/
+	sudo cp mmldata/fujisan.mml mnt/
+	sudo cp mmldata/daigo.mml mnt/
+	sudo cp mmldata/daiku.mml mnt/
+	sudo cp gview/gview.hrb mnt/
+	sudo cp pictdata/fujisan.jpg mnt/
+	sudo cp pictdata/night.bmp mnt/
+	sudo cp nihongo/nihongo.fnt mnt/
+
+	# Unmount the image
+	sudo umount mnt
+	rmdir mnt
+
+	# Detach the disk
+	hdiutil detach $@
+
 haribote.img: haribote/ipl09.bin haribote/haribote.sys \
 		a/a.hrb hello3/hello3.hrb hello4/hello4.hrb hello5/hello5.hrb \
 		winhelo/winhelo.hrb winhelo2/winhelo2.hrb winhelo3/winhelo3.hrb \
@@ -130,9 +203,23 @@ haribote.img: haribote/ipl09.bin haribote/haribote.sys \
 
 img: haribote.img
 
+usb: usb.img
+
 run: src_only img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
 	file=$(IMG),format=raw,if=floppy,index=0,media=disk
+
+haribote.iso: haribote.img
+	hdiutil makehybrid -iso -joliet -o $@ $<
+
+run-cd: haribote.iso
+	qemu-system-i386 -boot d -cdrom haribote.iso -m 512
+
+run-usb: src_only usb
+	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
+	file=$(IMG),format=raw,if=none,id=usbdrive \
+	-device usb-ehci,id=ehci -device usb-storage,drive=usbdrive
+
 
 full:
 	$(MAKE) -C haribote
@@ -168,7 +255,43 @@ full:
 	$(MAKE) -C gview
 	$(MAKE) haribote.img
 
+full-usb:
+	$(MAKE) -C haribote usb
+	$(MAKE) -C apilib
+	$(MAKE) -C a
+	$(MAKE) -C hello3
+	$(MAKE) -C hello4
+	$(MAKE) -C hello5
+	$(MAKE) -C winhelo
+	$(MAKE) -C winhelo2
+	$(MAKE) -C winhelo3
+	$(MAKE) -C star1
+	$(MAKE) -C stars
+	$(MAKE) -C stars2
+	$(MAKE) -C lines
+	$(MAKE) -C walk
+	$(MAKE) -C noodle
+	$(MAKE) -C beepdown
+	$(MAKE) -C color
+	$(MAKE) -C color2
+	$(MAKE) -C sosu
+	$(MAKE) -C sosu2
+	$(MAKE) -C sosu3
+	$(MAKE) -C type
+	$(MAKE) -C iroha
+	$(MAKE) -C chklang
+	$(MAKE) -C notrec
+	$(MAKE) -C bball
+	$(MAKE) -C invader
+	$(MAKE) -C calc
+	$(MAKE) -C tview
+	$(MAKE) -C mmlplay
+	$(MAKE) -C gview
+	$(MAKE) usb.img
+
 run_full: full run
+
+run-usb_full: full-usb run-usb
 
 run_os: haribote.img run
 

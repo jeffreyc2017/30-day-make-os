@@ -55,13 +55,9 @@ APP_CFLAGS += -I $(LIBC_DIR)/include
 
 default : ipl09.bin haribote.sys
 
+usb: ipl09usb.bin haribote.sys
+
 # ファイル生成規則
-
-ipl09.bin: ipl09.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basename $@).lst
-
-asmhead.bin: asmhead.nas
-	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $(basename $@).lst
 
 hankaku.asm: hankaku.txt
 	# Use the native gcc to build the tool on local machine.
@@ -80,6 +76,9 @@ haribote.sys: asmhead.bin bootpack.hrb
 
 # 一般規則
 
+%.bin: %.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
+
 %.obj: %.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
 
@@ -96,8 +95,7 @@ vpath %.S $(LIBC_DIR)/src
 # コマンド
 
 clean :
-	-$(DEL) asmhead.bin
-	-$(DEL) hankaku.bin
+	-$(DEL) *.bin
 	-$(DEL) *.lst
 	-$(DEL) *.obj
 	-$(DEL) *.map
@@ -105,5 +103,4 @@ clean :
 	-$(DEL) *.hrb
 
 src_only : clean
-	-$(DEL) ipl09.bin
 	-$(DEL) haribote.sys
