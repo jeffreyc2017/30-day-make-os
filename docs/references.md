@@ -8,5 +8,7 @@
 - https://github.com/sky5454/30daysMakeOS-Origin-ISOfiles
 - https://github.com/ghosind/HariboteOS
 - https://github.com/kamaboko123/30daysOS
+- https://github.com/tyfkda/haribote
+- https://github.com/yosswi414/HariboteOS_USB/blob/master/makefile
 
 - https://viterbi-web.usc.edu/~yudewei/main/sources/books/30天自制操作系统/

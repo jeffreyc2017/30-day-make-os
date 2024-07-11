@@ -74,67 +74,57 @@ usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
 		notrec/notrec.hrb bball/bball.hrb invader/invader.hrb \
 		calc/calc.hrb tview/tview.hrb mmlplay/mmlplay.hrb gview/gview.hrb
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$@ bs=1m count=64
+	dd if=/dev/zero of=$@ bs=512 count=2880
 
-	# Format the image as FAT32
-	hdiutil attach -nomount $@
-	diskutil partitionDisk $@ 1 MBRFormat "MS-DOS FAT32" "HARIBOTE" 100%
+	# Format the image as FAT12
+	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# mkfs.fat -F 12 $@
+	mformat -f 1440 -C -B haribote/ipl09usb.bin -i $@ ::
 
-	# Mount the image
-	mkdir -p mnt
-	sudo mount -t msdos $@ mnt
+	# Write the boot sector
+	# dd if=haribote/ipl09usb.bin of=$@ bs=512 count=1 conv=notrunc
 
-	# Write the boot sector (assuming ipl09usb.bin is the bootloader)
-	sudo dd if=haribote/ipl09usb.bin of=$@ bs=512 count=1
-
-	# Copy files to the USB drive image
-	sudo cp haribote/haribote.sys mnt/
-	sudo cp haribote/ipl09usb.nas mnt/
-	sudo cp Makefile mnt/
-	sudo cp a/a.hrb mnt/
-	sudo cp hello3/hello3.hrb mnt/
-	sudo cp hello4/hello4.hrb mnt/
-	sudo cp hello5/hello5.hrb mnt/
-	sudo cp winhelo/winhelo.hrb mnt/
-	sudo cp winhelo2/winhelo2.hrb mnt/
-	sudo cp winhelo3/winhelo3.hrb mnt/
-	sudo cp star1/star1.hrb mnt/
-	sudo cp stars/stars.hrb mnt/
-	sudo cp stars2/stars2.hrb mnt/
-	sudo cp lines/lines.hrb mnt/
-	sudo cp walk/walk.hrb mnt/
-	sudo cp noodle/noodle.hrb mnt/
-	sudo cp beepdown/beepdown.hrb mnt/
-	sudo cp color/color.hrb mnt/
-	sudo cp color2/color2.hrb mnt/
-	sudo cp sosu/sosu.hrb mnt/
-	sudo cp sosu2/sosu2.hrb mnt/
-	sudo cp sosu3/sosu3.hrb mnt/
-	sudo cp type/type.hrb mnt/
-	sudo cp iroha/iroha.hrb mnt/
-	sudo cp chklang/chklang.hrb mnt/
-	sudo cp euc.txt mnt/
-	sudo cp notrec/notrec.hrb mnt/
-	sudo cp bball/bball.hrb mnt/
-	sudo cp invader/invader.hrb mnt/
-	sudo cp calc/calc.hrb mnt/
-	sudo cp tview/tview.hrb mnt/
-	sudo cp mmlplay/mmlplay.hrb mnt/
-	sudo cp mmldata/kirakira.mml mnt/
-	sudo cp mmldata/fujisan.mml mnt/
-	sudo cp mmldata/daigo.mml mnt/
-	sudo cp mmldata/daiku.mml mnt/
-	sudo cp gview/gview.hrb mnt/
-	sudo cp pictdata/fujisan.jpg mnt/
-	sudo cp pictdata/night.bmp mnt/
-	sudo cp nihongo/nihongo.fnt mnt/
-
-	# Unmount the image
-	sudo umount mnt
-	rmdir mnt
-
-	# Detach the disk
-	hdiutil detach $@
+	# copy to 0x4200
+	mcopy -i $@ haribote/haribote.sys ::/
+	mcopy -i $@ haribote/ipl09usb.nas ::/
+	mcopy -i $@ Makefile ::/
+	mcopy -i $@ a/a.hrb ::/
+	mcopy -i $@ hello3/hello3.hrb ::/
+	mcopy -i $@ hello4/hello4.hrb ::/
+	mcopy -i $@ hello5/hello5.hrb ::/
+	mcopy -i $@ winhelo/winhelo.hrb ::/
+	mcopy -i $@ winhelo2/winhelo2.hrb ::/
+	mcopy -i $@ winhelo3/winhelo3.hrb ::/
+	mcopy -i $@ star1/star1.hrb ::/
+	mcopy -i $@ stars/stars.hrb ::/
+	mcopy -i $@ stars2/stars2.hrb ::/
+	mcopy -i $@ lines/lines.hrb ::/
+	mcopy -i $@ walk/walk.hrb ::/
+	mcopy -i $@ noodle/noodle.hrb ::/
+	mcopy -i $@ beepdown/beepdown.hrb ::/
+	mcopy -i $@ color/color.hrb ::/
+	mcopy -i $@ color2/color2.hrb ::/
+	mcopy -i $@ sosu/sosu.hrb ::/
+	mcopy -i $@ sosu2/sosu2.hrb ::/
+	mcopy -i $@ sosu3/sosu3.hrb ::/
+	mcopy -i $@ type/type.hrb ::/
+	mcopy -i $@ iroha/iroha.hrb ::/
+	mcopy -i $@ chklang/chklang.hrb ::/
+	mcopy -i $@ euc.txt ::/
+	mcopy -i $@ notrec/notrec.hrb ::/
+	mcopy -i $@ bball/bball.hrb ::/
+	mcopy -i $@ invader/invader.hrb ::/
+	mcopy -i $@ calc/calc.hrb ::/
+	mcopy -i $@ tview/tview.hrb ::/
+	mcopy -i $@ mmlplay/mmlplay.hrb ::/
+	mcopy -i $@ mmldata/kirakira.mml ::/
+	mcopy -i $@ mmldata/fujisan.mml ::/
+	mcopy -i $@ mmldata/daigo.mml ::/
+	mcopy -i $@ mmldata/daiku.mml ::/
+	mcopy -i $@ gview/gview.hrb ::/
+	mcopy -i $@ pictdata/fujisan.jpg ::/
+	mcopy -i $@ pictdata/night.bmp ::/
+	mcopy -i $@ nihongo/nihongo.fnt ::/
 
 haribote.img: haribote/ipl09.bin haribote/haribote.sys \
 		a/a.hrb hello3/hello3.hrb hello4/hello4.hrb hello5/hello5.hrb \
@@ -216,9 +206,9 @@ haribote.iso: haribote.img
 run-cd: full haribote.iso
 	qemu-system-i386 -boot d -cdrom haribote.iso -m 32
 
-run-usb: full haribote.iso
+run-usb: full-usb usb.img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std \
-	-drive file=haribote.iso,format=raw,if=none,id=usbdrive \
+	-drive file=usb.img,format=raw,if=none,id=usbdrive \
 	-device usb-ehci -device usb-storage,drive=usbdrive
 
 full:
