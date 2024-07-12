@@ -45,7 +45,7 @@ sudo apt install genisoimage
 [mtools](https://formulae.brew.sh/formula/mtools)
 
 ```sh
-brew install i386-elf-binutils i386-elf-gcc autoconf automake
+brew install i386-elf-binutils i386-elf-gcc autoconf automake dosfstools
 ```
 
 [Grub](https://wiki.osdev.org/GRUB#Installing_GRUB_2_on_OS_X)

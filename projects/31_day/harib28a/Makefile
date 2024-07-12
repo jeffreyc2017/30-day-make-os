@@ -299,6 +299,7 @@ clean:
 
 src_only: clean
 	-$(DEL) $(IMG)
+	-$(DEL) usb.img
 
 clean_full :
 	$(MAKE) -C haribote		clean
