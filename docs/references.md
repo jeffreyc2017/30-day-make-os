@@ -10,5 +10,6 @@
 - https://github.com/kamaboko123/30daysOS
 - https://github.com/tyfkda/haribote
 - https://github.com/yosswi414/HariboteOS_USB/blob/master/makefile
+- https://github.com/d0iasm/haribote-os
 
 - https://viterbi-web.usc.edu/~yudewei/main/sources/books/30天自制操作系统/
