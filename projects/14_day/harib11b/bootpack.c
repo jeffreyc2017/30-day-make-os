@@ -77,6 +77,7 @@ void HariMain(void)
 
 	for (;;) {
 		count++;
+		sprintf(s, "%010d", count);
 
 		io_cli();
 		if (fifo32_status(&fifo) == 0) {
