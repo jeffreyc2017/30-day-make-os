@@ -29,7 +29,9 @@ to
 RESB	0x7dfe-0x7c00-($-$$)
 ```
 
-## 13_day harib10c ~
+## 13_day harib10c ~ 14_day harib11e
+
+运行起来显示很卡。规避方法是在 count++语句下加一行: sprintf(s, "%010d", count); 如此可取得与书中描述一致的效果。
 
 ```sh
 	for (;;) {
