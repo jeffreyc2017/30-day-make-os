@@ -116,7 +116,7 @@ haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb a.hrb hello3.hrb
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 	mcopy -i $@ a.hrb ::/
@@ -138,7 +138,7 @@ vpath %.c $(LIBC_DIR)/src
 
 img: haribote.img
 
-run: src_only img
+run: img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
 	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 

@@ -110,7 +110,7 @@ stdio.obj: $(LIBC_DIR)/src/stdio.c
 
 img: haribote.img
 
-run: src_only img
+run: img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std -drive \
 	file=$(IMG),format=raw,if=floppy,index=0,media=disk
 
