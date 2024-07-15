@@ -6,6 +6,8 @@ OBJS_BOOTPACK +=  stdio.obj string.obj
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -79,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T $(HRB_LDS) -e STACK_SIZE=3136*1024 $^
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -93,33 +95,33 @@ hello2.hrb: hello2.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T $(HRB_LDS)
 
 hello4.hrb: a_nask.obj hello4.c
 	$(CC) $(APP_CFLAGS) -c hello4.c -o hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
 
 hello5.hrb: hello5.nas
 	# In order to use the app.lds for linking, split the nasm command into two steps commands.
 	# $(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello5.lst
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
-	$(LD) $(APP_LDFLAGS) --oformat binary hello5.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary hello5.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
 
 bug1.hrb: a_nask.obj bug1.c
 	$(CC) $(APP_CFLAGS) -c bug1.c -o bug1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug1.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary bug1.obj a_nask.obj -o $@ -T $(HRB_LDS)
 
 bug2.hrb: bug2.c
 	$(CC) $(APP_CFLAGS) -c bug2.c -o bug2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug2.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary bug2.obj -o $@ -T $(HRB_LDS)
 
 bug3.hrb: a_nask.obj bug3.c
 	$(CC) $(APP_CFLAGS) -c bug3.c -o bug3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug3.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary bug3.obj a_nask.obj -o $@ -T $(HRB_LDS)
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb bug1.hrb bug2.hrb bug3.hrb \

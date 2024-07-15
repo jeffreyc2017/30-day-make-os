@@ -6,6 +6,7 @@
 
   - [modifications](modifications.md)
   - [memory map](memory_map.md)
+  - [HRB file format](hrb_format.md)
   - [Q&A](Q&A.md)
   - [references](references.md)
 
