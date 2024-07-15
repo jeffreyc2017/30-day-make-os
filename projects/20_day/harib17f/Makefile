@@ -76,7 +76,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -97,6 +97,8 @@ haribote.img: ipl10.bin haribote.sys hello.hrb
 
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ ipl10.nas ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 
 # ˆê”Ê‹K‘¥

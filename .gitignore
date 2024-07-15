@@ -9,6 +9,7 @@
 *.hrb
 *.org
 *.lib
+*.map
 
 makefont
 hankaku.asm

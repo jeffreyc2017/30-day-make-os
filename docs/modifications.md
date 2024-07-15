@@ -76,6 +76,22 @@ to
 		MOV		[VRAM],EAX
 ```
 
+## 20_day harib17b/c/d
+
+Due to the different develop environment and tools, the function addresses are different.
+In the bootpack.map the
+
+```sh
+                0x00000ca4                _asm_cons_putchar
+```
+
+so changed the hlt.nas:
+
+```sh
+;		CALL    2*8:0xbe3
+		CALL    2*8:0xca4
+```
+
 ## 30_day
 
 In 27d,e,f renamed bmp.nasm to bmp.nas so it can be found by the Makefile and compiled.

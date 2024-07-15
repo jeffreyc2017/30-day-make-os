@@ -75,17 +75,17 @@ hankaku.asm: hankaku.txt
 hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
-bootpack.hrb: $(OBJS_BOOTPACK) hlt.obj
+bootpack.hrb: $(OBJS_BOOTPACK)
 	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
 
-hlt.obj: hlt.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l hlt.lst
+hlt.hrb: hlt.nas
+	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hlt.lst
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
 	cat bootpack.hrb >> $@
 
-haribote.img: ipl10.bin haribote.sys
+haribote.img: ipl10.bin haribote.sys hlt.hrb
 	# Create an empty 1.44MB floppy image
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
@@ -97,6 +97,9 @@ haribote.img: ipl10.bin haribote.sys
 
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ ipl10.nas ::/
+	mcopy -i $@ make.bat ::/
+	mcopy -i $@ hlt.hrb ::/
 
 # ˆê”Ê‹K‘¥
 

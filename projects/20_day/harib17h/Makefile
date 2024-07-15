@@ -100,6 +100,8 @@ haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb
 
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ ipl10.nas ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 
