@@ -96,15 +96,15 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T app.lds
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T app.lds
 
 crack1.hrb: crack1.c
 	$(CC) $(APP_CFLAGS) -c crack1.c -o crack1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@
+	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@ -T app.lds
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb crack1.hrb
@@ -120,7 +120,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 	mcopy -i $@ a.hrb ::/
