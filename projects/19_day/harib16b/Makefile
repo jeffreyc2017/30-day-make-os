@@ -94,6 +94,8 @@ haribote.img: ipl10.bin haribote.sys
 
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
+	mcopy -i $@ ipl10.nas ::/
+	mcopy -i $@ make.bat ::/
 
 # ˆê”Ê‹K‘¥
 
