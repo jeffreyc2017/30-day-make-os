@@ -96,11 +96,11 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T app.lds
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T app.lds
 
 
 haribote.img: ipl10.bin haribote.sys hello.hrb hello2.hrb a.hrb hello3.hrb
