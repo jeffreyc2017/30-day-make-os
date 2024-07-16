@@ -81,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T $(HRB_LDS) -e STACK_SIZE=3136*1024 $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ -T $(HRB_LDS) -e STACK_SIZE=3136*1024 $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
