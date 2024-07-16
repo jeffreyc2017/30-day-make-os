@@ -11,6 +11,8 @@ OBJS_API =	api001.obj api002.obj api003.obj api004.obj api005.obj api006.obj \
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -87,7 +89,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -100,73 +102,84 @@ a.obj: a.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 a.hrb: a.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 hello3.obj: hello3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello3.hrb: hello3.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 hello4.obj: hello4.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello4.hrb: hello4.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 hello5.obj: hello5.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
 hello5.hrb: hello5.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo.hrb: winhelo.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 winhelo2.obj: winhelo2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo2.hrb: winhelo2.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 winhelo3.obj: winhelo3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo3.hrb: winhelo3.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 star1.obj: star1.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 star1.hrb: star1.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 stars.obj: stars.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars.hrb: stars.obj apilib.lib rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 stars2.obj: stars2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars2.hrb: stars2.obj apilib.lib rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 lines.obj: lines.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 lines.hrb: lines.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 walk.obj: walk.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 walk.hrb: walk.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
@@ -175,25 +188,29 @@ appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: noodle.obj apilib.lib appstdio.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 beepdown.obj: beepdown.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 beepdown.hrb: beepdown.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 color.obj: color.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 color.hrb: color.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 color2.obj: color2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 color2.hrb: color2.obj apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 haribote.img: ipl10.bin haribote.sys \
 		a.hrb hello3.hrb hello4.hrb hello5.hrb winhelo.hrb winhelo2.hrb \
@@ -203,7 +220,7 @@ haribote.img: ipl10.bin haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 
@@ -213,7 +230,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ a.hrb ::/
 	mcopy -i $@ hello3.hrb ::/
 	mcopy -i $@ hello4.hrb ::/
@@ -254,6 +271,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

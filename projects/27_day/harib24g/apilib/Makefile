@@ -6,6 +6,8 @@ OBJS_API =	api001.obj api002.obj api003.obj api004.obj api005.obj api006.obj \
 UTILS_FOLDER := ../../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as

@@ -77,7 +77,7 @@ usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -C -B haribote/ipl09usb.bin -i $@ ::
 
@@ -87,7 +87,7 @@ usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote/haribote.sys ::/
 	mcopy -i $@ haribote/ipl09usb.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ a/a.hrb ::/
 	mcopy -i $@ hello3/hello3.hrb ::/
 	mcopy -i $@ hello4/hello4.hrb ::/
@@ -140,7 +140,7 @@ haribote.img: haribote/ipl09.bin haribote/haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 
@@ -150,7 +150,7 @@ haribote.img: haribote/ipl09.bin haribote/haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote/haribote.sys ::/
 	mcopy -i $@ haribote/ipl09.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ a/a.hrb ::/
 	mcopy -i $@ hello3/hello3.hrb ::/
 	mcopy -i $@ hello4/hello4.hrb ::/
@@ -291,6 +291,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

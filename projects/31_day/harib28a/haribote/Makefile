@@ -6,6 +6,8 @@ OBJS_BOOTPACK +=  stdio.obj string.obj setjmp.obj
 UTILS_FOLDER := ../../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 MAKE = make
 NASM = nasm
 CC = $(GCCPREFIX)gcc
@@ -68,7 +70,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@

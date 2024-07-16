@@ -10,6 +10,8 @@ HARIBOTEPATH = ../haribote/
 UTILS_FOLDER := ../../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 MAKE     = make
 NASM     = nasm
 CC       = $(GCCPREFIX)gcc
@@ -33,7 +35,7 @@ default :
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
 $(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T ../app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
 
 haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 		Makefile
@@ -41,7 +43,7 @@ haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 

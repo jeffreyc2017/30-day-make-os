@@ -6,6 +6,8 @@ OBJS_BOOTPACK +=  stdio.obj string.obj
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -79,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -123,7 +125,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 	mcopy -i $@ a.hrb ::/
@@ -157,6 +159,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

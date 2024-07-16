@@ -6,6 +6,8 @@ OBJS_BOOTPACK +=  stdio.obj string.obj
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -79,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -96,15 +98,18 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T $(HRB_LDS)
+
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T $(HRB_LDS)
+
 
 crack1.hrb: crack1.c
 	$(CC) $(APP_CFLAGS) -c crack1.c -o crack1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@ -T $(HRB_LDS)
+
 
 crack2.hrb: crack2.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l crack2.lst
@@ -157,6 +162,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

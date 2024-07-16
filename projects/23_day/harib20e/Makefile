@@ -6,6 +6,8 @@ OBJS_BOOTPACK +=  stdio.obj string.obj
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -79,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -95,67 +97,68 @@ a.obj: a.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 a.hrb: a_nask.obj a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello3.obj: hello3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello3.hrb: a_nask.obj hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
 
 hello4.obj: hello4.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello4.hrb: a_nask.obj hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello5.obj: hello5.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
 hello5.hrb: hello5.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo.hrb: a_nask.obj winhelo.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo2.obj: winhelo2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo2.hrb: a_nask.obj winhelo2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 winhelo3.obj: winhelo3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo3.hrb: a_nask.obj winhelo3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 star1.obj: star1.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 star1.hrb: a_nask.obj star1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
 
 stars.obj: stars.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars.hrb: a_nask.obj stars.obj rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
 
 stars2.obj: stars2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars2.hrb: a_nask.obj stars2.obj rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
 
 lines.obj: lines.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 lines.hrb: a_nask.obj lines.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T app.lds
+	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \
@@ -165,7 +168,7 @@ haribote.img: ipl10.bin haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 
@@ -175,7 +178,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 	mcopy -i $@ a.hrb ::/
@@ -216,6 +219,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

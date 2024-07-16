@@ -1,6 +1,8 @@
 UTILS_FOLDER := ../../../utils
 include $(UTILS_FOLDER)/platform_config.mk
 
+HRB_LDS := $(UTILS_FOLDER)/linker_script/hrb.lds
+
 NASM = nasm
 CC = $(GCCPREFIX)gcc
 AS = $(GCCPREFIX)as
@@ -38,7 +40,7 @@ naskfunc.obj: naskfunc.nas
 	$(NASM) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: bootpack.obj naskfunc.obj
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T bootpack.lds $^
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -49,7 +51,7 @@ haribote.img: ipl10.bin haribote.sys
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 
@@ -72,6 +74,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys

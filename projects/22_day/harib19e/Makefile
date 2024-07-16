@@ -81,7 +81,7 @@ hankaku.obj: hankaku.asm
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 bootpack.hrb: $(OBJS_BOOTPACK)
-	$(LD) $(LDFLAGS) --oformat binary -o $@ -T $(HRB_LDS) -e STACK_SIZE=3136*1024 $^ -Map $(basename $@).map
+	$(LD) $(LDFLAGS) --oformat binary -o $@ --defsym=STACK_SIZE=3136*1024 -T $(HRB_LDS) $^ -Map $(basename $@).map
 
 haribote.sys: asmhead.bin bootpack.hrb
 	cat asmhead.bin > $@
@@ -95,7 +95,7 @@ hello2.hrb: hello2.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
+	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
@@ -103,13 +103,13 @@ hello3.hrb: a_nask.obj hello3.c
 
 hello4.hrb: a_nask.obj hello4.c
 	$(CC) $(APP_CFLAGS) -c hello4.c -o hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
+	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello5.hrb: hello5.nas
 	# In order to use the app.lds for linking, split the nasm command into two steps commands.
 	# $(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l hello5.lst
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
-	$(LD) $(APP_LDFLAGS) --oformat binary hello5.obj -o $@ -T $(HRB_LDS) -e STACK_SIZE=1024
+	$(LD) $(APP_LDFLAGS) --oformat binary hello5.obj -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 bug1.hrb: a_nask.obj bug1.c
 	$(CC) $(APP_CFLAGS) -c bug1.c -o bug1.obj
@@ -130,7 +130,7 @@ haribote.img: ipl10.bin haribote.sys \
 	dd if=/dev/zero of=$@ bs=512 count=2880
 
 	# Format the image as FAT12
-	# This command causes the file starts from 0x4400. Use makfs.msdos instead.
+	# This command causes the file starts from 0x4400. Use mkfs.msdos instead.
 	# mkfs.fat -F 12 $@
 	mformat -f 1440 -i $@ ::
 
@@ -140,7 +140,7 @@ haribote.img: ipl10.bin haribote.sys \
 	# copy to 0x4200
 	mcopy -i $@ haribote.sys ::/
 	mcopy -i $@ ipl10.nas ::/
-	mcopy -i $@ Makefile ::/
+	mcopy -i $@ make.bat ::/
 	mcopy -i $@ hello.hrb ::/
 	mcopy -i $@ hello2.hrb ::/
 	mcopy -i $@ a.hrb ::/
@@ -177,6 +177,7 @@ clean:
 	-$(DEL) *.elf
 	-$(DEL) *.o
 	-$(DEL) *.obj
+	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
