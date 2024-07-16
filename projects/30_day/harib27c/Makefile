@@ -176,10 +176,8 @@ clean:
 	-$(DEL) *.obj
 	-$(DEL) *.map
 	-$(DEL) *.hrb
-	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 	-$(DEL) hankaku.asm
-	-$(DEL) kernel.sys
 
 src_only: clean
 	-$(DEL) $(IMG)

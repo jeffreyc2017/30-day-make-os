@@ -133,19 +133,19 @@ winhelo3.obj: winhelo3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo3.hrb: a_nask.obj winhelo3.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=41*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 star1.obj: star1.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 star1.hrb: a_nask.obj star1.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=48*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 stars.obj: stars.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars.hrb: a_nask.obj stars.obj rand.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=48*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 stars2.obj: stars2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
@@ -227,10 +227,8 @@ clean:
 	-$(DEL) *.obj
 	-$(DEL) *.map
 	-$(DEL) *.hrb
-	-$(DEL) bootpack.s
 	-$(DEL) haribote.sys
 	-$(DEL) hankaku.asm
-	-$(DEL) kernel.sys
 
 src_only: clean
 	-$(DEL) $(IMG)
