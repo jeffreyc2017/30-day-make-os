@@ -151,7 +151,7 @@ stars2.obj: stars2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars2.hrb: a_nask.obj stars2.obj rand.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=48*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 lines.obj: lines.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
