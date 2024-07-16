@@ -125,7 +125,7 @@ hello5.obj: hello5.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
 hello5.hrb: hello5.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
