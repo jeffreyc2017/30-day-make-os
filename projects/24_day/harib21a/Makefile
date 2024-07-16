@@ -157,7 +157,7 @@ lines.obj: lines.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 lines.hrb: a_nask.obj lines.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=49*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 walk.obj: walk.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
