@@ -98,27 +98,27 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) a.obj a_nask.obj -o $@
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) hello3.obj a_nask.obj -o $@
 
 hello4.hrb: a_nask.obj hello4.c
 	$(CC) $(APP_CFLAGS) -c hello4.c -o hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello4.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) hello4.obj a_nask.obj -o $@
 
 bug1.hrb: a_nask.obj bug1.c
 	$(CC) $(APP_CFLAGS) -c bug1.c -o bug1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug1.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) bug1.obj a_nask.obj -o $@
 
 bug2.hrb: bug2.c
 	$(CC) $(APP_CFLAGS) -c bug2.c -o bug2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug2.obj -o $@
+	$(LD) $(APP_LDFLAGS) bug2.obj -o $@
 
 bug3.hrb: a_nask.obj bug3.c
 	$(CC) $(APP_CFLAGS) -c bug3.c -o bug3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary bug3.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) bug3.obj a_nask.obj -o $@
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb bug1.hrb bug2.hrb bug3.hrb \

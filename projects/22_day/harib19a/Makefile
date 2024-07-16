@@ -98,15 +98,15 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) a.obj a_nask.obj -o $@
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) hello3.obj a_nask.obj -o $@
 
 crack1.hrb: crack1.c a_nask.obj
 	$(CC) $(APP_CFLAGS) -c crack1.c -o crack1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj a_nask.obj -o $@
+	$(LD) $(APP_LDFLAGS) crack1.obj a_nask.obj -o $@
 
 crack2.hrb: crack2.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l crack2.lst

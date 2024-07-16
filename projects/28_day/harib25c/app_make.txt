@@ -34,7 +34,7 @@ default: $(APP).hrb
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
 $(APP).bim: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 
 haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \

@@ -35,7 +35,7 @@ default :
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
 $(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 haribote.img : ../haribote/ipl20.bin ../haribote/haribote.sys $(APP).hrb \
 		Makefile

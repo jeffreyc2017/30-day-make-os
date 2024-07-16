@@ -97,37 +97,37 @@ a.obj: a.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 a.hrb: a_nask.obj a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello3.obj: hello3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello3.hrb: a_nask.obj hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 hello4.obj: hello4.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello4.hrb: a_nask.obj hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello5.obj: hello5.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
 hello5.hrb: hello5.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo.hrb: a_nask.obj winhelo.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo2.obj: winhelo2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo2.hrb: a_nask.obj winhelo2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map -e STACK_SIZE=1024
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map -e STACK_SIZE=1024
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \

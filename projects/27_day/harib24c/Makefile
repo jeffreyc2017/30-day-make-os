@@ -99,73 +99,73 @@ a.obj: a.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 a.hrb: a_nask.obj a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello3.obj: hello3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello3.hrb: a_nask.obj hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 hello4.obj: hello4.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 hello4.hrb: a_nask.obj hello4.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 hello5.obj: hello5.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o hello5.obj $< -l hello5.lst
 
 hello5.hrb: hello5.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo.obj: winhelo.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo.hrb: a_nask.obj winhelo.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS)
 
 winhelo2.obj: winhelo2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo2.hrb: a_nask.obj winhelo2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 winhelo3.obj: winhelo3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo3.hrb: a_nask.obj winhelo3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 star1.obj: star1.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 star1.hrb: a_nask.obj star1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 stars.obj: stars.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars.hrb: a_nask.obj stars.obj rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 stars2.obj: stars2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars2.hrb: a_nask.obj stars2.obj rand.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 lines.obj: lines.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 lines.hrb: a_nask.obj lines.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 walk.obj: walk.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 walk.hrb: a_nask.obj walk.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
@@ -174,35 +174,35 @@ appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: a_nask.obj noodle.obj appstdio.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 
 beepdown.obj: beepdown.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 beepdown.hrb: a_nask.obj beepdown.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 
 color.obj: color.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 color.hrb: a_nask.obj color.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 
 color2.obj: color2.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 color2.hrb: a_nask.obj color2.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 
 crack7.obj: crack7.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o crack7.obj $< -l crack7.lst
 
 crack7.hrb: crack7.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \

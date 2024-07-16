@@ -98,17 +98,17 @@ a_nask.obj: a_nask.nas
 
 a.hrb: a_nask.obj a.c
 	$(CC) $(APP_CFLAGS) -c a.c -o a.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary a.obj a_nask.obj -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) a.obj a_nask.obj -o $@ -T $(HRB_LDS)
 
 
 hello3.hrb: a_nask.obj hello3.c
 	$(CC) $(APP_CFLAGS) -c hello3.c -o hello3.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary hello3.obj a_nask.obj -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) hello3.obj a_nask.obj -o $@ -T $(HRB_LDS)
 
 
 crack1.hrb: crack1.c
 	$(CC) $(APP_CFLAGS) -c crack1.c -o crack1.obj
-	$(LD) $(APP_LDFLAGS) --oformat binary crack1.obj -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) crack1.obj -o $@ -T $(HRB_LDS)
 
 
 haribote.img: ipl10.bin haribote.sys \
