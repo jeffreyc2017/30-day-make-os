@@ -174,7 +174,7 @@ appstdio.obj: $(LIBC_DIR)/src/stdio.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 noodle.hrb: a_nask.obj noodle.obj appstdio.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=41*1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 
 beepdown.obj: beepdown.c
