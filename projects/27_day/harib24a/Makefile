@@ -165,7 +165,7 @@ walk.obj: walk.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 walk.hrb: a_nask.obj walk.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=49*1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+48)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 noodle.obj: noodle.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
