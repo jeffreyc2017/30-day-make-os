@@ -133,19 +133,19 @@ winhelo3.obj: winhelo3.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 winhelo3.hrb: a_nask.obj winhelo3.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=41*1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+40)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 star1.obj: star1.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 star1.hrb: a_nask.obj star1.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=48*1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+47)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 stars.obj: stars.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 stars.hrb: a_nask.obj stars.obj rand.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=48*1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+47)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \
