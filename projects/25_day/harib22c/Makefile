@@ -181,7 +181,7 @@ beepdown.obj: beepdown.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 beepdown.hrb: a_nask.obj beepdown.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=41*1024 -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+40)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 
 color.obj: color.c
