@@ -164,6 +164,7 @@ clean:
 	-$(DEL) *.map
 	-$(DEL) *.hrb
 	-$(DEL) haribote.sys
+	-$(DEL) apilib.lib
 	-$(DEL) hankaku.asm
 
 src_only: clean
