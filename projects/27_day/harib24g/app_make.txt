@@ -33,8 +33,11 @@ default: $(APP).hrb
 
 # ÉtÉ@ÉCÉãê∂ê¨ãKë•
 
+STACK_VALUE = $(patsubst %k,%,$(STACK))
+MALLOC_VALUE = $(patsubst %k,%,$(MALLOC))
+
 $(APP).bim: $(APP).obj $(APILIBPATH)apilib.lib $(OBJS_APP)
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$((($(STACK_VALUE)+$(MALLOC_VALUE))*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 
 haribote.img: ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
