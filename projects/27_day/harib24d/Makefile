@@ -199,10 +199,10 @@ color2.hrb: a_nask.obj color2.obj
 
 
 crack7.obj: crack7.nas
-	$(NASM) $(NASM_FLAGS) -f elf32 -o crack7.obj $< -l crack7.lst
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $(basename $@).lst
 
 crack7.hrb: crack7.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=1024 -T $(HRB_LDS) -Map $(basename $@).map
 
 haribote.img: ipl10.bin haribote.sys \
 		hello.hrb hello2.hrb a.hrb hello3.hrb hello4.hrb hello5.hrb \
