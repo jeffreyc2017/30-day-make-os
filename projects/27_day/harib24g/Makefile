@@ -150,42 +150,42 @@ src_only: clean
 	-$(DEL) $(IMG)
 
 clean_full:
-	$(MAKE) -C haribote	clean
+	$(MAKE) -C haribote		clean
 	$(MAKE) -C apilib		clean
 	$(MAKE) -C a			clean
 	$(MAKE) -C hello3		clean
 	$(MAKE) -C hello4		clean
 	$(MAKE) -C hello5		clean
 	$(MAKE) -C winhelo		clean
-	$(MAKE) -C winhelo2	clean
-	$(MAKE) -C winhelo3	clean
+	$(MAKE) -C winhelo2		clean
+	$(MAKE) -C winhelo3		clean
 	$(MAKE) -C star1		clean
 	$(MAKE) -C stars		clean
 	$(MAKE) -C stars2		clean
 	$(MAKE) -C lines		clean
-	$(MAKE) -C walk		clean
+	$(MAKE) -C walk			clean
 	$(MAKE) -C noodle		clean
-	$(MAKE) -C beepdown	clean
+	$(MAKE) -C beepdown		clean
 	$(MAKE) -C color		clean
 	$(MAKE) -C color2		clean
 
 src_only_full :
-	$(MAKE) -C haribote	src_only
+	$(MAKE) -C haribote		src_only
 	$(MAKE) -C apilib		src_only
 	$(MAKE) -C a			src_only
 	$(MAKE) -C hello3		src_only
 	$(MAKE) -C hello4		src_only
 	$(MAKE) -C hello5		src_only
 	$(MAKE) -C winhelo		src_only
-	$(MAKE) -C winhelo2	src_only
-	$(MAKE) -C winhelo3	src_only
+	$(MAKE) -C winhelo2		src_only
+	$(MAKE) -C winhelo3		src_only
 	$(MAKE) -C star1		src_only
 	$(MAKE) -C stars		src_only
 	$(MAKE) -C stars2		src_only
 	$(MAKE) -C lines		src_only
-	$(MAKE) -C walk		src_only
+	$(MAKE) -C walk			src_only
 	$(MAKE) -C noodle		src_only
-	$(MAKE) -C beepdown	src_only
+	$(MAKE) -C beepdown		src_only
 	$(MAKE) -C color		src_only
 	$(MAKE) -C color2		src_only
 	-$(DEL) haribote.img
