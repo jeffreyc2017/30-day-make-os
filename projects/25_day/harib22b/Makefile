@@ -188,7 +188,7 @@ color.obj: color.c
 	$(CC) $(APP_CFLAGS) -c $< -o $@
 
 color.hrb: a_nask.obj color.obj
-	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+40)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
+	$(LD) $(APP_LDFLAGS) $^ -o $@ --defsym=STACK_SIZE=$$(((1+56)*1024)) -T $(HRB_LDS) -Map $(basename $@).map
 
 
 haribote.img: ipl10.bin haribote.sys \
