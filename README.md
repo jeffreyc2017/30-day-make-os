@@ -1,5 +1,7 @@
 # 30dayMakeOS
 
+[![GitHub Actions](https://github.com/jeffreyc2017/30day-os-rpi/actions/workflows/github-actions.yml/badge.svg)](https://github.com/jeffreyc2017/30day-os-rpi/actions/workflows/github-actions.yml)
+
 ## 项目目标
 
 《30 天自制操作系统》书中的代码在 windows 环境下开发，并使用了作者定制的工具。本项目的目标是能够在 Linux / macOS 环境下（包括 x86 和 ARM CPU，即 Intel/AMD CPU 和 Raspberry Pi）也可以运行并验证书中代码。
