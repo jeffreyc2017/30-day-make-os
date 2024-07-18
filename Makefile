@@ -1,7 +1,7 @@
 # The root directory to start the search
 ROOT_DIR := ./projects
 
-.PHONY: all src_only git_restore
+.PHONY: all src_only git_restore check
 
 all:
 	$(MAKE) -C $(ROOT_DIR)/02_day/helloos5
@@ -467,3 +467,9 @@ src_only:
 
 git_restore:
 	git restore "**/*.hrb" "**/*.lib" "**/*.sys" "**/*.bin" "**/*.img" "**/*.obj"
+
+check:
+	$(MAKE) src_only
+	$(MAKE) all
+	$(MAKE) src_only
+	$(MAKE) git_restore
