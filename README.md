@@ -60,9 +60,14 @@ sudo apt install hexedit
 
 ## 运行环境
 
-此项目在 RaspberryPi 5, x86 Ubuntu 和 MacBookPro(Intel CPU) 上运行通过。
+此项目在以下设备上运行验证通过：
 
-> [!note]我目前没有 m1 CPU 的苹果设备，没有办法在其上编译验证。不过想来工具链是相同的，应该没有问题。
+- RaspberryPi 5
+- x86 Ubuntu
+- MacBookPro(Intel CPU)
+
+> [!NOTE]
+> 我目前没有 m1 CPU 的苹果电脑，没有办法在其上编译验证。不过想来工具链是相同的，应该没有问题。
 
 ### RaspberryPi
 
@@ -138,8 +143,10 @@ Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 
 ## 项目结构
 
+```sh
 .
-├── docs Github pages 文件夹
-├── projects 项目代码
-├── README.md 说明（本文档）
-└── utils 运行项目代码用到的辅助工具
+├── docs:      Github pages 文件夹
+├── projects:  项目代码
+├── README.md: 说明（本文档）
+└── utils:     运行项目代码用到的辅助工具
+```
