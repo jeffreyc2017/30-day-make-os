@@ -14,3 +14,4 @@
 - https://github.com/d0iasm/haribote-os
 
 - https://viterbi-web.usc.edu/~yudewei/main/sources/books/30天自制操作系统/
+- https://www.linux.com

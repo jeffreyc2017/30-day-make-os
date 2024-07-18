@@ -92,6 +92,16 @@ so changed the hlt.nas:
 		CALL    2*8:0xca4
 ```
 
-## 30_day
+## 30_day harib27e/f
 
-In 27d,e,f renamed bmp.nasm to bmp.nas so it can be found by the Makefile and compiled.
+在 Linux 上查看 img 文件是 0x430a0,需要 15 个柱面，因为没有使用 tek 压缩。将 9 改为 15（此值因开发环境不同可能有差异）
+
+```sh
+CYLS	EQU		9
+```
+
+to
+
+```sh
+CYLS	EQU		15
+```

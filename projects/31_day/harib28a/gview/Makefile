@@ -34,6 +34,9 @@ default :
 
 # ƒtƒ@ƒCƒ‹¶¬‹K‘¥
 
+bmp.obj: bmp.nasm
+	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
+
 $(APP).bim : $(APP).obj bmp.obj jpeg.obj $(APILIBPATH)apilib.lib
 	$(LD) $(APP_LDFLAGS) $^ -o $@ -T $(HRB_LDS)
 

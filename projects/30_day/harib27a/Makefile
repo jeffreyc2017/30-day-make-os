@@ -161,16 +161,7 @@ run_full: full run
 run_os: haribote.img run
 
 clean:
-	-$(DEL) *.bin
-	-$(DEL) *.lst
-	-$(DEL) *.elf
-	-$(DEL) *.o
-	-$(DEL) *.obj
-	-$(DEL) *.map
-	-$(DEL) *.hrb
-	-$(DEL) haribote.sys
-	-$(DEL) apilib.lib
-	-$(DEL) hankaku.asm
+# œàµÈ¢
 
 src_only: clean
 	-$(DEL) $(IMG)
