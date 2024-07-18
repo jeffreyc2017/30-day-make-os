@@ -20,6 +20,9 @@ CFLAGS = -fleading-underscore \
 		 -mtune=i486 -march=i486 \
 		 -masm=intel
 
+# For macOS
+CFLAGS += -Wno-int-conversion
+
 LDFLAGS = -m elf_i386
 DEL = rm -f
 

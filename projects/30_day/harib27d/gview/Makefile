@@ -27,6 +27,9 @@ LIBC_DIR := $(UTILS_FOLDER)/libc
 
 APP_CFLAGS += -I $(LIBC_DIR)/include
 
+# For macOS
+APP_CFLAGS += -Wno-return-type -Wno-return-mismatch
+
 # デフォルト動作
 
 default :

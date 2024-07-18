@@ -291,6 +291,7 @@ clean:
 src_only: clean
 	-$(DEL) $(IMG)
 	-$(DEL) usb.img
+	-$(DEL) haribote.iso
 
 clean_full :
 	$(MAKE) -C haribote		clean
@@ -325,7 +326,7 @@ clean_full :
 	$(MAKE) -C mmlplay		clean
 	$(MAKE) -C gview		clean
 
-src_only_full :
+src_only_full : src_only
 	$(MAKE) -C haribote		src_only
 	$(MAKE) -C apilib		src_only
 	$(MAKE) -C a			src_only
@@ -357,7 +358,6 @@ src_only_full :
 	$(MAKE) -C tview		src_only
 	$(MAKE) -C mmlplay		src_only
 	$(MAKE) -C gview		src_only
-	-$(DEL) haribote.img
 
 refresh: full clean_full
 	-$(DEL) haribote.img

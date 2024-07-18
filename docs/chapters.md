@@ -30,7 +30,7 @@
 |                                          | 10      | harib00j            | 实现 HLT                       |                                                                                                                                                                                                     |
 | 04 day C 语言与画面显示的练习            | 1       | harib01a            | 用 C 语言实现内存写入          |                                                                                                                                                                                                     |
 |                                          | 2       | harib01b            | 条纹图案                       |                                                                                                                                                                                                     |
-|                                          | 3       | harib01c            | 挑战指针                       |                                                                                                                                                                                                     |
+|                                          | 3       | harib01c            | 挑战指针                       | macOS 上有编译问题：`bootpack.c:10:19: error: assignment to 'char ' from 'int' makes pointer from integer without a cast [-Wint-conversion]` added `-Wno-int-conversion`                            |
 |                                          | 4       | harib01d            | 指针应用（1）                  |                                                                                                                                                                                                     |
 |                                          | 5       | harib01e            | 指针应用（2）                  |                                                                                                                                                                                                     |
 |                                          | 6       | harib01f            | 色号设定                       |                                                                                                                                                                                                     |
@@ -213,7 +213,7 @@
 | 30 day 高级的应用程序                    | 1       | harib27a            | 命令行计算器                   |                                                                                                                                                                                                     |
 |                                          | 2       | harib27b            | 文本阅览器                     |                                                                                                                                                                                                     |
 |                                          | 3       | harib27c            | MML 播放器                     |                                                                                                                                                                                                     |
-|                                          | 4       | harib27d            | 图片阅览器                     | JPEG 图片显示有问题                                                                                                                                                                                 |
+|                                          | 4       | harib27d            | 图片阅览器                     | JPEG 图片显示有问题，需要移动一下窗口才能正常显示。另有 macOS 上的编译问题，加入`-Wno-return-type -Wno-return-mismatch`[^10]                                                                        |
 |                                          | 5       | harib27e            | IPL 的改良                     | 从此 ipl20->ipl09。在 Linux 上查看 img 文件是 0x430a0,需要 15 个柱面，因为没有使用 tek 压缩字库文件。将 9 改为 15（此值因开发环境不同可能有差异）                                                   |
 |                                          | 6       | harib27f            | 光盘启动                       |                                                                                                                                                                                                     |
 
@@ -253,4 +253,24 @@ tek.c:2:10: fatal error: setjmp.h: No such file or directory
       |          ^~~~~~~~~~
 compilation terminated.
 make: *** [Makefile:104: tek.obj] Error 1
+```
+
+[^10]:
+
+```sh
+x86_64-elf-gcc -Wall -Wno-format -Wno-unused -std=gnu99 -fno-pie -m32 -fleading-underscore -fno-stack-protector -nostdinc -nostdlib -I../ -I ../../../../utils/libc/include -c jpeg.c -o jpeg.obj
+jpeg.c: In function 'jpeg_decode_yuv':
+jpeg.c:705:9: error: 'return' with no value, in function returning non-void [-Wreturn-mismatch]
+  705 |         return;
+      |         ^~~~~~
+jpeg.c:642:5: note: declared here
+  642 | int jpeg_decode_yuv(JPEG *jpeg, int h, int v, unsigned char *rgb, int b_type)
+      |     ^~~~~~~~~~~~~~~
+jpeg.c: In function 'jpeg_decode_mcu':
+jpeg.c:638:1: warning: control reaches end of non-void function [-Wreturn-type]
+  638 | }
+      | ^
+make[2]: *** [jpeg.obj] Error 1
+make[1]: *** [default] Error 2
+make: *** [full] Error 2
 ```
