@@ -102,6 +102,40 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 
 ### x86 PC
 
+```sh
+$ uname -r
+5.15.0-116-generic
+
+$ dos2unix --version
+dos2unix 7.4.2 (2020-10-12)
+With Unicode UTF-16 support.
+With native language support.
+With support to preserve the user and group ownership of files.
+LOCALEDIR: /usr/share/locale
+http://waterlan.home.xs4all.nl/dos2unix.html
+
+$ mtools --version
+mtools (GNU mtools) 4.0.32
+configured with the following options: enable-xdf disable-vold disable-new-vold disable-debug enable-raw-term
+
+$ nasm -v
+NASM version 2.15.05
+
+$ i686-linux-gnu-gcc -v
+Using built-in specs.
+COLLECT_GCC=i686-linux-gnu-gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc-cross/i686-linux-gnu/11/lto-wrapper
+Target: i686-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 11.4.0-1ubuntu1~22.04' --with-bugurl=file:///usr/share/doc/gcc-11/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-11 --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --without-target-system-zlib --enable-targets=all --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=i686-linux-gnu --program-prefix=i686-linux-gnu- --includedir=/usr/i686-linux-gnu/include --with-build-config=bootstrap-lto-lean --enable-link-serialization=2
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04)
+
+$ qemu-system-x86_64 --version
+QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.21)
+Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
+```
+
 ## 项目结构
 
 .
