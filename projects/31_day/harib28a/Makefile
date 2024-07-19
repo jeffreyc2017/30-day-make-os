@@ -203,10 +203,10 @@ haribote.iso: haribote.img
 	# hdiutil makehybrid -iso -joliet -o $@ $<
 	mkisofs -b $< -o $@ -input-charset utf8 $<
 
-run-cd: full haribote.iso
+run_cd: full haribote.iso
 	qemu-system-i386 -boot d -cdrom haribote.iso -m 32
 
-run-usb: full-usb usb.img
+run_usb: full_usb usb.img
 	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std \
 	-drive file=usb.img,format=raw,if=none,id=usbdrive \
 	-device usb-ehci -device usb-storage,drive=usbdrive
@@ -245,7 +245,7 @@ full:
 	$(MAKE) -C gview
 	$(MAKE) haribote.img
 
-full-usb:
+full_usb:
 	$(MAKE) -C haribote usb
 	$(MAKE) -C apilib
 	$(MAKE) -C a
@@ -281,7 +281,7 @@ full-usb:
 
 run_full: full run
 
-run-usb_full: full-usb run-usb
+run_full_usb: full_usb run_usb
 
 run_os: haribote.img run
 

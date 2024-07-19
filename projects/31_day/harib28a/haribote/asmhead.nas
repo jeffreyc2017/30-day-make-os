@@ -24,7 +24,7 @@ SCRNY	EQU		0x0ff6			; 解像度のY
 VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 
 		ORG		0xc200			; このプログラムがどこに読み込まれるのか
-
+; JMP scrn320
 ; VBE存在確認
 
 		MOV		AX,0x9000

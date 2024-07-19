@@ -80,6 +80,7 @@ haribote.sys: asmhead.bin bootpack.hrb
 
 %.bin: %.nas
 	$(NASM) $(NASM_FLAGS) -f bin -o $@ $< -l $*.lst
+	ndisasm -b 32 $*.bin > $*.map
 
 %.obj: %.nas
 	$(NASM) $(NASM_FLAGS) -f elf32 -o $@ $< -l $*.lst
