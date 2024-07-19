@@ -2,14 +2,14 @@
 
   - [30daymakeos](README.md)
 
-  - [chapters](chapters.md)
+  - [Chapters](chapters.md)
 
-  - [modifications](modifications.md)
-  - [memory map](memory_map.md)
+  - [Modifications](modifications.md)
+  - [Memory map](memory_map.md)
   - [HRB file format](hrb_format.md)
   - [BPB](bpb.md)
   - [Q&A](Q&A.md)
-  - [references](references.md)
+  - [References](references.md)
 
   - [Tools](tools.md)
 
