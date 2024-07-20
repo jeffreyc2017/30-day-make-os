@@ -1,14 +1,15 @@
 ; haribote-ipl
 ; TAB=4
 
-CYLS    EQU     20            ; Number of cylinders (not used in this code but defined for reference)
+CYLS	EQU		15				; How far to read
+DRVNO   EQU     0x80            ; Drive number (0x80: first HDD)
 
     ORG     0x7c00           ; Origin of the code. The BIOS loads the bootloader at address 0x7c00
 
 ; BPB Structure (BIOS Parameter Block) for FAT32
 
     JMP     SHORT   entry    ; Jump to the entry point of the bootloader code
-    NOP                        ; No operation, used for alignment
+    NOP                      ; No operation, used for alignment
 
 BS_OEMName      DB  "HARIBOTE"       ; [8 bytes] OEM name or identifier
 BPB_BytsPerSec  DW  0x0200           ; Bytes per sector (512 bytes). Standard for FAT12/16/32
@@ -56,9 +57,6 @@ entry:
 
 ; Read disk and initialize the system
 
-    MOV     DL, 0x80        ; Set DL to 0x80 to specify the first hard disk drive
-    MOV     [drv], DL       ; Store the drive number (DL) into memory (for later use)
-
 ; Check if extended INT 0x13 is available
 
     MOV     AH, 0x41        ; BIOS interrupt 0x13, function 0x41: check if extended INT 13h is available
@@ -66,34 +64,26 @@ entry:
     INT     0x13            ; Call BIOS interrupt 0x13
     JC      nosupport       ; Jump to nosupport label if carry flag is set (indicates failure)
 
-    XOR     AX, AX          ; Clear AX register (AX = 0)
-    ADD     AX, 1           ; Add 1 to AX (used to clear carry flag)
-    XOR     EDI, EDI        ; Clear EDI register (EDI = 0)
+    MOV     DI, [DAPS.lba]
 
 ; Perform disk operations using the drive number in DL
 
     MOV     AH, 0x45        ; BIOS interrupt 0x13, function 0x45: lock the drive
     MOV     AL, 0x01        ; Lock drive 0x80
-    MOV     DL, 0x80        ; Drive number 0x80 (first HDD)
+    MOV     DL, DRVNO       ; Drive number 0x80 (first HDD)
     INT     0x13            ; Call BIOS interrupt 0x13 to lock the drive
-
-    MOV     AX, 0           ; Clear AX register
-    MOV     DS, AX          ; Set Data Segment (DS) to 0 (base address)
 
 loop:
     MOV     CL, 0           ; Clear CL register (used for retry counter)
 retry:
-    PUSH    DS              ; Save Data Segment (DS) on stack
-    PUSHAD                  ; Save all general-purpose registers on stack
-    MOV     DL, [drv]       ; Load drive number from memory
+    MOV     DL, DRVNO       ; Load drive number from memory
     MOV     AH, 0x42        ; BIOS interrupt 0x13, function 0x42: extended read disk
-    MOV     AL, 0x00        ; Read 1 sector (specified by count)
     MOV     SI, DAPS        ; Load address of Disk Address Packet (DAPS)
     INT     0x13            ; Call BIOS interrupt 0x13 to read the disk
     JNC     next            ; Jump to next if no carry (indicates success)
 
     ADD     CL, 1           ; Increment retry counter
-    MOV     DL, 0x80        ; Reset drive
+    MOV     DL, DRVNO       ; Reset drive
     MOV     AH, 0x00        ; BIOS interrupt 0x13, function 0x00: reset drive
     INT     0x13            ; Call BIOS interrupt 0x13
     CMP     CL, 6           ; Compare retry counter with 6
@@ -101,68 +91,38 @@ retry:
     JMP     retry           ; Jump back to retry reading disk
 
 next:
-    XOR     EAX, EAX        ; Clear EAX register
-    XOR     EBX, EBX        ; Clear EBX register
-    XOR     ECX, ECX        ; Clear ECX register
+    ADD     DI, 1           ; Increment DI (used to track sectors read)
+    MOV     [DAPS.lba], DI  ; Store incremented DI to LBA address
 
-    ADD     EDI, 1          ; Increment EDI (used to track sectors read)
-    MOV     ECX, lba0       ; Load address of LBA (Logical Block Address) 0
-    MOV     [ECX], EDI      ; Store incremented EDI to LBA address
-
-    XOR     EAX, EAX        ; Clear EAX register
-    XOR     ECX, ECX        ; Clear ECX register
-    XOR     EBP, EBP        ; Clear EBP register
-
-    MOV     AX, [addr]      ; Load address from memory (target location for reading)
-    MOV     ECX, addr       ; Load address of addr
-    MOV     EBX, segm       ; Load address of segment
+    MOV     AX, [DAPS.addr] ; Load address from memory (target location for reading)
     ADD     AX, 0x200       ; Add 0x200 to AX (offset adjustment)
+    MOV     [DAPS.addr], AX ; Store address in DAPS.addr
     ADC     BP, 0           ; Add carry to BP (for address calculation)
     SHL     BP, 12          ; Shift BP left by 12 (address scaling)
-    ADD     BP, [segm]      ; Add segment base address to BP
-    MOV     [EBX], BP       ; Store computed address in EBX
+    ADD     BP, [DAPS.segm] ; Add segment base address to BP
+    MOV     [DAPS.segm], BP ; Store computed address in DAPS.segm
 
-    MOV     [ECX], AX       ; Store address in ECX
-    MOV     [EBX], BP       ; Store base address in EBX
+    CMP     DI, 0x21c       ; check if all sectors read
+    JL      loop            ;
 
-    CMP     EDI, 0x16a      ; Compare EDI with 0x16a (check if all sectors read)
-    JL      loop            ; Jump to loop if EDI < 0x16a
-
-    MOV     ECX, 0xc200     ; Load address to jump to (0xc200 in segment 0x0000)
-
-    MOV     EAX, 0x0000     ; Clear EAX register
-    MOV     EBX, EAX        ; Clear EBX register
-    MOV     EDX, EAX        ; Clear EDX register
-    MOV     EBP, EAX        ; Clear EBP register
-    MOV     ES, AX          ; Set Extra Segment (ES) to 0
-    MOV     ESI, EAX        ; Clear ESI register
-    MOV     EDI, EAX        ; Clear EDI register
-
-    MOV     CH, 10          ; Load 0x0A (newline character) into CH
-    MOV     [0x0ff0], CH    ; Store CH at 0x0ff0 (for display purposes)
-
-    MOV     ECX, EAX        ; Clear ECX register
-    JMP     0x0000:0xc200   ; Jump to address 0xc200 in segment 0x0000
+    MOV     BYTE [0x0ff0], CYLS  ; Note how far the IPL has read
+    JMP     0xc200          ; Jump to address 0xc200 in segment 0x0000
 
 nosupport:
     MOV     SI, msg_nos     ; Load address of "extINT13H not supported" message
-    JMP     putloop         ; Jump to putloop to display the message
-
-error:
-    POPAD                   ; Restore all general-purpose registers from stack
-    POP     DS              ; Restore Data Segment (DS) from stack
-    MOV     SI, msg         ; Load address of "load error" message
-    JMP     putloop         ; Jump to putloop to display the message
-
 putloop:
     MOV     AL, [SI]        ; Load character from message into AL
     ADD     SI, 1           ; Increment message pointer (SI)
     CMP     AL, 0           ; Compare AL with 0 (end of message)
     JE      fin             ; Jump to fin if end of message
     MOV     AH, 0x0e        ; BIOS interrupt 0x10, function 0x0e: teletype output
-    MOV     BX, [chclr]     ; Load color code for output
+    MOV     BX, 15          ; Load color code for output
     INT     0x10            ; Call BIOS interrupt 0x10 to output character
     JMP     putloop         ; Jump back to putloop to display next character
+
+error:
+    MOV     SI, msg         ; Load address of "load error" message
+    JMP     putloop         ; Jump to putloop to display the message
 
 fin:
     HLT                     ; Halt the CPU (end of bootloader execution)
@@ -170,33 +130,23 @@ fin:
 
 msg:
     DB      "load error"    ; Error message to display
-    DB      0x0d, 0x0a     ; CR LF (Carriage Return and Line Feed)
-    DB      0              ; Null terminator for the string
+    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
+    DB      0               ; Null terminator for the string
 
 msg_nos:
-    DB      0x0d, 0x0a     ; CR LF (Carriage Return and Line Feed)
+    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
     DB      "extINT13H not supported" ; Message indicating extended INT 13h not supported
-    DB      0x0d, 0x0a     ; CR LF (Carriage Return and Line Feed)
-    DB      0              ; Null terminator for the string
+    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
+    DB      0               ; Null terminator for the string
 
-drv:
-    DB      0x80           ; Drive number (0x80: first HDD)
-
-chclr:
-    DW      0x000f         ; Color code for text output (15 = light grey on black)
-
+align 4
 DAPS:
-    DB      0x10           ; Size of Disk Address Packet (16 bytes)
-    DB      0              ; Reserved, always 0
-count:
-    DB      539              ; Number of sectors to read (1 sector = 512 bytes)
-    DB      0              ; Reserved, always 0
-addr:
-    DW      0x8000         ; Target location for reading data (0x8000)
-segm:
-    DW      0x0000         ; Segment address (0x0000)
-lba0:
-    DD      1              ; Read from LBA 1 (second block)
+    .packet_size    DB      0x10            ; Size of Disk Address Packet (16 bytes)
+    .reserved       DB      0               ; Reserved, always 0
+    .block_count    DW      1               ; Number of blocks to transfer (1 sector = 512 bytes)
+    .addr           DW      0x8000          ; Target location for reading data to (0x8000)
+    .segm           DW      0x0000          ; Segment address (0x0000)
+    .lba            DQ      0               ; Read from LBA 1 (second block)
 
     TIMES   0x7dfe-0x7c00-($-$$)  DB  0  ; Fill the remainder of the boot sector with zeros
-    DB      0x55, 0xaa       ; Boot signature (0x55AA), required for BIOS to recognize bootable disk
+    DB      0x55, 0xaa      ; Boot signature (0x55AA), required for BIOS to recognize bootable disk
