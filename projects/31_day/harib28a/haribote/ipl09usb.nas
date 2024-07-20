@@ -64,8 +64,6 @@ entry:
     INT     0x13            ; Call BIOS interrupt 0x13
     JC      nosupport       ; Jump to nosupport label if carry flag is set (indicates failure)
 
-    MOV     DI, [DAPS.lba]
-
 ; Perform disk operations using the drive number in DL
 
     MOV     AH, 0x45        ; BIOS interrupt 0x13, function 0x45: lock the drive
@@ -91,6 +89,7 @@ retry:
     JMP     retry           ; Jump back to retry reading disk
 
 next:
+    MOV     DI, [DAPS.lba]
     ADD     DI, 1           ; Increment DI (used to track sectors read)
     MOV     [DAPS.lba], DI  ; Store incremented DI to LBA address
 
@@ -102,41 +101,42 @@ next:
     ADD     BP, [DAPS.segm] ; Add segment base address to BP
     MOV     [DAPS.segm], BP ; Store computed address in DAPS.segm
 
-    CMP     DI, 0x21c       ; check if all sectors read
+    CMP     DI, CYLS * 18 * 2   ; check if all sectors read
     JL      loop            ;
 
     MOV     BYTE [0x0ff0], CYLS  ; Note how far the IPL has read
     JMP     0xc200          ; Jump to address 0xc200 in segment 0x0000
 
 nosupport:
+    MOV		AX,0
+    MOV		ES,AX
     MOV     SI, msg_nos     ; Load address of "extINT13H not supported" message
-putloop:
-    MOV     AL, [SI]        ; Load character from message into AL
-    ADD     SI, 1           ; Increment message pointer (SI)
-    CMP     AL, 0           ; Compare AL with 0 (end of message)
-    JE      fin             ; Jump to fin if end of message
-    MOV     AH, 0x0e        ; BIOS interrupt 0x10, function 0x0e: teletype output
-    MOV     BX, 15          ; Load color code for output
-    INT     0x10            ; Call BIOS interrupt 0x10 to output character
-    JMP     putloop         ; Jump back to putloop to display next character
-
+    JMP     putloop
 error:
-    MOV     SI, msg         ; Load address of "load error" message
-    JMP     putloop         ; Jump to putloop to display the message
-
+    MOV		AX,0
+    MOV		ES,AX
+    MOV		SI,msg
+putloop:
+    MOV		AL,[SI]
+    ADD		SI,1			; Add 1 to SI
+    CMP		AL,0
+    JE		fin
+    MOV		AH,0x0e			; Display one character function
+    MOV		BX,15			; Color code
+    INT		0x10			; Call video BIOS
+    JMP		putloop
 fin:
-    HLT                     ; Halt the CPU (end of bootloader execution)
-    JMP     fin             ; Infinite loop to prevent further execution
-
+    HLT						; Halt the CPU until something happens
+    JMP		fin				; Infinite loop
 msg:
-    DB      "load error"    ; Error message to display
-    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
-    DB      0               ; Null terminator for the string
-
+    DB		0x0a, 0x0a		; Two newlines
+    DB		"load error"
+    DB		0x0a			; Newline
+    DB		0
 msg_nos:
-    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
+    DB      0x0a, 0x0a      ; Two newlines
     DB      "extINT13H not supported" ; Message indicating extended INT 13h not supported
-    DB      0x0d, 0x0a      ; CR LF (Carriage Return and Line Feed)
+    DB      0x0a            ; Newline
     DB      0               ; Null terminator for the string
 
 align 4
