@@ -90,22 +90,31 @@ retry:
 
 next:
     MOV     DI, [DAPS.lba]
-    ADD     DI, 1           ; Increment DI (used to track sectors read)
+    ADD     DI, [DAPS.block_count]           ; Increment DI (used to track sectors read)
     MOV     [DAPS.lba], DI  ; Store incremented DI to LBA address
-
     MOV     AX, [DAPS.addr] ; Load address from memory (target location for reading)
-    ADD     AX, 0x200       ; Add 0x200 to AX (offset adjustment)
+    MOV     BX, [DAPS.block_count]
+    IMUL    BX, [BPB_BytsPerSec]
+    ADD     AX, BX          ; Offset adjustment
     MOV     [DAPS.addr], AX ; Store address in DAPS.addr
     ADC     BP, 0           ; Add carry to BP (for address calculation)
     SHL     BP, 12          ; Shift BP left by 12 (address scaling)
     ADD     BP, [DAPS.segm] ; Add segment base address to BP
     MOV     [DAPS.segm], BP ; Store computed address in DAPS.segm
-
     CMP     DI, CYLS * 18 * 2   ; check if all sectors read
     JL      loop            ;
 
     MOV     BYTE [0x0ff0], CYLS  ; Note how far the IPL has read
+    CALL    unlock
     JMP     0xc200          ; Jump to address 0xc200 in segment 0x0000
+
+; Unlock the drive
+unlock:
+    MOV     AH, 0x46        ; BIOS interrupt 0x13, function 0x46: unlock the drive
+    MOV     AL, 0x01        ; Unlock drive 0x80
+    MOV     DL, DRVNO       ; Drive number 0x80 (first HDD)
+    INT     0x13            ; Call BIOS interrupt 0x13 to unlock the drive
+    RET
 
 nosupport:
     MOV		AX,0
@@ -143,7 +152,7 @@ align 4
 DAPS:
     .packet_size    DB      0x10            ; Size of Disk Address Packet (16 bytes)
     .reserved       DB      0               ; Reserved, always 0
-    .block_count    DW      1               ; Number of blocks to transfer (1 sector = 512 bytes)
+    .block_count    DW      0x7F            ; Number of blocks to transfer (1 sector = 512 bytes)
     .addr           DW      0x8000          ; Target location for reading data to (0x8000)
     .segm           DW      0x0000          ; Segment address (0x0000)
     .lba            DQ      0               ; Read from LBA 1 (second block)
