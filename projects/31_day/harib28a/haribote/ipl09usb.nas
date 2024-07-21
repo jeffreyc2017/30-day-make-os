@@ -153,9 +153,9 @@ DAPS:
     .packet_size    DB      0x10            ; Size of Disk Address Packet (16 bytes)
     .reserved       DB      0               ; Reserved, always 0
     .block_count    DW      0x7F            ; Number of blocks to transfer (1 sector = 512 bytes)
-    .addr           DW      0x8000          ; Target location for reading data to (0x8000)
+    .addr           DW      0xc200          ; Target location for reading data to (0x8000)
     .segm           DW      0x0000          ; Segment address (0x0000)
-    .lba            DQ      0               ; Read from LBA 1 (second block)
+    .lba            DQ      16040               ; Read from LBA 1 (second block)
 
     TIMES   0x7dfe-0x7c00-($-$$)  DB  0  ; Fill the remainder of the boot sector with zeros
     DB      0x55, 0xaa      ; Boot signature (0x55AA), required for BIOS to recognize bootable disk
