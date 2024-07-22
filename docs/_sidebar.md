@@ -8,6 +8,7 @@
   - [Memory map](memory_map.md)
   - [HRB file format](hrb_format.md)
   - [BPB](bpb.md)
+  - [GRUB](grub.md)
   - [Q&A](Q&A.md)
   - [References](references.md)
 

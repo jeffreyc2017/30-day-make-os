@@ -10,6 +10,7 @@
 *.org
 *.lib
 *.map
+*.iso
 
 makefont
 hankaku.asm
