@@ -2,6 +2,18 @@
 
 ## Step-by-Step Guide
 
+### Install GRUB
+
+First, install GRUB and GRUB EFI Modules on your Ubuntu system if it’s not already installed:
+
+```sh
+sudo apt update
+sudo apt install grub2
+sudo apt install grub-efi-amd64-bin
+```
+
+### Make a bootable USB drive for mac
+
 1. Prepare the USB Drive with GPT Using fdisk
 
    1. Open fdisk on the USB Drive:
@@ -44,19 +56,9 @@
 
 3. Install GRUB
 
-   1. First, install GRUB and GRUB EFI Modules on your Ubuntu system if it’s not already installed:
-
-      ```sh
-      sudo apt update
-      sudo apt install grub2
-      sudo apt install grub-efi-amd64-bin
-      ```
-
-   2. Install GRUB:
-
-      ```sh
-      sudo grub-install --target=x86_64-efi --efi-directory=/mnt/usb --boot-directory=/mnt/usb/boot --removable
-      ```
+   ```sh
+   sudo grub-install --target=x86_64-efi --efi-directory=/mnt/usb --boot-directory=/mnt/usb/boot --removable
+   ```
 
 4. Configure GRUB
 
@@ -98,3 +100,111 @@
    Insert it into Your MacBook Pro and Boot:
    Hold down the Option (⌥) key during startup.
    Select the USB drive from the boot menu.
+
+### For QEMU testing
+
+To create a grub.img file and install GRUB onto it for testing with QEMU, follow these steps:
+
+1. Create a Blank Disk Image:
+
+   ```sh
+   dd if=/dev/zero of=grub.img bs=1M count=64
+   ```
+
+   This command creates a 64MB blank disk image file named grub.img.
+
+2. Partition the Disk Image:
+
+   Use fdisk to create a partition table:
+
+   ```sh
+   fdisk grub.img
+   ```
+
+   Inside fdisk, create a new partition:
+
+   - Type o to create a new empty DOS partition table.
+   - Type n to create a new partition.
+   - Choose p for primary partition.
+   - Partition number: 1.
+   - First sector: default (just press Enter).
+   - Last sector: default (just press Enter).
+   - Type a to toggle bootable flag on the new partition.
+   - Type w to write changes and exit.
+
+3. Create a Loop Device:
+
+   ```sh
+
+   sudo losetup -fP grub.img
+   sudo losetup -l
+   ```
+
+   This will list all loop devices and their corresponding files. Note the loop device name (e.g., /dev/loopX).
+
+4. Format the Partition:
+
+   ```sh
+   sudo mkfs.vfat /dev/loopXp1
+   ```
+
+   This command formats the first partition of the loop device with a FAT32 file system.
+
+5. Mount the Partition:
+
+   ```sh
+   sudo mkdir /mnt/grub
+   sudo mount /dev/loopXp1 /mnt/grub
+   ```
+
+6. Copy `haribote.img` to the USB Image:
+
+   Copy the `haribote.img` file to the root of the mounted partition:
+
+   ```sh
+   sudo cp haribote.img /mnt/grub/
+   ```
+
+7. Install GRUB:
+
+   ```sh
+   sudo grub-install --target=i386-pc --boot-directory=/mnt/grub/boot /dev/loopX
+   ```
+
+   This installs GRUB onto the disk image.
+
+8. Create a GRUB Configuration File:
+
+   Create a basic grub.cfg file inside the mounted partition:
+
+   ```sh
+   sudo nano /mnt/grub/boot/grub/grub.cfg
+   ```
+
+   Add the following content:
+
+   ```sh
+   set timeout=5
+   set default=0
+
+   menuentry "Haribote OS" {
+      insmod fat
+      loopback loop0 /haribote.img
+      chainloader (loop0)+1
+   }
+   ```
+
+9. Unmount the Partition:
+
+   ```sh
+   sudo umount /mnt/grub
+   sudo losetup -d /dev/loopX
+   ```
+
+10. Test with QEMU:
+
+    ```sh
+    qemu-system-x86_64 -drive format=raw,file=grub.img
+    ```
+
+    This should boot the grub.img file using QEMU, and you should see the GRUB menu with the "Test Entry".

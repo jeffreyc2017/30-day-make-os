@@ -137,7 +137,7 @@ usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
 		notrec/notrec.hrb bball/bball.hrb invader/invader.hrb \
 		calc/calc.hrb tview/tview.hrb mmlplay/mmlplay.hrb gview/gview.hrb
 	# Create an empty 1.44MB floppy image
-	dd if=/dev/zero of=$@ bs=1M count=1024
+	dd if=/dev/zero of=$@ bs=1M count=16
 
 	# Format the image as FAT32
 	mkfs.msdos -F 32 $@
