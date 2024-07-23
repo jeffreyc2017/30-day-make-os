@@ -1,14 +1,18 @@
-- Welcome
+- [Welcome](/zh-cn/README.md)
 
-  - [30daymakeos](README.md)
+  - [Chapters](/zh-cn/chapters.md)
 
-  - [chapters](chapters.md)
+  - [Modifications](/zh-cn/modifications.md)
+  - [Memory map](/zh-cn/memory_map.md)
+  - [HRB file format](/zh-cn/hrb_format.md)
+  - [BPB](/zh-cn/bpb.md)
+  - [ASM](/zh-cn/asm.md)
+  - [BIOS](/zh-cn/bios.md)
+  - [FAT12](/zh-cn/fat12.md)
+  - [Q&A](/zh-cn/Q&A.md)
+  - [References](/zh-cn/references.md)
 
-  - [modifications](modifications.md)
+  - [Tools](/zh-cn/tools.md)
 
-  - [Q&A](Q&A.md)
-  - [references](references.md)
-
-  - [Tools](tools.md)
-
-  - [04 day](04_day.md)
+  - [02 day](/zh-cn/02_day.md)
+  - [04 day](/zh-cn/04_day.md)
