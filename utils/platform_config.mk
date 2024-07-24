@@ -1,3 +1,9 @@
+/*
+ * Author: jeffreyc2017
+ *
+ * License: MIT
+ */
+
 # File: platform_config.mk
 
 # Detect if we're on a Raspberry Pi

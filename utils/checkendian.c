@@ -1,3 +1,9 @@
+/*
+ * Author: jeffreyc2017
+ *
+ * License: MIT
+ */
+
 #include <stdio.h>
 
 int main() {

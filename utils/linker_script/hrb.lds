@@ -1,4 +1,10 @@
 /*
+ * Author: jeffreyc2017
+ *
+ * License: MIT
+ */
+
+/*
 From 22 day section 5
 
 0x0000 (DWORD) ......Size of the data segment requested by the operating system for the application
