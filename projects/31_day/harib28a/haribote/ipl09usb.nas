@@ -47,6 +47,7 @@ BS_FilSysType   DB  "FAT32   "       ; [8 bytes] Filesystem type
 ; Boot code starts here, after the BPB and EBP sections
 
 entry:
+    CALL    start
     MOV     AX, 0           ; Initialize AX register to 0
     MOV     SS, AX          ; Set Stack Segment (SS) to 0 (base address)
     MOV     ES, AX          ; Set Extra Segment (ES) to 0 (base address)
@@ -116,27 +117,41 @@ unlock:
     INT     0x13            ; Call BIOS interrupt 0x13 to unlock the drive
     RET
 
+start:
+    MOV		AX,0
+    MOV		ES,AX
+    MOV     SI, msg_start
+    CALL    putloop
+    RET
 nosupport:
     MOV		AX,0
     MOV		ES,AX
     MOV     SI, msg_nos     ; Load address of "extINT13H not supported" message
-    JMP     putloop
+    CALL    putloop
+    JMP     fin
 error:
     MOV		AX,0
     MOV		ES,AX
     MOV		SI,msg
+    CALL    putloop
+    JMP     fin
+
 putloop:
     MOV		AL,[SI]
     ADD		SI,1			; Add 1 to SI
     CMP		AL,0
-    JE		fin
+    JE		putloop_end
     MOV		AH,0x0e			; Display one character function
     MOV		BX,15			; Color code
     INT		0x10			; Call video BIOS
     JMP		putloop
+putloop_end:
+    RET
+
 fin:
     HLT						; Halt the CPU until something happens
     JMP		fin				; Infinite loop
+
 msg:
     DB		0x0a, 0x0a		; Two newlines
     DB		"load error"
@@ -147,15 +162,21 @@ msg_nos:
     DB      "extINT13H not supported" ; Message indicating extended INT 13h not supported
     DB      0x0a            ; Newline
     DB      0               ; Null terminator for the string
+msg_start:
+    DB      "Booting Haribote OS ..."
+    DB      0x0d, 0x0a
+    DB      0
 
 align 4
 DAPS:
     .packet_size    DB      0x10            ; Size of Disk Address Packet (16 bytes)
     .reserved       DB      0               ; Reserved, always 0
     .block_count    DW      0x7F            ; Number of blocks to transfer (1 sector = 512 bytes)
-    .addr           DW      0xc200          ; Target location for reading data to (0x8000)
+    ;.addr           DW      0xc200          ; Target location for reading data to (0x8000)
+    .addr           DW      0x8000          ; Target location for reading data to (0x8000)
     .segm           DW      0x0000          ; Segment address (0x0000)
-    .lba            DQ      16040               ; Read from LBA 1 (second block)
+    ;.lba            DQ      16040               ; Read from LBA 16040 (haribote.sys location on FAT32)
+    .lba            DQ      0               ; Read from LBA 0 (including boot sector)
 
     TIMES   0x7dfe-0x7c00-($-$$)  DB  0  ; Fill the remainder of the boot sector with zeros
     DB      0x55, 0xaa      ; Boot signature (0x55AA), required for BIOS to recognize bootable disk

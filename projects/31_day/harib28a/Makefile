@@ -140,60 +140,62 @@ usb.img: haribote/ipl09usb.bin haribote/haribote.sys \
 	dd if=/dev/zero of=$@ bs=1M count=16
 
 	# Format the image as FAT32
-	mkfs.msdos -F 32 $@
+	# mkfs.msdos -F 32 $@
+	mformat -f 1440 -C -B haribote/ipl09usb.bin -i $@ ::
 
 	# Write the boot sector
-	dd if=haribote/ipl09usb.bin of=$@ bs=512 count=1 conv=notrunc
+	# dd if=haribote/ipl09usb.bin of=$@ bs=512 count=1 conv=notrunc
 
-	mkdir -p usb
-	sleep 1
-	sudo mount usb.img usb
-	sleep 1
-	sudo cp haribote/haribote.sys usb
-	sleep 1
-	sudo umount usb
+	# For FAT32
+	#mkdir -p usb
+	#sleep 1
+	#sudo mount usb.img usb
+	#sleep 1
+	#sudo cp haribote/haribote.sys usb
+	#sleep 1
+	#sudo umount usb
 
 	# copy to 0x4200
-	# mcopy -i $@ haribote/haribote.sys ::/
-	# mcopy -i $@ haribote/ipl09usb.nas ::/
-	# mcopy -i $@ make.bat ::/
-	# mcopy -i $@ a/a.hrb ::/
-	# mcopy -i $@ hello3/hello3.hrb ::/
-	# mcopy -i $@ hello4/hello4.hrb ::/
-	# mcopy -i $@ hello5/hello5.hrb ::/
-	# mcopy -i $@ winhelo/winhelo.hrb ::/
-	# mcopy -i $@ winhelo2/winhelo2.hrb ::/
-	# mcopy -i $@ winhelo3/winhelo3.hrb ::/
-	# mcopy -i $@ star1/star1.hrb ::/
-	# mcopy -i $@ stars/stars.hrb ::/
-	# mcopy -i $@ stars2/stars2.hrb ::/
-	# mcopy -i $@ lines/lines.hrb ::/
-	# mcopy -i $@ walk/walk.hrb ::/
-	# mcopy -i $@ noodle/noodle.hrb ::/
-	# mcopy -i $@ beepdown/beepdown.hrb ::/
-	# mcopy -i $@ color/color.hrb ::/
-	# mcopy -i $@ color2/color2.hrb ::/
-	# mcopy -i $@ sosu/sosu.hrb ::/
-	# mcopy -i $@ sosu2/sosu2.hrb ::/
-	# mcopy -i $@ sosu3/sosu3.hrb ::/
-	# mcopy -i $@ type/type.hrb ::/
-	# mcopy -i $@ iroha/iroha.hrb ::/
-	# mcopy -i $@ chklang/chklang.hrb ::/
-	# mcopy -i $@ euc.txt ::/
-	# mcopy -i $@ notrec/notrec.hrb ::/
-	# mcopy -i $@ bball/bball.hrb ::/
-	# mcopy -i $@ invader/invader.hrb ::/
-	# mcopy -i $@ calc/calc.hrb ::/
-	# mcopy -i $@ tview/tview.hrb ::/
-	# mcopy -i $@ mmlplay/mmlplay.hrb ::/
-	# mcopy -i $@ mmldata/kirakira.mml ::/
-	# mcopy -i $@ mmldata/fujisan.mml ::/
-	# mcopy -i $@ mmldata/daigo.mml ::/
-	# mcopy -i $@ mmldata/daiku.mml ::/
-	# mcopy -i $@ gview/gview.hrb ::/
-	# mcopy -i $@ pictdata/fujisan.jpg ::/
-	# mcopy -i $@ pictdata/night.bmp ::/
-	# mcopy -i $@ nihongo/nihongo.fnt ::/
+	mcopy -i $@ haribote/haribote.sys ::/
+	mcopy -i $@ haribote/ipl09usb.nas ::/
+	mcopy -i $@ make.bat ::/
+	mcopy -i $@ a/a.hrb ::/
+	mcopy -i $@ hello3/hello3.hrb ::/
+	mcopy -i $@ hello4/hello4.hrb ::/
+	mcopy -i $@ hello5/hello5.hrb ::/
+	mcopy -i $@ winhelo/winhelo.hrb ::/
+	mcopy -i $@ winhelo2/winhelo2.hrb ::/
+	mcopy -i $@ winhelo3/winhelo3.hrb ::/
+	mcopy -i $@ star1/star1.hrb ::/
+	mcopy -i $@ stars/stars.hrb ::/
+	mcopy -i $@ stars2/stars2.hrb ::/
+	mcopy -i $@ lines/lines.hrb ::/
+	mcopy -i $@ walk/walk.hrb ::/
+	mcopy -i $@ noodle/noodle.hrb ::/
+	mcopy -i $@ beepdown/beepdown.hrb ::/
+	mcopy -i $@ color/color.hrb ::/
+	mcopy -i $@ color2/color2.hrb ::/
+	mcopy -i $@ sosu/sosu.hrb ::/
+	mcopy -i $@ sosu2/sosu2.hrb ::/
+	mcopy -i $@ sosu3/sosu3.hrb ::/
+	mcopy -i $@ type/type.hrb ::/
+	mcopy -i $@ iroha/iroha.hrb ::/
+	mcopy -i $@ chklang/chklang.hrb ::/
+	mcopy -i $@ euc.txt ::/
+	mcopy -i $@ notrec/notrec.hrb ::/
+	mcopy -i $@ bball/bball.hrb ::/
+	mcopy -i $@ invader/invader.hrb ::/
+	mcopy -i $@ calc/calc.hrb ::/
+	mcopy -i $@ tview/tview.hrb ::/
+	mcopy -i $@ mmlplay/mmlplay.hrb ::/
+	mcopy -i $@ mmldata/kirakira.mml ::/
+	mcopy -i $@ mmldata/fujisan.mml ::/
+	mcopy -i $@ mmldata/daigo.mml ::/
+	mcopy -i $@ mmldata/daiku.mml ::/
+	mcopy -i $@ gview/gview.hrb ::/
+	mcopy -i $@ pictdata/fujisan.jpg ::/
+	mcopy -i $@ pictdata/night.bmp ::/
+	mcopy -i $@ nihongo/nihongo.fnt ::/
 
 # R}h
 
@@ -213,7 +215,7 @@ run_cd: full haribote.iso
 usb: usb.img
 
 run_usb: full_usb usb.img
-	qemu-system-i386 $(QEMU_FLAGS) -m 32 -vga std \
+	qemu-system-i386 $(QEMU_FLAGS) -m 4096 -vga std \
 	-drive file=usb.img,format=raw,if=none,id=usbdrive \
 	-device usb-ehci -device usb-storage,drive=usbdrive
 
