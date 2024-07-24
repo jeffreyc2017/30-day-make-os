@@ -1,6 +1,4 @@
-- Welcome
-
-  - [30daymakeos](README.md)
+- [Welcome](README.md)
 
   - [Chapters](chapters.md)
 
@@ -8,11 +6,12 @@
   - [Memory map](memory_map.md)
   - [HRB file format](hrb_format.md)
   - [BPB](bpb.md)
+  - [ASM](asm.md)
+  - [BIOS](bios.md)
+  - [FAT12](fat12.md)
   - [GRUB](grub.md)
-  - [Q&A](Q&A.md)
-  - [References](references.md)
-
   - [Tools](tools.md)
-
   - [02 day](02_day.md)
   - [04 day](04_day.md)
+  - [Q&A](Q&A.md)
+  - [References](references.md)
