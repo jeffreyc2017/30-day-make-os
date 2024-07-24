@@ -1,10 +1,6 @@
-/*
- * Author: jeffreyc2017
- *
- * License: MIT
- */
-
 # File: platform_config.mk
+# Author: jeffreyc2017
+# License: MIT
 
 # Detect if we're on a Raspberry Pi
 IS_RASPBERRY_PI := $(if $(RPI),1,0)
