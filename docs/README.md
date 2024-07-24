@@ -1,4 +1,4 @@
-# 30dayMakeOS
+# 30 Day Make OS
 
 [![GitHub Actions](https://github.com/jeffreyc2017/30day-os-rpi/actions/workflows/github-actions.yml/badge.svg)](https://github.com/jeffreyc2017/30day-os-rpi/actions/workflows/github-actions.yml)
 
