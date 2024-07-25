@@ -1,0 +1,9 @@
+megs: 32
+romimage: file=/usr/share/bochs/BIOS-bochs-legacy
+vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
+floppya: 1_44=haribote.img, status=inserted
+boot: floppy
+#log: bochsout.txt
+mouse: enabled=0
+#keyboard: keymap=/usr/share/bochs/keymaps/x11-pc-us.map
+display_library: sdl2
