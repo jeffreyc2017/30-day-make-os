@@ -14,4 +14,5 @@
   - [02 day](/zh-cn/02_day.md)
   - [04 day](/zh-cn/04_day.md)
   - [Q&A](/zh-cn/Q&A.md)
+  - [bochs](/zh-cn/bochs.md)
   - [References](/zh-cn/references.md)
